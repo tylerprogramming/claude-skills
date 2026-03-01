@@ -11,6 +11,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | Skill | Command | Description |
 |-------|---------|-------------|
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
+| **Transcribe** | `/transcribe` | Transcribe YouTube videos or local audio/video files using OpenAI Whisper |
 
 ## Installation
 
