@@ -1,2 +1,4 @@
 # Add skills to exclude from version control
 
+# Environment variables (contains secrets)
+.env

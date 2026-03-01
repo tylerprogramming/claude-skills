@@ -6,9 +6,9 @@ Usage: python3 ~/.claude/skills/journal/send_summary.py
 Reads ~/journal/weekly_summary.txt and emails it.
 
 Requires:
+  - GMAIL_ADDRESS environment variable (your Gmail address)
   - GMAIL_APP_PASSWORD environment variable (Google App Password, NOT your regular password)
     Generate one at: https://myaccount.google.com/apppasswords
-  - Sends from and to: tylerreedytlearning@gmail.com
 """
 
 import smtplib
@@ -18,11 +18,15 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
-GMAIL_ADDRESS = "tylerreedytlearning@gmail.com"
 SUMMARY_FILE = os.path.expanduser("~/journal/weekly_summary.txt")
 
 
 def main():
+    gmail_address = os.environ.get("GMAIL_ADDRESS")
+    if not gmail_address:
+        print("Error: GMAIL_ADDRESS environment variable is not set.")
+        sys.exit(1)
+
     app_password = os.environ.get("GMAIL_APP_PASSWORD")
     if not app_password:
         print("Error: GMAIL_APP_PASSWORD environment variable is not set.")
@@ -42,16 +46,16 @@ def main():
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = GMAIL_ADDRESS
-    msg["To"] = GMAIL_ADDRESS
+    msg["From"] = gmail_address
+    msg["To"] = gmail_address
 
     msg.attach(MIMEText(summary_text, "plain"))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_ADDRESS, app_password)
-            server.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
-        print(f"Weekly summary emailed to {GMAIL_ADDRESS}")
+            server.login(gmail_address, app_password)
+            server.sendmail(gmail_address, gmail_address, msg.as_string())
+        print(f"Weekly summary emailed to {gmail_address}")
     except smtplib.SMTPAuthenticationError:
         print("Error: Gmail authentication failed.")
         print("Make sure GMAIL_APP_PASSWORD is a valid App Password.")
