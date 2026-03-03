@@ -8,9 +8,26 @@ user-invocable: true
 
 Track workouts and eating in a GitHub-style contribution grid.
 
+## First-Time Setup
+
+Before doing anything else, check if `~/fitness/` exists. If it does NOT:
+
+1. Create the directory: `mkdir -p ~/fitness`
+2. Copy all template files from this skill's `templates/` folder into `~/fitness/`:
+   - `templates/tracker.html` → `~/fitness/tracker.html`
+   - `templates/data.js` → `~/fitness/data.js`
+   - `templates/strength.js` → `~/fitness/strength.js`
+3. Tell the user: "I've set up your fitness tracker at ~/fitness/. You can customize it by:
+   - Editing your name, handle, bio, and city in tracker.html
+   - Dropping a profile.png into ~/fitness/ for your avatar
+   - The default strength exercises are just starting points — add, remove, or rename them in strength.js to match YOUR routine (e.g. deadlifts, pull-ups, curls, whatever you do)"
+
+If `~/fitness/` already exists, skip setup and proceed normally.
+
 ## Data Location
 
 - Data file: `~/fitness/data.js` (JavaScript format for browser compatibility)
+- Strength data: `~/fitness/strength.js` (tracks exercise progress over time)
 - Web viewer: `~/fitness/tracker.html`
 
 ## Parsing Arguments
@@ -105,10 +122,33 @@ When confirming, you can mention the color their day will show:
 - Both → Purple square
 - Any + ate well → Yellow border around the square
 
+## Strength Data Format
+
+The strength data tracks exercises over time for progress charts. The template includes common exercises but **users can track ANY exercises they want** — just add new keys to the object:
+
+```javascript
+// Strength tracking data - updated by /fitness skill
+window.STRENGTH_DATA = {
+  "bench-press": {
+    "name": "Bench Press",
+    "entries": [
+      { "date": "2026-03-01", "sets": [135, 185, 205], "notes": "3 sets" }
+    ]
+  },
+  "pull-ups": {
+    "name": "Pull-ups",
+    "entries": []
+  }
+};
+```
+
+When logging a weight exercise, also update `~/fitness/strength.js` with the exercise entry. If the exercise key doesn't exist yet, create it.
+
 ## Rules
 
 - Always merge with existing day data, never overwrite
 - If image analysis is uncertain, ask to confirm
 - Keep notes concise but useful
 - Date format must be YYYY-MM-DD
-- Create data.json if it doesn't exist (start with empty object {})
+- Run first-time setup if `~/fitness/` doesn't exist
+- Strength exercises are fully customizable — add new ones as needed
