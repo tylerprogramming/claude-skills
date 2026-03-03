@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Tracker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+
+    /* Sidebar / Profile */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .profile-image-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+    }
+
+    .profile-image {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #388bfd;
+      background: #161b22;
+    }
+
+    .profile-badge {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: #0d1117;
+      border-radius: 50%;
+      padding: 4px;
+      border: 2px solid #30363d;
+    }
+
+    .profile-badge-inner {
+      width: 32px;
+      height: 32px;
+      background: #3fb950;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: 600;
+      color: #c9d1d9;
+    }
+
+    .profile-username {
+      font-size: 18px;
+      color: #8b949e;
+      margin-top: -8px;
+    }
+
+    .profile-bio {
+      font-size: 14px;
+      color: #8b949e;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 14px;
+      color: #8b949e;
+      margin-top: 8px;
+    }
+
+    .profile-stats strong {
+      color: #c9d1d9;
+    }
+
+    .profile-stats-divider {
+      color: #30363d;
+    }
+
+    .profile-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      padding-top: 16px;
+      border-top: 1px solid #21262d;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #8b949e;
+    }
+
+    .profile-link-icon {
+      width: 16px;
+      text-align: center;
+    }
+
+    .achievements {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #21262d;
+    }
+
+    .achievements-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .achievement-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .achievement-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+    }
+
+    .achievement-badge.running {
+      background: linear-gradient(135deg, #388bfd 0%, #1f6feb 100%);
+    }
+
+    .achievement-badge.weights {
+      background: linear-gradient(135deg, #da3633 0%, #b62324 100%);
+    }
+
+    .achievement-badge.streak {
+      background: linear-gradient(135deg, #3fb950 0%, #238636 100%);
+    }
+
+    .achievement-badge.nutrition {
+      background: linear-gradient(135deg, #f0c000 0%, #d4a900 100%);
+    }
+
+    .achievement-count {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background: #0d1117;
+      border: 2px solid #30363d;
+      border-radius: 10px;
+      padding: 0 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #c9d1d9;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 400;
+      color: #c9d1d9;
+    }
+
+    .title-count {
+      font-weight: 600;
+    }
+
+    .year-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .year-btn {
+      background: none;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .year-btn:hover {
+      border-color: #8b949e;
+      color: #c9d1d9;
+    }
+
+    .year-btn.active {
+      background: #238636;
+      border-color: #238636;
+      color: #fff;
+    }
+
+    .graph-container {
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 16px;
+      background: #0d1117;
+    }
+
+    .grid-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .months-row {
+      display: flex;
+      margin-bottom: 8px;
+      margin-left: 36px;
+      font-size: 12px;
+      color: #8b949e;
+    }
+
+    .month-label {
+      flex: none;
+    }
+
+    .day-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      font-size: 12px;
+      color: #8b949e;
+      width: 28px;
+      padding-right: 8px;
+    }
+
+    .day-label {
+      height: 11px;
+      line-height: 11px;
+      margin-bottom: 3px;
+    }
+
+    .day-label:nth-child(even) {
+      visibility: hidden;
+    }
+
+    .grid {
+      display: flex;
+      gap: 3px;
+    }
+
+    .week {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .day {
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+      background: #161b22;
+      cursor: pointer;
+      position: relative;
+      outline: 1px solid rgba(27, 31, 35, 0.06);
+      outline-offset: -1px;
+    }
+
+    .day:hover {
+      outline: 2px solid #8b949e;
+      outline-offset: -1px;
+    }
+
+    .day.weights { background: #da3633; }
+    .day.running { background: #388bfd; }
+    .day.both { background: #8957e5; }
+    .day.ate-well {
+      box-shadow: 0 0 6px 2px rgba(240, 192, 0, 0.5);
+    }
+    .day.future { opacity: 0.4; pointer-events: none; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    .footer-text {
+      color: #8b949e;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #8b949e;
+    }
+
+    .legend-text { margin: 0 4px; }
+
+    .legend-box {
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+    }
+
+    .legend-box.empty { background: #161b22; }
+    .legend-box.running { background: #388bfd; }
+    .legend-box.weights { background: #da3633; }
+    .legend-box.both { background: #8957e5; }
+
+    .legend-divider {
+      width: 1px;
+      height: 11px;
+      background: #30363d;
+      margin: 0 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Intro Section */
+    .intro-section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(56, 139, 253, 0.1) 0%, rgba(137, 87, 229, 0.1) 100%);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+    }
+
+    .intro-quote {
+      font-size: 18px;
+      font-style: italic;
+      color: #c9d1d9;
+      margin-bottom: 8px;
+    }
+
+    .intro-text {
+      font-size: 14px;
+      color: #8b949e;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .stat-card-value.running { color: #388bfd; }
+    .stat-card-value.weights { color: #da3633; }
+    .stat-card-value.both { color: #8957e5; }
+    .stat-card-value.nutrition { color: #f0c000; }
+    .stat-card-value.streak { color: #3fb950; }
+    .stat-card-value.best-streak { color: #f78166; }
+    .stat-card-value.miles { color: #a371f7; }
+    .stat-card-value.avg-miles { color: #79c0ff; }
+    .stat-card-value.calories { color: #ffa657; }
+
+    .stat-card-label {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    /* Recent Activity */
+    .activity-section {
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .activity-header {
+      padding: 16px;
+      border-bottom: 1px solid #30363d;
+      font-weight: 600;
+    }
+
+    .activity-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #21262d;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.running { background: rgba(56, 139, 253, 0.2); }
+    .activity-icon.weights { background: rgba(218, 54, 51, 0.2); }
+    .activity-icon.both { background: rgba(137, 87, 229, 0.2); }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-size: 14px;
+      color: #c9d1d9;
+    }
+
+    .activity-date {
+      font-size: 12px;
+      color: #8b949e;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .modal-date {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #8b949e;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: #c9d1d9; }
+
+    .modal-activity {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .activity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .activity-badge.weights {
+      background: rgba(218, 54, 51, 0.2);
+      color: #f85149;
+    }
+
+    .activity-badge.running {
+      background: rgba(56, 139, 253, 0.2);
+      color: #58a6ff;
+    }
+
+    .activity-badge.ate-well {
+      background: rgba(240, 192, 0, 0.2);
+      color: #f0c000;
+    }
+
+    .modal-notes-label {
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-notes {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #c9d1d9;
+    }
+
+    .modal-notes.empty {
+      font-style: italic;
+      color: #8b949e;
+    }
+
+    .modal-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-section-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .modal-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .nutrition-stat {
+      text-align: center;
+      padding: 8px 4px;
+      background: #161b22;
+      border-radius: 6px;
+    }
+
+    .nutrition-stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .nutrition-stat-value.cal { color: #ffa657; }
+    .nutrition-stat-value.protein { color: #3fb950; }
+    .nutrition-stat-value.fat { color: #f85149; }
+    .nutrition-stat-value.carbs { color: #58a6ff; }
+
+    .nutrition-stat-label {
+      font-size: 10px;
+      color: #8b949e;
+      margin-top: 2px;
+    }
+
+    .nutrition-items {
+      font-size: 12px;
+      color: #8b949e;
+      line-height: 1.6;
+    }
+
+    .nutrition-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nutrition-item::before {
+      content: '•';
+      color: #484f58;
+    }
+
+    .run-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .run-stat {
+      text-align: center;
+      padding: 8px 4px;
+      background: #161b22;
+      border-radius: 6px;
+    }
+
+    .run-stat-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #58a6ff;
+      line-height: 1.2;
+    }
+
+    .run-stat-label {
+      font-size: 10px;
+      color: #8b949e;
+      margin-top: 2px;
+    }
+
+    .workout-list {
+      font-size: 13px;
+      color: #c9d1d9;
+      line-height: 1.6;
+    }
+
+    .workout-list-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .workout-list-item::before {
+      content: '🏋️';
+      font-size: 12px;
+    }
+
+    /* Strength Progress */
+    .strength-section {
+      margin-top: 8px;
+    }
+
+    .strength-header {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #c9d1d9;
+    }
+
+    .strength-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .strength-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .strength-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #c9d1d9;
+      margin-bottom: 12px;
+    }
+
+    .strength-card-max {
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 8px;
+    }
+
+    .strength-card-max strong {
+      color: #58a6ff;
+      font-size: 14px;
+    }
+
+    .strength-card canvas {
+      width: 100%;
+      height: 120px;
+    }
+
+    .strength-placeholder {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #484f58;
+      font-size: 14px;
+      font-style: italic;
+      border: 1px dashed #30363d;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .page-container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        align-items: center;
+        text-align: center;
+      }
+      .profile-links {
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="profile-image-container">
+        <img src="profile.png" alt="Profile" class="profile-image">
+        <div class="profile-badge">
+          <div class="profile-badge-inner">🏃</div>
+        </div>
+      </div>
+
+      <h1 class="profile-name">Your Name</h1>
+      <p class="profile-username">@your_handle</p>
+
+      <p class="profile-bio">
+        Building consistency one workout at a time. Track your running, lifting, and nutrition with code.
+      </p>
+
+      <div class="profile-stats">
+        <span><strong id="stat-miles">0</strong> miles</span>
+        <span class="profile-stats-divider">·</span>
+        <span><strong id="stat-workouts">0</strong> workouts</span>
+      </div>
+
+      <div class="profile-links">
+        <div class="profile-link">
+          <span class="profile-link-icon">🔥</span>
+          <span><strong id="stat-streak">0</strong> day streak</span>
+        </div>
+        <div class="profile-link">
+          <span class="profile-link-icon">🏆</span>
+          <span>Best: <strong id="stat-best-streak">0</strong> days</span>
+        </div>
+        <div class="profile-link">
+          <span class="profile-link-icon">📍</span>
+          <span>Your City</span>
+        </div>
+      </div>
+
+      <div class="achievements">
+        <h3 class="achievements-title">Achievements</h3>
+        <div class="achievement-badges">
+          <div class="achievement-badge running" title="Running">
+            🏃
+            <span class="achievement-count" id="badge-running">0</span>
+          </div>
+          <div class="achievement-badge weights" title="Weights">
+            🏋️
+            <span class="achievement-count" id="badge-weights">0</span>
+          </div>
+          <div class="achievement-badge streak" title="Streak">
+            🔥
+            <span class="achievement-count" id="badge-streak">0</span>
+          </div>
+          <div class="achievement-badge nutrition" title="Nutrition">
+            🥗
+            <span class="achievement-count" id="badge-nutrition">0</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="intro-section">
+        <p class="intro-quote">"The only bad workout is the one that didn't happen."</p>
+        <p class="intro-text">Every square represents a day. Every color tells a story. Keep showing up.</p>
+      </div>
+
+      <div class="header">
+        <div class="title"><span class="title-count" id="total-count">0</span> workouts in the last year</div>
+        <div class="year-selector">
+          <button class="year-btn active">2026</button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-value miles" id="card-miles">0</div>
+          <div class="stat-card-label">Total Miles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value running" id="card-running">0</div>
+          <div class="stat-card-label">Running Days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value weights" id="card-weights">0</div>
+          <div class="stat-card-label">Weight Days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value streak" id="card-streak">0</div>
+          <div class="stat-card-label">Current Streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value best-streak" id="card-best-streak">0</div>
+          <div class="stat-card-label">Best Streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value avg-miles" id="card-avg-miles">0</div>
+          <div class="stat-card-label">Avg Miles/Run</div>
+        </div>
+      </div>
+
+      <div class="graph-container">
+        <div id="content">
+          <div class="no-data">Loading...</div>
+        </div>
+
+        <div class="footer">
+          <span class="footer-text">Track your fitness journey</span>
+          <div class="legend">
+            <span class="legend-text">Less</span>
+            <div class="legend-box empty"></div>
+            <div class="legend-box running"></div>
+            <div class="legend-box weights"></div>
+            <div class="legend-box both"></div>
+            <span class="legend-text">More</span>
+            <div class="legend-divider"></div>
+            <div class="legend-item">
+              <div class="legend-box" style="background:#161b22; box-shadow: 0 0 6px 2px rgba(240, 192, 0, 0.5);"></div>
+              <span>Ate well</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strength Progress -->
+      <div class="strength-section">
+        <div class="strength-header">Strength Progress</div>
+        <div class="strength-grid" id="strength-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-date" id="modal-date"></div>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-activity" id="modal-activity"></div>
+      <div class="modal-sections" id="modal-sections"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="strength.js"></script>
+  <script>
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    let fitnessData = {};
+
+    function loadData() {
+      return window.FITNESS_DATA || {};
+    }
+
+    function getDateString(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr + 'T12:00:00');
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function formatDateShort(dateStr) {
+      const date = new Date(dateStr + 'T12:00:00');
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    function getActivityClass(entry) {
+      if (!entry) return '';
+      const classes = [];
+      if (entry.weights && entry.running) classes.push('both');
+      else if (entry.weights) classes.push('weights');
+      else if (entry.running) classes.push('running');
+      if (entry.ateWell) classes.push('ate-well');
+      return classes.join(' ');
+    }
+
+    function extractMiles(notes) {
+      if (!notes) return 0;
+      const match = notes.match(/([\d.]+)\s*mi/i);
+      return match ? parseFloat(match[1]) : 0;
+    }
+
+    function extractCalories(notes) {
+      if (!notes) return 0;
+      const match = notes.match(/([\d,]+)\s*cal/i);
+      return match ? parseInt(match[1].replace(',', '')) : 0;
+    }
+
+    function showModal(dateStr, entry) {
+      const modal = document.getElementById('modal');
+      document.getElementById('modal-date').textContent = formatDate(dateStr);
+
+      let badges = '';
+      if (entry) {
+        if (entry.weights) badges += '<span class="activity-badge weights">Weights</span>';
+        if (entry.running) badges += '<span class="activity-badge running">Running</span>';
+        if (entry.ateWell) badges += '<span class="activity-badge ate-well">Ate Well</span>';
+      }
+      document.getElementById('modal-activity').innerHTML = badges || '<span style="color:#8b949e">No activity logged</span>';
+
+      const sectionsEl = document.getElementById('modal-sections');
+      sectionsEl.innerHTML = '';
+
+      if (entry && entry.notes) {
+        const parts = entry.notes.split(' | ').map(s => s.trim());
+        let runParts = [];
+        let workoutParts = [];
+        let nutritionPart = null;
+
+        parts.forEach(part => {
+          if (part.match(/^\d+K|^\d+[\d.]*\s*mi|Race|Run/i)) {
+            runParts.push(part);
+          } else if (part.match(/^Nutrition:/i)) {
+            nutritionPart = part;
+          } else {
+            workoutParts.push(part);
+          }
+        });
+
+        // Running section
+        if (runParts.length > 0) {
+          const runText = runParts.join(' | ');
+          const milesMatch = runText.match(/([\d.]+)\s*mi/i);
+          const timeMatch = runText.match(/(\d+:\d+)/);
+          const paceMatch = runText.match(/([\d]+'[\d]+")/);
+          const calMatch = runText.match(/([\d,]+)\s*cal/i);
+          const nameMatch = runText.match(/^([^-–]+)/);
+
+          let html = '<div class="modal-section-card">';
+          html += '<div class="modal-section-title">🏃 ' + (nameMatch ? nameMatch[1].trim() : 'Run') + '</div>';
+          html += '<div class="run-stats">';
+          if (milesMatch) html += '<div class="run-stat"><div class="run-stat-value">' + milesMatch[1] + '</div><div class="run-stat-label">Miles</div></div>';
+          if (timeMatch) html += '<div class="run-stat"><div class="run-stat-value">' + timeMatch[1] + '</div><div class="run-stat-label">Time</div></div>';
+          if (paceMatch) html += '<div class="run-stat"><div class="run-stat-value">' + paceMatch[1] + '</div><div class="run-stat-label">Pace</div></div>';
+          if (calMatch) html += '<div class="run-stat"><div class="run-stat-value">' + calMatch[1] + '</div><div class="run-stat-label">Calories</div></div>';
+          html += '</div></div>';
+          sectionsEl.innerHTML += html;
+        }
+
+        // Workout section
+        if (workoutParts.length > 0) {
+          let html = '<div class="modal-section-card">';
+          html += '<div class="modal-section-title">🏋️ Strength Training</div>';
+          html += '<div class="workout-list">';
+          workoutParts.forEach(w => {
+            html += '<div class="workout-list-item">' + w + '</div>';
+          });
+          html += '</div></div>';
+          sectionsEl.innerHTML += html;
+        }
+
+        // Nutrition section
+        if (nutritionPart) {
+          const calMatch = nutritionPart.match(/~?([\d,]+)\s*cal/i);
+          const proteinMatch = nutritionPart.match(/([\d.]+)g\s*protein/i);
+          const fatMatch = nutritionPart.match(/([\d.]+)g\s*fat/i);
+          const carbsMatch = nutritionPart.match(/([\d.]+)g\s*carbs/i);
+          const itemsMatch = nutritionPart.match(/\(([^)]+)\)/);
+
+          let html = '<div class="modal-section-card">';
+          html += '<div class="modal-section-title">🍽️ Nutrition</div>';
+          html += '<div class="nutrition-grid">';
+          if (calMatch) html += '<div class="nutrition-stat"><div class="nutrition-stat-value cal">' + calMatch[1] + '</div><div class="nutrition-stat-label">Calories</div></div>';
+          if (proteinMatch) html += '<div class="nutrition-stat"><div class="nutrition-stat-value protein">' + proteinMatch[1] + 'g</div><div class="nutrition-stat-label">Protein</div></div>';
+          if (fatMatch) html += '<div class="nutrition-stat"><div class="nutrition-stat-value fat">' + fatMatch[1] + 'g</div><div class="nutrition-stat-label">Fat</div></div>';
+          if (carbsMatch) html += '<div class="nutrition-stat"><div class="nutrition-stat-value carbs">' + carbsMatch[1] + 'g</div><div class="nutrition-stat-label">Carbs</div></div>';
+          html += '</div>';
+
+          if (itemsMatch) {
+            const items = itemsMatch[1].split(',').map(s => s.trim());
+            html += '<div class="nutrition-items">';
+            items.forEach(item => {
+              html += '<div class="nutrition-item">' + item + '</div>';
+            });
+            html += '</div>';
+          }
+          html += '</div>';
+          sectionsEl.innerHTML += html;
+        }
+
+        // Fallback if nothing parsed
+        if (runParts.length === 0 && workoutParts.length === 0 && !nutritionPart) {
+          sectionsEl.innerHTML = '<div class="modal-section-card"><div class="modal-section-title">📝 Notes</div><div style="font-size:13px;color:#c9d1d9;">' + entry.notes + '</div></div>';
+        }
+      } else {
+        sectionsEl.innerHTML = '<div class="modal-notes empty">No activity logged for this day</div>';
+      }
+      modal.classList.add('active');
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    function renderGrid(data) {
+      fitnessData = data;
+      const content = document.getElementById('content');
+
+      const today = new Date();
+      const oneYearAgo = new Date(today);
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+      const startDate = new Date(oneYearAgo);
+      startDate.setDate(startDate.getDate() - startDate.getDay());
+
+      const weeks = [];
+      let currentDate = new Date(startDate);
+
+      while (currentDate <= today) {
+        const week = [];
+        for (let i = 0; i < 7; i++) {
+          const dateStr = getDateString(currentDate);
+          const isFuture = currentDate > today;
+          week.push({ date: dateStr, entry: data[dateStr] || null, isFuture });
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        weeks.push(week);
+      }
+
+      const monthPositions = [];
+      let lastMonth = -1;
+      weeks.forEach((week, weekIndex) => {
+        const firstDay = new Date(week[0].date + 'T12:00:00');
+        const month = firstDay.getMonth();
+        if (month !== lastMonth) {
+          monthPositions.push({ month, weekIndex });
+          lastMonth = month;
+        }
+      });
+
+      // Calculate stats
+      let weightsDays = 0, runningDays = 0, bothDays = 0, ateWellDays = 0, totalWorkouts = 0, totalMiles = 0, totalCalories = 0;
+      let currentStreak = 0, bestStreak = 0, tempStreak = 0, runCount = 0;
+
+      // Sort dates for streak calculation
+      const sortedDates = Object.keys(data).sort();
+
+      // Calculate best streak
+      sortedDates.forEach((dateStr, i) => {
+        const entry = data[dateStr];
+        if (entry.weights || entry.running) {
+          tempStreak++;
+          if (tempStreak > bestStreak) bestStreak = tempStreak;
+
+          // Check if next day continues streak
+          if (i < sortedDates.length - 1) {
+            const nextDate = new Date(dateStr + 'T12:00:00');
+            nextDate.setDate(nextDate.getDate() + 1);
+            const nextDateStr = getDateString(nextDate);
+            if (sortedDates[i + 1] !== nextDateStr) {
+              tempStreak = 0;
+            }
+          }
+        } else {
+          tempStreak = 0;
+        }
+      });
+
+      // Current streak from today backwards
+      const checkDate = new Date(today);
+      while (true) {
+        const dateStr = getDateString(checkDate);
+        const entry = data[dateStr];
+        if (entry && (entry.weights || entry.running)) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+
+      Object.entries(data).forEach(([dateStr, entry]) => {
+        if (entry.weights || entry.running) totalWorkouts++;
+        if (entry.weights && entry.running) bothDays++;
+        else if (entry.weights) weightsDays++;
+        else if (entry.running) runningDays++;
+        if (entry.ateWell) ateWellDays++;
+        const miles = extractMiles(entry.notes);
+        if (miles > 0) runCount++;
+        totalMiles += miles;
+        totalCalories += extractCalories(entry.notes);
+      });
+
+      const avgMiles = runCount > 0 ? (totalMiles / runCount).toFixed(1) : 0;
+
+      // Update all stats displays
+      document.getElementById('total-count').textContent = totalWorkouts;
+      document.getElementById('stat-miles').textContent = totalMiles.toFixed(1);
+      document.getElementById('stat-workouts').textContent = totalWorkouts;
+      document.getElementById('stat-streak').textContent = currentStreak;
+      document.getElementById('stat-best-streak').textContent = bestStreak;
+
+      document.getElementById('card-miles').textContent = totalMiles.toFixed(1);
+      document.getElementById('card-running').textContent = runningDays + bothDays;
+      document.getElementById('card-weights').textContent = weightsDays + bothDays;
+      document.getElementById('card-streak').textContent = currentStreak;
+      document.getElementById('card-best-streak').textContent = bestStreak;
+      document.getElementById('card-avg-miles').textContent = avgMiles;
+
+      document.getElementById('badge-running').textContent = runningDays + bothDays;
+      document.getElementById('badge-weights').textContent = weightsDays + bothDays;
+      document.getElementById('badge-streak').textContent = currentStreak;
+      document.getElementById('badge-nutrition').textContent = ateWellDays;
+
+      // Render grid
+      content.innerHTML = `
+        <div class="months-row">
+          ${monthPositions.map((m, i) => {
+            const nextPos = monthPositions[i + 1]?.weekIndex || weeks.length;
+            const width = (nextPos - m.weekIndex) * 14;
+            return `<span class="month-label" style="width:${width}px">${MONTHS[m.month]}</span>`;
+          }).join('')}
+        </div>
+        <div class="grid-wrapper">
+          <div class="day-labels">
+            ${DAYS.map(d => `<div class="day-label">${d}</div>`).join('')}
+          </div>
+          <div class="grid">
+            ${weeks.map(week => `
+              <div class="week">
+                ${week.map(day => `
+                  <div class="day ${getActivityClass(day.entry)} ${day.isFuture ? 'future' : ''}"
+                       data-date="${day.date}"></div>
+                `).join('')}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Click handlers
+      document.querySelectorAll('.day:not(.future)').forEach(dayEl => {
+        dayEl.addEventListener('click', () => {
+          showModal(dayEl.dataset.date, fitnessData[dayEl.dataset.date]);
+        });
+      });
+
+    }
+
+    // Modal handlers
+    document.getElementById('modal-close').addEventListener('click', hideModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modal')) hideModal();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideModal(); });
+
+    // Strength Progress Charts
+    function renderStrengthCharts() {
+      const strengthData = window.STRENGTH_DATA || {};
+      const grid = document.getElementById('strength-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '';
+
+      Object.entries(strengthData).forEach(([key, exercise]) => {
+        const card = document.createElement('div');
+        card.className = 'strength-card';
+
+        const title = document.createElement('div');
+        title.className = 'strength-card-title';
+        title.textContent = exercise.name;
+        card.appendChild(title);
+
+        if (exercise.entries.length === 0) {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'strength-placeholder';
+          placeholder.textContent = 'No data yet';
+          card.appendChild(placeholder);
+        } else {
+          const maxWeight = Math.max(...exercise.entries.map(e => Math.max(...e.sets)));
+          const maxInfo = document.createElement('div');
+          maxInfo.className = 'strength-card-max';
+          maxInfo.innerHTML = 'Max: <strong>' + maxWeight + ' lbs</strong>';
+          card.appendChild(maxInfo);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = 560;
+          canvas.height = 240;
+          canvas.style.width = '100%';
+          canvas.style.height = '120px';
+          card.appendChild(canvas);
+
+          drawStrengthChart(canvas, exercise.entries);
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    function drawStrengthChart(canvas, entries) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const padding = { top: 20, right: 20, bottom: 30, left: 45 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      // Get max weight per session
+      const points = entries.map(e => ({
+        date: e.date,
+        max: Math.max(...e.sets)
+      }));
+
+      const maxVal = Math.max(...points.map(p => p.max));
+      const minVal = Math.min(...points.map(p => p.max));
+      const range = maxVal - minVal || 1;
+      const yMin = Math.max(0, minVal - range * 0.2);
+      const yMax = maxVal + range * 0.2;
+      const yRange = yMax - yMin || 1;
+
+      // Background
+      ctx.fillStyle = '#0d1117';
+      ctx.fillRect(0, 0, w, h);
+
+      // Grid lines
+      ctx.strokeStyle = '#21262d';
+      ctx.lineWidth = 1;
+      const gridLines = 4;
+      for (let i = 0; i <= gridLines; i++) {
+        const y = padding.top + (chartH / gridLines) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        // Y-axis labels
+        const val = Math.round(yMax - (yRange / gridLines) * i);
+        ctx.fillStyle = '#484f58';
+        ctx.font = '18px -apple-system, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(val + '', padding.left - 8, y + 5);
+      }
+
+      if (points.length === 1) {
+        // Single point - draw a dot in the center
+        const x = padding.left + chartW / 2;
+        const y = padding.top + chartH / 2;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#58a6ff';
+        ctx.fill();
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(88, 166, 255, 0.2)';
+        ctx.fill();
+
+        // Date label
+        ctx.fillStyle = '#484f58';
+        ctx.font = '18px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(formatDateShort(points[0].date), x, h - 6);
+      } else {
+        // Line chart
+        ctx.beginPath();
+        ctx.strokeStyle = '#58a6ff';
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+
+        points.forEach((p, i) => {
+          const x = padding.left + (i / (points.length - 1)) * chartW;
+          const y = padding.top + (1 - (p.max - yMin) / yRange) * chartH;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Area fill
+        ctx.lineTo(padding.left + chartW, padding.top + chartH);
+        ctx.lineTo(padding.left, padding.top + chartH);
+        ctx.closePath();
+        const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+        gradient.addColorStop(0, 'rgba(88, 166, 255, 0.15)');
+        gradient.addColorStop(1, 'rgba(88, 166, 255, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Data points
+        points.forEach((p, i) => {
+          const x = padding.left + (i / (points.length - 1)) * chartW;
+          const y = padding.top + (1 - (p.max - yMin) / yRange) * chartH;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#58a6ff';
+          ctx.fill();
+          ctx.strokeStyle = '#0d1117';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+
+        // X-axis date labels
+        ctx.fillStyle = '#484f58';
+        ctx.font = '18px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        const maxLabels = Math.min(points.length, 5);
+        const step = Math.max(1, Math.floor(points.length / maxLabels));
+        for (let i = 0; i < points.length; i += step) {
+          const x = padding.left + (i / (points.length - 1)) * chartW;
+          ctx.fillText(formatDateShort(points[i].date), x, h - 6);
+        }
+      }
+    }
+
+    // Load and render
+    const data = loadData();
+    renderGrid(data);
+    renderStrengthCharts();
+  </script>
+</body>
+</html>
