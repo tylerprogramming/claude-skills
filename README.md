@@ -12,6 +12,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 |-------|---------|-------------|
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
 | **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid with image analysis support |
+| **Thumbnail** | `/thumbnail` | Generate YouTube thumbnails via Kie.ai (Nano Banana 2, Nano Banana Pro, Seedream 4.5) |
 | **Transcribe** | `/transcribe` | Transcribe YouTube videos or local audio/video files using OpenAI Whisper |
 
 ## Installation
