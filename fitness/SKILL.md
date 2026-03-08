@@ -1,12 +1,12 @@
 ---
 name: fitness
-description: Track workouts and eating with a GitHub-style grid. Log weights, running, or eating well for any day. Supports text input or image uploads from other fitness apps. Use when logging a workout, tracking eating, or viewing the fitness grid. Triggers on: fitness, log workout, worked out, went running, lifted weights, ate well, fitness show.
-argument-hint: [weights/running/ate well/image path/show]
-allowed-tools: Bash, Read, Write, Glob
+description: Track workouts, nutrition, and eating with a GitHub-style grid. Log weights, running, or food intake for any day. Supports text input, nutrition label photos, running app screenshots, and multi-day updates. Triggers on: fitness, log workout, worked out, went running, lifted weights, ate well, fitness show, I had, I ate.
+argument-hint: [weights/running/ate well/food items/image path/show]
+allowed-tools: Bash, Read, Write, Glob, Edit, WebSearch
 user-invocable: true
 ---
 
-Track workouts and eating in a GitHub-style contribution grid.
+Track workouts, nutrition, and eating in a GitHub-style contribution grid.
 
 ## First-Time Setup
 
@@ -33,11 +33,13 @@ If `~/fitness/` already exists, skip setup and proceed normally.
 ## Parsing Arguments
 
 Parse `$ARGUMENTS` for:
-- **Workout types:** "weights", "lifting", "weight training", "strength" → weights=true
+- **Workout types:** "weights", "lifting", "weight training", "strength", "shoulder day", "chest day", "arm day" → weights=true
 - **Running:** "ran", "running", "run", "cardio", "jog" → running=true
 - **Eating:** "ate well", "ate good", "healthy eating", "good food" → ateWell=true
+- **Food/Nutrition:** "I had", "I ate", "ate", food item names, servings → track nutrition with macros
 - **Image path:** Any file path ending in .png, .jpg, .jpeg, .heic → analyze with vision
 - **Show:** "show", "view", "grid", "open" → open the web viewer
+- **Date references:** "yesterday", "last night", "today", specific dates → update the correct day
 - **Notes:** Any additional text describing the workout
 
 ## Flow
@@ -59,9 +61,34 @@ Allow multiple selections.
 
 If an image path is provided:
 1. Read the image file using the Read tool (Claude can see images)
-2. Analyze what type of workout it shows (weights, running, both, other)
-3. Extract any useful details for notes (exercises, distance, duration)
-4. Confirm with the user what you detected before logging
+2. Determine the image type and extract data:
+   - **Running app screenshots** — Extract distance, time, pace, calories (e.g. Apple Fitness, Strava)
+   - **Nutrition labels** — Extract calories, protein, fat, carbs per serving, note the serving size
+   - **Food photos** — Identify the food and estimate nutrition if no label is available
+   - **Workout screenshots** — Extract exercises, sets, reps, weights
+3. Use the extracted data to calculate totals based on the servings the user specifies
+4. If uncertain about what the image shows, confirm with the user before logging
+
+### Step 2b: Handle Food/Nutrition Input
+
+When the user mentions food items (with or without images):
+1. If a nutrition label photo is provided, use those exact values
+2. If the user references a food they've logged before, check existing entries in `data.js` for stored nutrition info
+3. For restaurant/fast food items, use WebSearch to look up nutrition facts
+4. For common foods without labels, use standard nutrition estimates
+5. Calculate totals based on the number of servings specified
+6. Present a nutrition breakdown table before updating:
+   - Show each item with calories, protein, fat, carbs
+   - Show subtotal of new items
+   - Show running day total (existing + new)
+7. Track cumulative nutrition in the notes as: `Nutrition: ~[cal] cal, [protein]g protein, [fat]g fat, [carbs]g carbs (item list)`
+
+### Step 2c: Handle Multi-Day Updates
+
+When the user references a different day ("yesterday", "last night", a specific date):
+1. Determine the correct date
+2. Update that day's entry instead of today
+3. Merge with existing data for that day — recalculate nutrition totals
 
 ### Step 3: Update the Data
 
@@ -109,10 +136,18 @@ window.FITNESS_DATA = {
     "weights": true,
     "running": false,
     "ateWell": true,
-    "notes": "bench press 3x10, squats 4x8"
+    "notes": "Incline Bench Pyramid: 45→115→165→185→185→165 lbs (6 sets) | Nutrition: ~1156 cal, 68g protein, 46.5g fat, 119.8g carbs (10 chicken nuggets, 1.5 servings cereal, 1 cup whole milk)"
   }
 };
 ```
+
+### Notes Format
+
+Notes should follow this structure, separated by ` | `:
+- **Running stats**: `5K Race - 3.10 mi, 27:54, 8'59"/mi pace, 469 cal`
+- **Weight exercises**: `Military Press: 6 sets, max 115x2 | Lateral Raises: 5 sets, max 30x7`
+- **Activity**: `Walked at Busch Gardens`
+- **Nutrition** (always last): `Nutrition: ~[total] cal, [protein]g protein, [fat]g fat, [carbs]g carbs (comma-separated item list)`
 
 ## Color Reference (for context)
 
@@ -152,3 +187,9 @@ When logging a weight exercise, also update `~/fitness/strength.js` with the exe
 - Date format must be YYYY-MM-DD
 - Run first-time setup if `~/fitness/` doesn't exist
 - Strength exercises are fully customizable — add new ones as needed
+- When adding food later in the day, recalculate the full day's nutrition totals (don't just append a second Nutrition: line)
+- Use WebSearch for restaurant/fast food nutrition when the user doesn't have a label
+- Support partial servings (e.g. "half a bag", "1/4 of a bagel", "1.5 filets")
+- When the user says "yesterday" or "last night", update the previous day's entry
+- Running stats from app screenshots should include: distance, time, pace, calories
+- Weight exercises should note: exercise name, number of sets, and max weight x reps
