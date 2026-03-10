@@ -145,32 +145,24 @@ Then merge the existing data (OR the new data) before posting.
 After logging, confirm what was recorded:
 - "Logged for [date]: [weights icon] Weights, [running icon] Running, [food icon] Ate well"
 - Show the notes if any
-- Mention they can run `/fitness show` to see their grid
+- If API mode: mention they can view the app at http://localhost:5173
+- If file mode: mention they can run `/fitness show` or start the app with `cd ~/fitness-app && bun run dev`
 
 ### Step 5: Show Grid (if requested)
 
-If user asked to show/view the grid:
+If server is running, open the React app:
+```bash
+open http://localhost:5173
+```
+
+Otherwise fall back:
 ```bash
 open ~/fitness/tracker.html
 ```
 
-## Data Format
+---
 
-The data is stored as a JavaScript file (`data.js`) so browsers can load it directly:
-
-```javascript
-// Fitness data - updated by /fitness skill
-window.FITNESS_DATA = {
-  "2026-03-01": {
-    "weights": true,
-    "running": false,
-    "ateWell": true,
-    "notes": "Incline Bench Pyramid: 45→115→165→185→185→165 lbs (6 sets) | Nutrition: ~1156 cal, 68g protein, 46.5g fat, 119.8g carbs (10 chicken nuggets, 1.5 servings cereal, 1 cup whole milk)"
-  }
-};
-```
-
-### Notes Format
+## Notes Format
 
 Notes should follow this structure, separated by ` | `:
 - **Running stats**: `5K Race - 3.10 mi, 27:54, 8'59"/mi pace, 469 cal`
