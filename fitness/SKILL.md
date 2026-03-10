@@ -178,36 +178,30 @@ When confirming, you can mention the color their day will show:
 - Both → Purple square
 - Any + ate well → Yellow border around the square
 
-## Strength Data Format
+## Strength Data (File Mode Only)
 
-The strength data tracks exercises over time for progress charts. The template includes common exercises but **users can track ANY exercises they want** — just add new keys to the object:
+In file mode, also update `~/fitness/strength.js` with exercise entries. In API mode, the strength data is stored in SQLite automatically via the notes text.
 
 ```javascript
-// Strength tracking data - updated by /fitness skill
 window.STRENGTH_DATA = {
   "bench-press": {
     "name": "Bench Press",
     "entries": [
       { "date": "2026-03-01", "sets": [135, 185, 205], "notes": "3 sets" }
     ]
-  },
-  "pull-ups": {
-    "name": "Pull-ups",
-    "entries": []
   }
 };
 ```
 
-When logging a weight exercise, also update `~/fitness/strength.js` with the exercise entry. If the exercise key doesn't exist yet, create it.
+---
 
 ## Rules
 
-- Always merge with existing day data, never overwrite
+- Always merge with existing day data, never overwrite — GET first in API mode
+- Try API first, fall back to file mode with a warning
 - If image analysis is uncertain, ask to confirm
 - Keep notes concise but useful
 - Date format must be YYYY-MM-DD
-- Run first-time setup if `~/fitness/` doesn't exist
-- Strength exercises are fully customizable — add new ones as needed
 - When adding food later in the day, recalculate the full day's nutrition totals (don't just append a second Nutrition: line)
 - Use WebSearch for restaurant/fast food nutrition when the user doesn't have a label
 - Support partial servings (e.g. "half a bag", "1/4 of a bagel", "1.5 filets")
