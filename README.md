@@ -11,7 +11,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | Skill | Command | Description |
 |-------|---------|-------------|
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
-| **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid with image analysis support |
+| **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid. API-first: posts to local React+SQLite app (localhost:3001) when running, falls back to editing data.js directly |
 | **Meal Plan** | `/meal-plan` | Generate a weekly meal plan with shopping list from your recipe folder |
 | **Post** | `/post` | Post to social media via Blotato MCP (Twitter, LinkedIn, Instagram, etc.) |
 | **PRD** | `/prd` | Generate a Product Requirements Document for a new feature |
