@@ -8,6 +8,21 @@ user-invocable: true
 
 Track workouts, nutrition, and eating in a GitHub-style contribution grid.
 
+## Data Backend (API-first, fallback to files)
+
+The fitness tracker has two backends. **Always try the API first:**
+
+### Check if API is running
+```bash
+curl -s --max-time 2 http://localhost:3001/api/health
+```
+
+- If it returns `{"ok":true}` → use **API mode** (POST to `http://localhost:3001/api/activity`)
+- If it fails / times out → use **file mode** (edit `~/fitness/data.js` directly) and warn the user:
+  > ⚠️ Fitness app server isn't running. Logging to ~/fitness/data.js instead. Start it with: `cd ~/fitness-app && bun run dev`
+
+---
+
 ## First-Time Setup
 
 Before doing anything else, check if `~/fitness/` exists. If it does NOT:
