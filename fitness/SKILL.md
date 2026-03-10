@@ -32,18 +32,11 @@ Before doing anything else, check if `~/fitness/` exists. If it does NOT:
    - `templates/tracker.html` → `~/fitness/tracker.html`
    - `templates/data.js` → `~/fitness/data.js`
    - `templates/strength.js` → `~/fitness/strength.js`
-3. Tell the user: "I've set up your fitness tracker at ~/fitness/. You can customize it by:
-   - Editing your name, handle, bio, and city in tracker.html
-   - Dropping a profile.png into ~/fitness/ for your avatar
-   - The default strength exercises are just starting points — add, remove, or rename them in strength.js to match YOUR routine (e.g. deadlifts, pull-ups, curls, whatever you do)"
+3. Tell the user: "I've set up your fitness tracker at ~/fitness/. Start the full app with: `cd ~/fitness-app && bun run dev`"
 
 If `~/fitness/` already exists, skip setup and proceed normally.
 
-## Data Location
-
-- Data file: `~/fitness/data.js` (JavaScript format for browser compatibility)
-- Strength data: `~/fitness/strength.js` (tracks exercise progress over time)
-- Web viewer: `~/fitness/tracker.html`
+---
 
 ## Parsing Arguments
 
