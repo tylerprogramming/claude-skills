@@ -100,22 +100,43 @@ When the user references a different day ("yesterday", "last night", a specific 
 
 ### Step 3: Update the Data
 
+#### API Mode (server is running)
+
+POST to `http://localhost:3001/api/activity`:
+```json
+{
+  "date": "2026-03-10",
+  "weights": true,
+  "running": false,
+  "ateWell": true,
+  "notes": "Shoulder Day | Military Press: 6 sets | Nutrition: ~1510 cal, 100g protein, 31g fat, 195g carbs (items...)",
+  "calories": 1510,
+  "protein": 100,
+  "fat": 31,
+  "carbs": 195
+}
+```
+
+The API uses upsert — if the day exists, it will be overwritten with the new values.
+
+**Important for merging:** Before posting, GET the existing day first:
+```bash
+curl -s http://localhost:3001/api/activity/2026-03-10
+```
+Then merge the existing data (OR the new data) before posting.
+
+#### File Mode (fallback)
+
 1. Read the current data from `~/fitness/data.js`
 2. Parse the JavaScript: extract the object after `window.FITNESS_DATA = `
 3. Get today's date in YYYY-MM-DD format
-4. Update today's entry, MERGING with any existing data for today:
+4. Update today's entry, MERGING with any existing data:
    - If weights detected/mentioned → set weights: true
    - If running detected/mentioned → set running: true
    - If ate well mentioned → set ateWell: true
    - Append any notes to existing notes
-5. Write the updated data back in this format:
-   ```javascript
-   // Fitness data - updated by /fitness skill
-   window.FITNESS_DATA = {
-     "2026-03-01": { ... },
-     ...
-   };
-   ```
+5. Write the updated data back in JavaScript format
+6. Also update `~/fitness/strength.js` for any strength exercises logged
 
 **Important:** Multiple uses per day should ACCUMULATE. If morning log was "weights" and evening is "ran 3 miles", the day should show BOTH (purple square).
 
