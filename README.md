@@ -11,7 +11,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | Skill | Command | Description |
 |-------|---------|-------------|
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
-| **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid. API-first: posts to local React+SQLite app (localhost:3001) when running, falls back to editing data.js directly |
+| **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid. Powered by a full React + Hono + SQLite app (included in `fitness/app/`). Falls back to static HTML when the server isn't running. |
 | **Meal Plan** | `/meal-plan` | Generate a weekly meal plan with shopping list from your recipe folder |
 | **Post** | `/post` | Post to social media via Blotato MCP (Twitter, LinkedIn, Instagram, etc.) |
 | **PRD** | `/prd` | Generate a Product Requirements Document for a new feature |
@@ -37,6 +37,21 @@ git clone https://github.com/tylerprogramming/claude-skills.git
 # Copy to your Claude skills folder
 cp -r claude-skills/* ~/.claude/skills/
 ```
+
+### Fitness App Setup
+
+The `/fitness` skill includes a full-stack app. After installing the skills:
+
+```bash
+cp -r ~/.claude/skills/fitness/app ~/fitness-app
+cd ~/fitness-app
+bun install   # or: npm install
+bun run dev   # starts both React frontend and Hono API server
+```
+
+- Frontend: http://localhost:5173
+- API: http://localhost:3001
+- SQLite DB is auto-created at `~/fitness-app/fitness.db` on first run
 
 ## Skill Structure
 
