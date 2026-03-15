@@ -8,16 +8,31 @@ user-invocable: true
 
 Track workouts, nutrition, and eating in a GitHub-style contribution grid.
 
+## App Architecture
+
+The fitness tracker is a full-stack app at `~/fitness-app/`:
+- **Frontend**: React + Vite at http://localhost:5173
+- **Backend**: Hono API server (Bun) at http://localhost:3001
+- **Database**: SQLite at `~/fitness-app/fitness.db`
+- **Start**: `cd ~/fitness-app && bun run dev`
+
+### SQLite Tables
+- `activity_log` — daily workout/nutrition entries
+- `meal_plan` — weekly planned meals (B, S1, L, S2, D)
+- `nutrition_items` — reusable food nutrition database
+- `exercises` / `strength_entries` / `strength_sets` — strength tracking
+
+---
+
 ## Data Backend (API-first, fallback to files)
 
-The fitness tracker has two backends. **Always try the API first:**
+**Always try the API first:**
 
-### Check if API is running
 ```bash
 curl -s --max-time 2 http://localhost:3001/api/health
 ```
 
-- If it returns `{"ok":true}` → use **API mode** (POST to `http://localhost:3001/api/activity`)
+- If it returns `{"ok":true}` → use **API mode**
 - If it fails / times out → use **file mode** (edit `~/fitness/data.js` directly) and warn the user:
   > ⚠️ Fitness app server isn't running. Logging to ~/fitness/data.js instead. Start it with: `cd ~/fitness-app && bun run dev`
 
@@ -25,16 +40,15 @@ curl -s --max-time 2 http://localhost:3001/api/health
 
 ## First-Time Setup
 
-Before doing anything else, check if `~/fitness/` exists. If it does NOT:
+The full app lives at `~/fitness-app/`. The `~/fitness/` folder is only used as a fallback when the server is not running.
 
+If `~/fitness/` does NOT exist (fallback setup only):
 1. Create the directory: `mkdir -p ~/fitness`
-2. Copy all template files from this skill's `templates/` folder into `~/fitness/`:
+2. Copy template files from this skill's `templates/` folder:
    - `templates/tracker.html` → `~/fitness/tracker.html`
    - `templates/data.js` → `~/fitness/data.js`
    - `templates/strength.js` → `~/fitness/strength.js`
-3. Tell the user: "I've set up your fitness tracker at ~/fitness/. Start the full app with: `cd ~/fitness-app && bun run dev`"
-
-If `~/fitness/` already exists, skip setup and proceed normally.
+3. Tell the user: "I've set up a fallback tracker at ~/fitness/. For the full app: `cd ~/fitness-app && bun run dev`"
 
 ---
 
@@ -49,6 +63,8 @@ Parse `$ARGUMENTS` for:
 - **Show:** "show", "view", "grid", "open" → open the web viewer
 - **Date references:** "yesterday", "last night", "today", specific dates → update the correct day
 - **Notes:** Any additional text describing the workout
+
+---
 
 ## Flow
 
@@ -80,16 +96,34 @@ If an image path is provided:
 ### Step 2b: Handle Food/Nutrition Input
 
 When the user mentions food items (with or without images):
-1. If a nutrition label photo is provided, use those exact values
-2. If the user references a food they've logged before, check existing entries in `data.js` for stored nutrition info
-3. For restaurant/fast food items, use WebSearch to look up nutrition facts
-4. For common foods without labels, use standard nutrition estimates
-5. Calculate totals based on the number of servings specified
-6. Present a nutrition breakdown table before updating:
+
+1. **Check the Nutrition DB first** (API mode):
+   ```bash
+   curl -s http://localhost:3001/api/nutrition
+   ```
+   Search the returned list for the food by name. Use stored values if found.
+
+2. If not in the DB:
+   - Use exact values from a nutrition label photo if provided
+   - Use WebSearch for restaurant/fast food items
+   - Use standard nutrition estimates for common foods
+
+3. **Add new items to the Nutrition DB** after logging (API mode):
+   ```bash
+   curl -s -X POST http://localhost:3001/api/nutrition \
+     -H "Content-Type: application/json" \
+     -d '{"name":"Item Name","serving_size":"1 serving (Xg)","calories":0,"protein":0,"fat":0,"carbs":0,"sodium":0,"fiber":0,"sugar":0}'
+   ```
+
+4. Calculate totals based on the number of servings specified
+
+5. Present a nutrition breakdown table before updating:
    - Show each item with calories, protein, fat, carbs
    - Show subtotal of new items
    - Show running day total (existing + new)
-7. Track cumulative nutrition in the notes as: `Nutrition: ~[cal] cal, [protein]g protein, [fat]g fat, [carbs]g carbs (item list)`
+
+6. Track cumulative nutrition in the notes as:
+   `Nutrition: ~[cal] cal, [protein]g protein, [fat]g fat, [carbs]g carbs (item list)`
 
 ### Step 2c: Handle Multi-Day Updates
 
@@ -98,9 +132,14 @@ When the user references a different day ("yesterday", "last night", a specific 
 2. Update that day's entry instead of today
 3. Merge with existing data for that day — recalculate nutrition totals
 
-### Step 3: Update the Data
+### Step 3: Update the Activity Log
 
 #### API Mode (server is running)
+
+GET existing day first, then POST merged data:
+```bash
+curl -s http://localhost:3001/api/activity/2026-03-10
+```
 
 POST to `http://localhost:3001/api/activity`:
 ```json
@@ -117,28 +156,37 @@ POST to `http://localhost:3001/api/activity`:
 }
 ```
 
-The API uses upsert — if the day exists, it will be overwritten with the new values.
-
-**Important for merging:** Before posting, GET the existing day first:
-```bash
-curl -s http://localhost:3001/api/activity/2026-03-10
-```
-Then merge the existing data (OR the new data) before posting.
+The API uses upsert — posting to an existing date overwrites it with the merged values.
 
 #### File Mode (fallback)
 
-1. Read the current data from `~/fitness/data.js`
-2. Parse the JavaScript: extract the object after `window.FITNESS_DATA = `
-3. Get today's date in YYYY-MM-DD format
-4. Update today's entry, MERGING with any existing data:
-   - If weights detected/mentioned → set weights: true
-   - If running detected/mentioned → set running: true
-   - If ate well mentioned → set ateWell: true
-   - Append any notes to existing notes
-5. Write the updated data back in JavaScript format
-6. Also update `~/fitness/strength.js` for any strength exercises logged
+1. Read `~/fitness/data.js`, extract the object after `window.FITNESS_DATA = `
+2. Update the entry for the target date, merging with existing data
+3. Write the updated data back in JavaScript format
+4. Update `~/fitness/strength.js` for any strength exercises logged
 
-**Important:** Multiple uses per day should ACCUMULATE. If morning log was "weights" and evening is "ran 3 miles", the day should show BOTH (purple square).
+**Important:** Multiple uses per day should ACCUMULATE — morning weights + evening run → show BOTH (purple square).
+
+### Step 3b: Update the Meal Plan (when correcting today's meals)
+
+To upsert meal plan entries for a date (POST accepts an array):
+```bash
+curl -s -X POST http://localhost:3001/api/meal-plan \
+  -H "Content-Type: application/json" \
+  -d '[
+    {"date":"2026-03-10","meal_code":"B","name":"Meal description","calories":300,"protein":20},
+    {"date":"2026-03-10","meal_code":"L","name":"Meal description","calories":400,"protein":35}
+  ]'
+```
+
+Meal codes: `B` (Breakfast), `S1` (Snack 1), `L` (Lunch), `S2` (Snack 2), `D` (Dinner)
+
+To toggle a meal as completed/eaten:
+```bash
+curl -s -X POST http://localhost:3001/api/meal-plan/toggle \
+  -H "Content-Type: application/json" \
+  -d '{"date":"2026-03-10","meal_code":"S1"}'
+```
 
 ### Step 4: Confirm and Summarize
 
@@ -167,7 +215,7 @@ open ~/fitness/tracker.html
 Notes should follow this structure, separated by ` | `:
 - **Running stats**: `5K Race - 3.10 mi, 27:54, 8'59"/mi pace, 469 cal`
 - **Weight exercises**: `Military Press: 6 sets, max 115x2 | Lateral Raises: 5 sets, max 30x7`
-- **Activity**: `Walked at Busch Gardens`
+- **Meals**: `Meals: B (bagel + cream cheese), L (4x flounder + green beans)`
 - **Nutrition** (always last): `Nutrition: ~[total] cal, [protein]g protein, [fat]g fat, [carbs]g carbs (comma-separated item list)`
 
 ## Color Reference (for context)
@@ -180,7 +228,7 @@ When confirming, you can mention the color their day will show:
 
 ## Strength Data (File Mode Only)
 
-In file mode, also update `~/fitness/strength.js` with exercise entries. In API mode, the strength data is stored in SQLite automatically via the notes text.
+In file mode, also update `~/fitness/strength.js` with exercise entries. In API mode, strength data is stored in SQLite automatically.
 
 ```javascript
 window.STRENGTH_DATA = {
@@ -199,12 +247,14 @@ window.STRENGTH_DATA = {
 
 - Always merge with existing day data, never overwrite — GET first in API mode
 - Try API first, fall back to file mode with a warning
+- **Always check `/api/nutrition` before estimating macros** — use DB values when available
+- Add new food items to the Nutrition DB after logging them
 - If image analysis is uncertain, ask to confirm
 - Keep notes concise but useful
 - Date format must be YYYY-MM-DD
-- When adding food later in the day, recalculate the full day's nutrition totals (don't just append a second Nutrition: line)
+- When adding food later in the day, recalculate the full day's nutrition totals (don't append a second Nutrition: line)
 - Use WebSearch for restaurant/fast food nutrition when the user doesn't have a label
-- Support partial servings (e.g. "half a bag", "1/4 of a bagel", "1.5 filets")
+- Support partial servings (e.g. "half a bag", "1/4 of a bagel", "1.5 fillets")
 - When the user says "yesterday" or "last night", update the previous day's entry
 - Running stats from app screenshots should include: distance, time, pace, calories
 - Weight exercises should note: exercise name, number of sets, and max weight x reps
