@@ -10,10 +10,19 @@ Track workouts, nutrition, and eating in a GitHub-style contribution grid.
 
 ## App Architecture
 
-The fitness tracker is a full-stack app at `~/fitness-app/`:
+The fitness tracker is a full-stack app included in this skill at `fitness/app/`.
+
+### First-time install
+```bash
+cp -r ~/.claude/skills/fitness/app ~/fitness-app
+cd ~/fitness-app
+bun install   # or: npm install
+bun run dev   # or: npm run dev
+```
+
 - **Frontend**: React + Vite at http://localhost:5173
 - **Backend**: Hono API server (Bun) at http://localhost:3001
-- **Database**: SQLite at `~/fitness-app/fitness.db`
+- **Database**: SQLite auto-created at `~/fitness-app/fitness.db` on first run
 - **Start**: `cd ~/fitness-app && bun run dev`
 
 ### SQLite Tables
