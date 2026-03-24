@@ -118,3 +118,48 @@ Rules for social titles:
 - These should NOT just be the YouTube title copy-pasted
 - Each platform has different psychology — LinkedIn = professional growth, TikTok = entertainment/discovery, Twitter = hot takes/insights
 - The social title should make the content feel native to that platform
+
+### Step 4: Present Results
+
+Show the user:
+1. The research summary (competitor titles + view counts)
+2. All 5 title options with the scorecard
+3. The recommended title (highlighted)
+4. The optimized description (first 3 lines preview)
+5. The tag list
+6. Social media titles (if generated)
+
+### Step 5: Iterate
+
+Ask: **"Want to go with one of these, or want me to generate more variants of a specific style?"**
+
+Options:
+- Pick a title and finalize
+- Generate 5 more in the style of a specific title
+- Mix elements from multiple titles
+- Adjust the description
+- Regenerate with different target keywords
+
+## Output
+
+If a video package exists at `~/youtube/<slug>/`:
+- **Update `titles.md`**: Add a `## SEO-Optimized Titles` section with the new titles, scorecard, and research data
+- **Update `description.md`**: Add a `## SEO-Optimized Version` section with the new description and tags
+
+If standalone (no existing package):
+- **Create `~/youtube/<slug>/seo.md`**: Contains all titles, scorecard, description, tags, research data, and social titles
+
+Always include the research data (competitor titles with view counts) in the output so the user can see WHY each title works.
+
+## Rules
+
+- ALWAYS do competitive research — never skip Step 2. The research is what makes this valuable.
+- Titles must be under 70 characters — no exceptions
+- Front-load the most important keyword in the first 40 characters
+- Never use clickbait that the video can't deliver on
+- Description first 2 lines are crucial — they show in search results
+- Tags should include exact match, broad match, and long-tail variants
+- Social titles should be platform-native, not just the YouTube title reformatted
+- Always show the research data so the user can see the reasoning
+- Include ALL competitor titles and view counts in the output — transparency builds trust
+- If updating existing files, add new sections rather than overwriting the original content
