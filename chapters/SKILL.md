@@ -84,3 +84,42 @@ Show the user the generated chapters:
 ```
 
 Ask: **"Do these chapters look right? Want to adjust any timestamps or titles?"**
+
+### Step 7: Update Description
+
+After the user approves (or after revisions):
+
+**If `description.md` exists with placeholder chapters:**
+- Replace the entire chapters section (the `[UPDATE]` placeholders) with the real timestamps
+
+**If `description.md` exists without a chapters section:**
+- Add a chapters section in the appropriate location (after the main body, before links/tags)
+
+**If no `description.md` exists:**
+- Create `~/youtube/<slug>/description.md` with just the chapters section and a note to fill in the rest
+
+Show the user the updated description and confirm the file was saved.
+
+### Step 8: Cleanup
+
+Delete the temporary audio file:
+```
+rm ~/scripts/chapters_audio_<slug>.mp3
+```
+
+Report what was done:
+- Transcript location
+- Updated description path
+- Number of chapters generated
+
+## Rules
+
+- Always extract audio first — don't try to transcribe the full video file directly (it's slower and larger)
+- Chapters must start at `0:00` — YouTube requires this
+- Chapter titles should be concise (2-6 words) — they appear in the progress bar
+- Minimum 3 chapters for YouTube to recognize them as chapters
+- Timestamps must be accurate to within ~5 seconds — round to clean numbers when the transition isn't instant
+- Don't create chapters shorter than 10 seconds — YouTube may not display them
+- When updating `description.md`, preserve all existing content outside the chapters section
+- Clean up the temporary mp3 after transcription
+- If the transcription doesn't have clear timestamps, estimate based on word count (~150 words per minute of speech)
