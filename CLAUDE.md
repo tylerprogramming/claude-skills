@@ -40,6 +40,7 @@ Skills write to these home directory locations (create them if they don't exist)
 | thumbnail | `~/youtube/thumbnails/` |
 | tiktok | `~/youtube/tiktok-research/<hashtag>-report.md` |
 | yt-search | `~/yt-research/<date>-<keywords>.md` |
+| shorts | `~/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
 | resize | `~/images/resized/` |
 | rmbg | `~/images/nobg/` |
 | prd | `tasks/prd-<name>.md` |
@@ -75,9 +76,30 @@ The fitness skill uses a full-stack app at `fitness/app/` (React + Vite frontend
 - **Fallback**: `~/fitness/data.js` and `strength.js` use `window.FITNESS_DATA` format for browser rendering in `tracker.html` — do not convert to JSON
 - **Tables**: `activity_log`, `meal_plan`, `nutrition_items`, `exercises`, `strength_entries`, `strength_sets` — all auto-created on first run via `CREATE TABLE IF NOT EXISTS`
 
+## Weekly Content Pipeline
+
+Skills that work together as a pipeline (run in this order):
+
+```
+/yt-search → /transcribe → /yt → /seo          (long-form track)
+                 ↓
+             /shorts                             (short-form track — feeds from same research)
+                 ↓
+             /content → /chapters                  (publish track — /content handles Blotato directly)
+```
+
+- `/yt-search` feeds both `/yt` (via transcripts) and `/shorts` (via research reports)
+- `/shorts` generates 5 short scripts + 2 Instagram carousel outlines per week
+- `/content` handles text posts (LinkedIn, YT Community) — separate from `/shorts`
+- `/chapters` runs post-edit on the final .mp4, not before filming
+- `/content` handles publishing via Blotato directly (no separate post skill needed)
+
 ## Skills That Compose
 
 - `/yt` calls `/thumbnail` at the end of its flow
+- `/shorts` reads `/yt-search` output from `~/yt-research/`
+- `/content` can render Instagram carousels outlined by `/shorts`
+- `/chapters` reuses `/transcribe`'s script for audio transcription
 - `/ralph` expects an existing PRD (from `/prd`) as input
 
 ## Adding a New Skill

@@ -13,7 +13,6 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
 | **Fitness** | `/fitness` | Track workouts and nutrition in a GitHub-style contribution grid. Powered by a full React + Hono + SQLite app (included in `fitness/app/`). Falls back to static HTML when the server isn't running. |
 | **Meal Plan** | `/meal-plan` | Generate a weekly meal plan with shopping list from your recipe folder |
-| **Post** | `/post` | Post to social media via Blotato MCP (Twitter, LinkedIn, Instagram, etc.) |
 | **PRD** | `/prd` | Generate a Product Requirements Document for a new feature |
 | **Quiz** | `/quiz` | Interactive quiz/coaching from any document — mock interviews, rapid fire, deep practice, study review |
 | **Ralph** | `/ralph` | Convert PRDs to prd.json format for the Ralph autonomous agent system |
@@ -25,6 +24,8 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **Transcribe** | `/transcribe` | Transcribe YouTube videos or local audio/video files using OpenAI Whisper |
 | **YT** | `/yt` | Full YouTube video package — analysis, research, titles, hooks, script, description, filming guide |
 | **YT Search** | `/yt-search` | Search YouTube by keywords via yt-dlp, sort by views, generate report |
+| **Shorts** | `/shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
+| **Custom GPT** | `/custom-gpt` | Build a complete Custom GPT package (system-prompt, KB files, README) from course transcripts or raw text |
 
 ## Installation
 
