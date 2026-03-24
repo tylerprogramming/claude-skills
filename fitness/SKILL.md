@@ -180,7 +180,34 @@ The API uses upsert — posting to an existing date overwrites it with the merge
 
 **Important:** Multiple uses per day should ACCUMULATE — morning weights + evening run → show BOTH (purple square).
 
-### Step 3b: Update the Meal Plan (when correcting today's meals)
+### Step 3b: Log Water / Caffeine (API mode)
+
+**Water** — adds to the daily cumulative total:
+```bash
+curl -s -X POST http://localhost:3001/api/hydration/water \
+  -H "Content-Type: application/json" \
+  -d '{"date":"2026-03-10","oz":16}'
+```
+
+**Caffeine** — add a timestamped entry (use current time if not specified, HH:MM format):
+```bash
+curl -s -X POST http://localhost:3001/api/hydration/caffeine \
+  -H "Content-Type: application/json" \
+  -d '{"date":"2026-03-10","time":"08:30","source":"Coffee (8oz)","mg":95}'
+```
+
+**Get current hydration totals** (to report back to user):
+```bash
+curl -s http://localhost:3001/api/hydration/2026-03-10
+```
+
+Common caffeine values:
+- Coffee 8oz: 95mg | Cold brew 12oz: 155mg | Espresso: 63mg
+- Pre-workout: 150–200mg | Energy drink 16oz: 160mg | Green tea: 28mg | Black tea: 47mg
+
+After logging, report back: current oz vs goal, total caffeine mg, warn if over 400mg.
+
+### Step 3c: Update the Meal Plan (when correcting today's meals)
 
 To upsert meal plan entries for a date (POST accepts an array):
 ```bash
