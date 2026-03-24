@@ -56,3 +56,65 @@ Present a **research summary** to the user:
 - Most common keywords (ranked by frequency)
 - Title formulas that appear to perform well
 - Content gaps — angles nobody is using
+
+### Step 3: Generate SEO-Optimized Content
+
+#### Title Options (5 titles)
+
+For each title:
+- **The title** — Under 70 characters (YouTube truncates after that)
+- **Character count** — Show the exact count
+- **CTR formula used** — Name the technique (curiosity gap, specific number, how-to, comparison, bold claim, etc.)
+- **Primary keyword** — What search term this targets
+- **Why it works** — One sentence on the psychology/SEO reasoning
+
+Rules for titles:
+- Front-load the most important keyword in the first 40 characters
+- Never use clickbait the video can't deliver on
+- Include at least one title using a number/specific claim
+- Include at least one curiosity-driven title
+- Include at least one direct/search-optimized title
+- Avoid overused words: "INSANE", "CRAZY", "YOU WON'T BELIEVE"
+
+#### Title Scorecard
+
+Rate each title on a 1-5 scale:
+
+| Title | Curiosity | Specificity | SEO Strength | Click Factor | Total |
+|-------|-----------|-------------|--------------|--------------|-------|
+
+- **Curiosity (1-5)** — Does it create an information gap the viewer wants to close?
+- **Specificity (1-5)** — Does it promise something concrete vs vague?
+- **SEO Strength (1-5)** — Does it contain high-volume searchable keywords?
+- **Click Factor (1-5)** — Would YOU click this in a sea of other thumbnails?
+
+Mark the recommended title with the highest total score.
+
+#### Optimized Description
+
+- **First 2 lines** — These show in search results. Front-load keywords and value proposition. No fluff.
+- **Body** — Natural keyword density (2-3% target keyword occurrence). Include related keywords organically.
+- **Chapters section** — `00:00 - Title` format (use placeholders if timestamps unknown, mark with [UPDATE])
+- **Links section** — Placeholder for relevant links
+- **Tags line** — Keywords at the bottom for additional SEO signal
+
+If an existing `description.md` exists, add a `## SEO-Optimized Version` section rather than replacing the original.
+
+#### Tags (15-20)
+
+Organize tags in three tiers:
+1. **Exact match** (3-5) — The exact phrases people search for
+2. **Broad match** (5-7) — Related topics and category terms
+3. **Long-tail** (5-8) — Specific, lower-competition phrases
+
+#### Social Media Titles (if `--social` flag)
+
+Generate platform-native titles:
+- **LinkedIn headline** — Professional, insight-driven (under 150 chars). Focus on the lesson or takeaway, not the video.
+- **TikTok/Reels caption** — Short, punchy, hook-first (under 100 chars). Create urgency or curiosity.
+- **Twitter/X post** — Under 280 chars, curiosity-driven. Make it a standalone insight that happens to link to a video.
+
+Rules for social titles:
+- These should NOT just be the YouTube title copy-pasted
+- Each platform has different psychology — LinkedIn = professional growth, TikTok = entertainment/discovery, Twitter = hot takes/insights
+- The social title should make the content feel native to that platform
