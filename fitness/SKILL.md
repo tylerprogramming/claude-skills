@@ -1,6 +1,6 @@
 ---
 name: fitness
-description: Track workouts, nutrition, and eating with a GitHub-style grid. Log weights, running, or food intake for any day. Supports text input, nutrition label photos, running app screenshots, and multi-day updates. Triggers on: fitness, log workout, worked out, went running, lifted weights, ate well, fitness show, I had, I ate.
+description: Track workouts, nutrition, eating, water, and caffeine with a GitHub-style grid. Log weights, running, food intake, water oz, or caffeine mg for any day. Supports text input, nutrition label photos, running app screenshots, and multi-day updates. Triggers on: fitness, log workout, worked out, went running, lifted weights, ate well, fitness show, I had, I ate, drank water, had a coffee, drank oz, caffeine.
 argument-hint: [weights/running/ate well/food items/image path/show]
 allowed-tools: Bash, Read, Write, Glob, Edit, WebSearch
 user-invocable: true
