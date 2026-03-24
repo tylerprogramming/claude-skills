@@ -28,6 +28,8 @@ bun run dev   # or: npm run dev
 ### SQLite Tables
 - `activity_log` — daily workout/nutrition entries
 - `meal_plan` — weekly planned meals (B, S1, L, S2, D)
+- `water_log` — daily water intake (oz) and goal
+- `caffeine_log` — timestamped caffeine entries (source, mg)
 - `nutrition_items` — reusable food nutrition database
 - `exercises` / `strength_entries` / `strength_sets` — strength tracking
 
