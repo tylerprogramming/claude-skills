@@ -36,7 +36,21 @@ Check if `--social` flag is present in $ARGUMENTS — if so, also generate socia
 
 ### Step 2: Competitive Research (WebSearch)
 
-This step is NOT optional — always do real research. Run at least 5-6 searches:
+This step is NOT optional — always do real research.
+
+**First, check for existing research from `/yt`:** If a video package exists at `~/youtube/<slug>/analysis.md`, read it. The `/yt` skill already runs 4-6 web searches and saves competitor data, content gaps, and community sentiment. Extract what's already there:
+- Competitor video titles and view counts
+- Keywords and phrases already identified
+- Content gaps already noted
+
+**Then fill in SEO-specific gaps** — only run searches for data NOT already in `analysis.md`. Typically this means 2-3 targeted searches instead of 5-6:
+
+1. **YouTube autocomplete**: Search `<topic> youtube autocomplete suggestions` and `<topic> how to / vs / best / tutorial` to find what people actually search for
+2. **Title patterns**: Search for variations of the topic to see how different creators title similar content (skip if analysis.md already has 10+ competitor titles)
+3. **Related keywords**: Search for synonyms, related terms, and long-tail variations
+4. **Trending angles**: Search for recent news/developments about the topic that could inform timely title angles (skip if analysis.md has recent news)
+
+**If no analysis.md exists** (standalone SEO run without `/yt`), run the full 5-6 searches:
 
 1. **Top videos on this topic**: Search `"<topic>" site:youtube.com` and `<topic> youtube` to find the top-performing videos
 2. **Title patterns**: Search for variations of the topic to see how different creators title similar content
