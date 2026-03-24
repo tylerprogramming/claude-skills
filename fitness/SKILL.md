@@ -70,6 +70,8 @@ Parse `$ARGUMENTS` for:
 - **Running:** "ran", "running", "run", "cardio", "jog" → running=true
 - **Eating:** "ate well", "ate good", "healthy eating", "good food" → ateWell=true
 - **Food/Nutrition:** "I had", "I ate", "ate", food item names, servings → track nutrition with macros
+- **Water:** "drank X oz", "drank X cups", "had X oz water", number + "oz" near "water" → log water intake
+- **Caffeine:** "had a coffee", "had espresso", "pre-workout", "energy drink", source name + optional mg + optional time → log caffeine entry
 - **Image path:** Any file path ending in .png, .jpg, .jpeg, .heic → analyze with vision
 - **Show:** "show", "view", "grid", "open" → open the web viewer
 - **Date references:** "yesterday", "last night", "today", specific dates → update the correct day
