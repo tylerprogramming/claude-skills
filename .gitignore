@@ -2,3 +2,14 @@
 
 # Environment variables (contains secrets)
 .env
+
+# Cached tokens and credentials
+analytics/yt_token.json
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+
+# Virtual environments
+.venv/
