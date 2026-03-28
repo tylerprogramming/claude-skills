@@ -35,7 +35,8 @@ Skills write to these home directory locations (create them if they don't exist)
 | fitness | `~/fitness-app/fitness.db` (SQLite, auto-created); `~/fitness/` fallback HTML files |
 | journal | `~/journal/YYYY-MM-DD.txt` |
 | transcribe | `~/scripts/transcript_<id>.txt` |
-| yt | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md) |
+| yt | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
+| analytics | `~/youtube/analytics/` (channel snapshots); `~/youtube/<slug>/performance.md` (per-video A/B tracking) |
 | save-idea | `~/youtube/video-ideas.md` |
 | thumbnail | `~/youtube/thumbnails/` |
 | tiktok | `~/youtube/tiktok-research/<hashtag>-report.md` |
@@ -43,6 +44,7 @@ Skills write to these home directory locations (create them if they don't exist)
 | shorts | `~/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
 | resize | `~/images/resized/` |
 | rmbg | `~/images/nobg/` |
+| email | Sends via Resend API, tracks in `~/.claude/skills/skool/data/skool.db` |
 | prd | `tasks/prd-<name>.md` |
 
 ## Environment Variables
