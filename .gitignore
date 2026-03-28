@@ -13,3 +13,6 @@ __pycache__/
 
 # Virtual environments
 .venv/
+
+# Skills excluded from version control
+skool/
