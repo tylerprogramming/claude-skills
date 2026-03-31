@@ -10,7 +10,7 @@ Create platform-ready social media posts and visuals from $ARGUMENTS.
 
 ## Workflow Context
 
-**Text content step of the weekly content pipeline** — runs after `/seo` for each long-form video, and after `/shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
+**Text content step of the weekly content pipeline** - runs after `/seo` for each long-form video, and after `/shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
 
 Run twice per week (once per video) for:
 - 2 LinkedIn posts (one per video)
@@ -22,11 +22,11 @@ Run twice per week (once per video) for:
 
 ## Overview
 
-This skill generates text posts + static visuals for X/Twitter, LinkedIn, Instagram, and YouTube Community — from either a YouTube video package or a standalone topic/URL/idea. It is distinct from `/repurpose` (which makes short-form video scripts). This skill also handles publishing directly via Blotato MCP.
+This skill generates text posts + static visuals for X/Twitter, LinkedIn, Instagram, and YouTube Community - from either a YouTube video package or a standalone topic/URL/idea. It is distinct from `/repurpose` (which makes short-form video scripts). This skill also handles publishing directly via Blotato MCP.
 
 **Output locations:**
-- YT video mode → `~/youtube/<slug>/social/`
-- Standalone mode → `~/social/YYYY-MM-DD-<slug>/`
+- YT video mode -> `~/youtube/<slug>/social/`
+- Standalone mode -> `~/social/YYYY-MM-DD-<slug>/`
 
 ---
 
@@ -34,9 +34,9 @@ This skill generates text posts + static visuals for X/Twitter, LinkedIn, Instag
 
 Parse $ARGUMENTS to determine the input type:
 
-- **YouTube video package** — path like `~/youtube/<slug>/` or just a slug name
-- **Topic / URL** — a subject, article link, or research query
-- **Direct text** — user provides raw copy or idea to adapt
+- **YouTube video package** - path like `~/youtube/<slug>/` or just a slug name
+- **Topic / URL** - a subject, article link, or research query
+- **Direct text** - user provides raw copy or idea to adapt
 
 If $ARGUMENTS is empty or ambiguous, ask:
 > "What's the source for this content? You can give me:
@@ -50,10 +50,10 @@ If $ARGUMENTS is empty or ambiguous, ask:
 
 ### YouTube Video Mode
 Read these files if they exist (in order of priority):
-- `~/youtube/<slug>/script.md` — full script for deep insight extraction
-- `~/youtube/<slug>/description.md` — polished summary + key points
-- `~/youtube/<slug>/hooks.md` — strong angles and hooks already written
-- `~/youtube/<slug>/titles.md` — for post headline ideas
+- `~/youtube/<slug>/script.md` - full script for deep insight extraction
+- `~/youtube/<slug>/description.md` - polished summary + key points
+- `~/youtube/<slug>/hooks.md` - strong angles and hooks already written
+- `~/youtube/<slug>/titles.md` - for post headline ideas
 
 Also look up the YouTube URL for the video by running:
 ```bash
@@ -104,44 +104,100 @@ If they say "all" or don't specify, generate all platforms.
 
 ## Step 5: Generate All Text Content
 
-### X/Twitter — Thread Format
+### X/Twitter - Thread Format
 
 Write as a thread: one punchy main tweet + 4-5 reply tweets + final reply with video link.
 
 - Main tweet: bold hook, under 230 chars (Tyler's account limit)
-- Reply tweets: one point each, under 230 chars, use 👉 emoji for points
+- Reply tweets: one point each, under 230 chars
 - Final reply: CTA + YouTube URL
 - No hashtags (they reduce engagement on X)
-- No em dashes — use commas or plain dashes instead
+- No em dashes - use commas or plain dashes instead
+- Write as punchy standalone insights, not "check out my video"
 
 ---
 
-### LinkedIn Text Post (150-300 words)
+### LinkedIn Text Post
 
-Structure:
-1. **Hook line** — Must earn the click. No "I just posted a video."
-2. **Body** — 3-5 points using 👉 emoji (not numbered lists, not markdown bold)
-3. **CTA** — Include YouTube video URL at the end
+**Structure (8-part framework):**
 
-Rules:
-- Plain text only — NO markdown, NO **bold**, NO hashtags
-- No em dashes — use commas or plain dashes
-- Use 👉 emoji instead of numbered points
-- Add blank lines between sections for readability
-- Write in first person, conversational but professional
-- Lead with an insight, not a promotional pitch
+1. **Hook** (6-8 words max) - Stop the scroll. Use one of these proven formulas:
+   - "I [did unexpected thing]. Here's what happened:"
+   - "[Number] [things] I wish I knew about [topic]"
+   - "Stop doing [common thing]. Do this instead:"
+   - "Everyone is wrong about [topic]. Here's why:"
+   - "I spent [time] doing [thing]. [Surprising result]."
+
+2. **Rehook** - Second line that challenges or expands the hook. Creates curiosity gap.
+
+3. **Problem** - Call out the reader's exact struggle in 1-2 sentences.
+
+4. **Solution** - Deliver the core value/insight.
+
+5. **Signpost** - "Here's how I did it:" or "Here's the framework:" - hint at the details coming.
+
+6. **Body** - 3-5 key points. Short paragraphs of 1-2 sentences each. Use blank lines between every paragraph. Can use emojis sparingly for visual breaks but NOT as bullet points.
+
+7. **Power ending** - One impactful closing sentence. Pattern interrupt or strong opinion.
+
+8. **Question CTA** - End with a simple, easy-to-answer question (72% better engagement than statements). Include YouTube video URL after the question.
+
+**Formatting rules:**
+- Plain text only - NO markdown, NO **bold**, NO hashtags
+- No em dashes - use commas or plain dashes
+- **14+ short paragraphs** with blank lines between each (1-2 sentences per paragraph)
+- 1,242-2,500 characters optimal length
+- Grade 5-7 reading level - simple, clear, human
+- Write "How I" not "How to" - readers want real stories
+- First person, conversational but professional
+- Lead with insight, not a promotional pitch
+
+**Algorithm optimization:**
+- No external links in the main post body (60% less reach). Put the YouTube URL at the very end after the CTA question, or in a comment.
+- Design for dwell time - longer reads with engaging structure
+- Posts go live between 10-11 AM ET, especially Tue-Thu
 
 ---
 
-### Instagram Carousel — Blotato
+### LinkedIn Carousel (PDF via Gamma or Kie.ai)
+
+When the user requests a LinkedIn carousel, create slide content following these specs:
+
+**Specs:**
+- PDF format, 1080x1080 (1:1) or 1080x1350 (4:5)
+- **6 content slides** (no CTA slide - Tyler adds separately with Kie.ai)
+- One idea per slide, large readable text
+- Minimal text per slide - 2-4 short lines max
+
+**Slide structure:**
+- **Slide 1 (Hook):** Bold headline with specific value/numbers. Under 8-10 words. Answer: "Is this for me?" and "What do I get if I swipe?"
+- **Slides 2-5 (Value):** One key point per slide. Big bold heading + short explanation.
+- **Slide 6 (Summary):** Key takeaway or actionable closing.
+
+**PDF filename matters** - it becomes the bold clickable headline under the carousel on LinkedIn. Make it compelling.
+
+**Carousel-specific caption:**
+- Use the 8-part text post framework above for the caption
+- End with "Save this for later" or "Send this to someone who needs it" (targets saves + shares, the top algorithm signals)
+
+If using Gamma API:
+```bash
+python3 ~/.claude/skills/carousel/gamma_carousel.py "<slides_file>" \
+  --theme-id "6mnm4rnohwy7bmr" \
+  --num-cards 6
+```
+
+---
+
+### Instagram Carousel - Blotato
 
 Use the **Tutorial Carousel with Monocolor Background** template (`e095104b-e6c5-4a81-a89d-b0df3d7c5baf/v1`).
 
 **Known template behavior:**
-- The intro slide text is hardcoded white — always use a dark `introBackgroundColor` (charcoal `#1a1a1a` works well)
-- The CTA slide (slide 7) is unreliable — it frequently renders blank or broken. **Always skip it.** Use only slides 1-6 when posting.
+- The intro slide text is hardcoded white - always use a dark `introBackgroundColor` (charcoal `#1a1a1a` works well)
+- The CTA slide (slide 7) is unreliable - it frequently renders blank or broken. **Always skip it.** Use only slides 1-6 when posting.
 - `hasAccentLines: true` on content slides has minimal visible effect
-- `accentColor` applies to accent elements — red `#e53e3e` works well against white content slides
+- `accentColor` applies to accent elements - red `#e53e3e` works well against white content slides
 
 **Standard settings:**
 ```
@@ -154,6 +210,14 @@ aspectRatio: 4:5
 authorName: Tyler Reed
 companyName: @tylerreedai
 ```
+
+**Carousel content rules (Instagram-specific):**
+- **8-10 slides** is the sweet spot for IG engagement (vs 6 for LinkedIn)
+- 4:5 aspect ratio (1080x1350) - fills the screen
+- First slide: under 8-10 words, answer "Is this for me?" and "What will I get if I swipe?"
+- 20% text rule per slide max - don't cram
+- Design for saves and shares - these are the #1 and #2 algorithm signals
+- Consider mixed-media carousels (images + video clips) - 2.33% engagement vs 1.92% for image-only, and only 7% of creators use this
 
 **Custom slide 7 (CTA):** Instead of the broken Blotato CTA slide, generate a custom Kie.ai image using:
 ```bash
@@ -170,11 +234,13 @@ Prompt should describe: Tyler at laptop, facing camera, clean white background, 
 
 Poll `blotato_get_visual_status` every 15 seconds until done. Use only slides 1-6 from Blotato when posting.
 
-**Caption rules:**
+**Instagram Caption rules:**
 - 150-250 words
-- Hook line first
-- Swipe CTA
-- Exactly 5 hashtags at the end: #claudecode #claudeai #ai #claudecodetips #aiautomation
+- Hook line first (must earn the swipe)
+- Swipe CTA early ("Swipe to see all 5")
+- **Keyword-rich SEO language** - include searchable terms like "Claude Code tutorial", "AI automation tips", "AI workflow" naturally in the caption. Keywords in captions matter MORE than hashtags for Instagram discovery now.
+- End with dual CTA: "Save this for later" + "Send to someone who needs this" (targets the top 2 algorithm signals: saves and shares)
+- Exactly 5 hashtags at the very end: #claudecode #claudeai #ai #claudecodetips #aiautomation
 
 ---
 
@@ -192,16 +258,16 @@ Tone: Casual, like texting a friend about something cool.
 Tone: Knowledgeable friend sharing something useful in a group chat. Not a newsletter, not a sales pitch.
 
 **For video days (long-form release):**
-- Hook line that stands on its own — not "new video is up"
+- Hook line that stands on its own - not "new video is up"
 - 2-4 short paragraphs with the key insight or takeaway from the video
 - End with a genuine question or CTA ("Drop a comment if you've tried this", "Who's already using this?")
 - Include `[VIDEO_URL]` at the end
 - 150-300 words
 
 **Rules:**
-- Plain text only — no markdown bold, no headers (Skool renders them oddly)
-- No em dashes — use plain hyphens or commas
-- Short paragraphs — 1-3 sentences max
+- Plain text only - no markdown bold, no headers (Skool renders them oddly)
+- No em dashes - use plain hyphens or commas
+- Short paragraphs - 1-3 sentences max
 - Lead with the most interesting thing, not background context
 - Emojis sparingly for visual breaks only
 
@@ -211,12 +277,24 @@ Tone: Knowledgeable friend sharing something useful in a group chat. Not a newsl
 
 Show all content clearly, organized by platform. Ask if anything needs revision before saving or posting.
 
+**Quality checklist before showing:**
+- [ ] LinkedIn hook is 6-8 words, uses a proven formula
+- [ ] LinkedIn post has 14+ short paragraphs, 1,242-2,500 chars
+- [ ] LinkedIn has no markdown, no bold, no hashtags, no em dashes
+- [ ] LinkedIn ends with a simple question CTA
+- [ ] Instagram caption includes keyword-rich SEO language
+- [ ] Instagram caption ends with save + share dual CTA
+- [ ] Instagram has exactly 5 hashtags at the end
+- [ ] X tweets are under 230 chars each, no hashtags
+- [ ] No em dashes anywhere in any content
+- [ ] All posts lead with insight, not promotion
+
 ---
 
 ## Step 7: Save Outputs
 
-**YT video mode** → `~/youtube/<slug>/social/`
-**Standalone mode** → `~/content/YYYY-MM-DD-<topic-slug>/`
+**YT video mode** -> `~/youtube/<slug>/social/`
+**Standalone mode** -> `~/content/YYYY-MM-DD-<topic-slug>/`
 
 Files to write:
 
@@ -231,7 +309,7 @@ Files to write:
 
 **status.md format:**
 ```markdown
-# Post Status — [Video Title]
+# Post Status - [Video Title]
 
 ## Video
 **Title:** ...
@@ -262,7 +340,7 @@ Files to write:
 
 After saving, ask: **"Ready to post? Which platforms?"**
 
-Handle posting directly using Blotato MCP tools — no need to hand off to `/post` skill:
+Handle posting directly using Blotato MCP tools - no need to hand off to `/post` skill:
 1. Call `blotato_list_accounts` to get account IDs
 2. Call `blotato_create_post` for each platform
 3. For X threads, use `additionalPosts` array for reply tweets
@@ -274,16 +352,24 @@ Handle posting directly using Blotato MCP tools — no need to hand off to `/pos
 - LinkedIn: `4987` (Tyler Reed, personal)
 - Twitter/X: `5910` (@TylerReedAI)
 
+**Optimal posting times:**
+- LinkedIn: 10-11 AM ET, best on Tue-Thu. Wednesday 11 AM-4 PM is peak.
+- Instagram: 6-9 AM, 11 AM-1 PM, or 7-9 PM EST. Best on Tue/Wed/Fri.
+- X: Mornings or lunch, weekdays
+
 ---
 
 ## Rules
 
-- **Never auto-post** — always show content and get confirmation before publishing
-- **Never skip the review step** — show all content before saving
-- LinkedIn: plain text only, no markdown, no hashtags, no em dashes, 👉 for points
+- **Never auto-post** - always show content and get confirmation before publishing
+- **Never skip the review step** - show all content before saving
+- **Run the quality checklist** in Step 6 before presenting content
+- LinkedIn: plain text only, no markdown, no hashtags, no em dashes, 8-part framework, 14+ paragraphs
 - X/Twitter: 230 char limit per tweet (Tyler's account), thread format with video link in last reply
-- Instagram Blotato carousel: use only slides 1-6, skip slide 7 (broken CTA) — replace with custom Kie.ai image
+- Instagram Blotato carousel: use only slides 1-6, skip slide 7 (broken CTA) - replace with custom Kie.ai image
+- Instagram captions: keyword-rich SEO language, dual save+share CTA, exactly 5 hashtags
 - Always fetch real YouTube URL from channel before writing posts
 - Always create/update `status.md` to track what was posted and where
 - If a `social/` folder already exists, ask before overwriting existing files
 - For standalone mode, always do WebSearch research before writing (2-3 queries minimum)
+- **Engagement reminder:** After posting, remind Tyler to reply to comments within 60 minutes (30% engagement boost on LinkedIn, critical for Instagram's 24-48hr algorithm window)
