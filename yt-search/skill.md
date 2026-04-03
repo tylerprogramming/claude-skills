@@ -8,6 +8,15 @@ user-invocable: true
 
 Search YouTube for videos matching the given keywords.
 
+## Workflow Context
+
+**Step 1 of the weekly content pipeline.** Run this first — its output feeds everything else:
+- `/transcribe` uses the top video URLs to get reference transcripts for `/yt`
+- `/shorts` reads the research reports from `~/yt-research/` to generate short-form scripts
+- `/yt` uses the transcripts + research context to plan the long-form video
+
+Run once per topic per week. Two topics = two `/yt-search` runs.
+
 ## Parsing Arguments
 
 Parse `$ARGUMENTS` for:
