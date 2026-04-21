@@ -26,6 +26,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **YT Search** | `/yt-search` | Search YouTube by keywords via yt-dlp, sort by views, generate report |
 | **Shorts** | `/shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
 | **Custom GPT** | `/custom-gpt` | Build a complete Custom GPT package (system-prompt, KB files, README) from course transcripts or raw text |
+| **Analytics** | `/analytics` | YouTube channel analytics - views, retention, traffic sources, per-video breakdown, title/thumbnail A/B tracking |
 
 ## Installation
 
