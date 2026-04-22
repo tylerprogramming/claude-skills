@@ -400,8 +400,9 @@ def main():
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    existing = list(output_dir.glob("thumbnail_*"))
-    start_index = len(existing)
+    # Use timestamp-based unique ID to avoid overwrites when running in parallel
+    import random
+    unique_id = datetime.now().strftime("%H%M%S") + f"{random.randint(100,999)}"
 
     mode = "Remix (image + text)" if resolved_refs else "Text-to-image"
     est_cost = get_cost_estimate(model_key, resolution, args.count)
@@ -432,7 +433,6 @@ def main():
     # Generate thumbnails
     all_urls = []
     for i in range(args.count):
-        idx = start_index + i + 1
         print(f"\n--- Thumbnail {i + 1} of {args.count} ---")
         task_id = create_task(
             prompt=prompt,
@@ -448,7 +448,9 @@ def main():
         all_urls.extend(urls)
 
         for j, url in enumerate(urls):
-            filename = f"thumbnail_{idx}_{j + 1}.{out_ext}" if len(urls) > 1 else f"thumbnail_{idx}.{out_ext}"
+            suffix = f"_{j + 1}" if len(urls) > 1 else ""
+            variant = f"_{i + 1}" if args.count > 1 else ""
+            filename = f"thumbnail_{unique_id}{variant}{suffix}.{out_ext}"
             download_image(url, output_dir / filename)
 
     # Save metadata
