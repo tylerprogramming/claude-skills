@@ -112,10 +112,15 @@ For each approved idea, write a full short-form package:
 - [Key phrase 2 — mid-video emphasis]
 - [Key phrase 3 — closing punchline or CTA]
 
+### CueCard (copy/paste into teleprompter)
+[Just the words Tyler says on camera. No metadata, no [SHOW:] tags, no captions.
+Split into sections with ## headers so he can jump between them with arrow keys.
+Include a ## Outro section for the closing line/CTA.]
+
 ### Filming Checklist
 - [ ] [Setup note: e.g., "Screen recording ready", "Teleprompter loaded", "Good lighting"]
 - [ ] [Any props or tabs/apps to have open]
-- [ ] [Energy note: e.g., "High energy — lean forward at hook"]
+- [ ] [Energy note: e.g., "High energy - lean forward at hook"]
 - [ ] [Estimated take time: ~X minutes]
 ```
 

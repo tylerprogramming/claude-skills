@@ -189,50 +189,48 @@ python3 ~/.claude/skills/carousel/gamma_carousel.py "<slides_file>" \
 
 ---
 
-### Instagram Carousel - Blotato
+### Instagram Carousel - Visual Carousel Maker
 
-Use the **Tutorial Carousel with Monocolor Background** template (`e095104b-e6c5-4a81-a89d-b0df3d7c5baf/v1`).
+All Instagram carousels go through the visual carousel maker at `http://localhost:3010`. Exports land in `~/content/carousel/<slug>/`.
 
-**Known template behavior:**
-- The intro slide text is hardcoded white - always use a dark `introBackgroundColor` (charcoal `#1a1a1a` works well)
-- The CTA slide (slide 7) is unreliable - it frequently renders blank or broken. **Always skip it.** Use only slides 1-6 when posting.
-- `hasAccentLines: true` on content slides has minimal visible effect
-- `accentColor` applies to accent elements - red `#e53e3e` works well against white content slides
+**Two ways to create carousels:**
 
-**Standard settings:**
+**Option A — From this skill (API):**
+Generate and auto-save carousels directly by calling the bulk endpoint:
+```bash
+curl -s -X POST http://localhost:3010/api/bulk-generate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "items": [
+      {"topic": "<topic 1>", "frameworkId": "educational", "platform": "instagram"},
+      {"topic": "<topic 2>", "frameworkId": "hormozi", "platform": "instagram"}
+    ]
+  }'
 ```
-introBackgroundColor: #1a1a1a
-contentBackgroundColor: #FFFFFF
-accentColor: #e53e3e
-ctaBackgroundColor: #FFFFFF
-font: font-poppins
-aspectRatio: 4:5
-authorName: Tyler Reed
-companyName: @tylerreedai
-```
+Returns `{results: [{id, title, savedAt}]}`. Carousels are saved to the app's library.
+After generating, tell the user: "Your carousels are ready in the carousel maker — open it at http://localhost:5175 to add backgrounds and export."
+
+Available frameworkIds (check `/api/frameworks` for the current list):
+- `educational` — step-by-step, numbered tips
+- `hormozi` — contrarian, proof-driven
+- `quick-wins` — fast actionable list
+- `storytelling` — narrative arc
+- `instagram-writer` — Cover/Pain/Solution/How/Results/CTA
+
+**Option B — In-app batch UI:**
+Tell the user to click the ⚡ Batch button in the carousel maker header. They paste topics (one per line), pick a framework, and generate all at once.
 
 **Carousel content rules (Instagram-specific):**
-- **8-10 slides** is the sweet spot for IG engagement (vs 6 for LinkedIn)
 - 4:5 aspect ratio (1080x1350) - fills the screen
 - First slide: under 8-10 words, answer "Is this for me?" and "What will I get if I swipe?"
-- 20% text rule per slide max - don't cram
 - Design for saves and shares - these are the #1 and #2 algorithm signals
-- Consider mixed-media carousels (images + video clips) - 2.33% engagement vs 1.92% for image-only, and only 7% of creators use this
+- Export as PDF for posting via Blotato (use PDF, not individual PNGs)
 
-**Custom slide 7 (CTA):** Instead of the broken Blotato CTA slide, generate a custom Kie.ai image using:
-```bash
-python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" \
-  --model nano-banana-2 \
-  --aspect-ratio 4:5 \
-  --resolution 2K \
-  --count 1 \
-  --format jpg \
-  --slug slide7-cta \
-  --reference-images /Users/tylerreed/youtube/claude-code-skills/thumbnail-ideas-to-use/tylerai.png
-```
-Prompt should describe: Tyler at laptop, facing camera, clean white background, semi-realistic cartoon/illustration style, bold clean outlines, text at top with yellow highlight boxes saying "Save" "Repost" "Follow @tylerreedai".
-
-Poll `blotato_get_visual_status` every 15 seconds until done. Use only slides 1-6 from Blotato when posting.
+**Posting via Blotato:**
+After the user exports the PDF from the carousel maker, post using Blotato:
+- Upload the PDF as the carousel asset
+- Use only slides 1-6 (the exported PDF is already correct)
+- The export saves to `~/content/carousel/<slug>/<slug>.pdf`
 
 **Instagram Caption rules:**
 - 150-250 words

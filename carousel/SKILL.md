@@ -132,10 +132,11 @@ After generation:
 
 ## Output
 
-Default output location depends on context:
-- If from a video package: `~/youtube/<slug>/social/<slug>_carousel.pdf`
-- If standalone: save next to the input file as `<input_name>_carousel.pdf`
+All carousels save to `~/content/carousel/` regardless of source:
+- Default: `~/content/carousel/<slug>/<slug>_carousel.pdf`
 - User can override with `--output`
+
+Note: This skill generates **LinkedIn PDF carousels** via Gamma API. For **Instagram visual carousels** with AI backgrounds, use `/carousel-app` instead.
 
 ## Rules
 

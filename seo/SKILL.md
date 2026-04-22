@@ -23,7 +23,7 @@ Optimize YouTube SEO for the video topic or package at $ARGUMENTS.
 
 Determine the input:
 
-- **Video package path** (`~/youtube/<slug>/`): Read `titles.md`, `script.md`, `description.md`, and `analysis.md` if they exist
+- **Video package path** (`~/youtube/<slug>/`): Read `titles.md`, `script.md`, `description.md`, `analysis.md`, and `performance.md` if they exist. The `performance.md` file tracks previously tried titles and thumbnails - never suggest a title that's already been tried.
 - **Topic/title string**: Use it directly as the starting point
 - **No argument**: Ask the user for their video topic or title
 
