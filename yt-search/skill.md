@@ -44,13 +44,43 @@ This will:
 
 Wait for it to finish. If it fails, check that `yt-dlp` is installed.
 
-### Step 2: Read the Report
+### Step 2: Download Thumbnails
+
+After the search completes, download thumbnails for the top results. Create a thumbnails folder for this search:
+
+```bash
+mkdir -p ~/yt-research/<date>-<keywords>-thumbnails
+```
+
+For each video in the top results, download its thumbnail using yt-dlp:
+
+```bash
+yt-dlp --write-thumbnail --skip-download --convert-thumbnails png -o "~/yt-research/<date>-<keywords>-thumbnails/%(playlist_index)s-%(id)s" "https://youtu.be/<video_id>"
+```
+
+This saves each thumbnail as a PNG named with the rank number and video ID (e.g., `01-ntDIxaeo3Wg.png`).
+
+After downloading, show the user a few of the top thumbnails so they can see what's working visually. Note any patterns:
+- Clean vs busy designs
+- Face vs no face
+- Text placement and style
+- Color schemes
+- Arrows, circles, or other visual elements
+
+### Step 3: Read the Report
 
 Read the generated markdown report from `~/yt-research/`. Present the summary table to the user.
 
-### Step 3: Analysis
+### Step 4: Analysis
 
 Read the raw JSON file and provide analysis. Your analysis MUST include:
+
+#### Thumbnail Analysis
+- What visual patterns do the top-performing thumbnails share?
+- Face vs no face? Text overlay style? Color schemes?
+- What makes them clickable at small sizes?
+- Recommend 2-3 thumbnail approaches for Tyler's video based on what's working
+- Reference the downloaded thumbnails at `~/yt-research/<date>-<keywords>-thumbnails/`
 
 #### Performance Overview
 - Total videos found vs. the top N shown
@@ -72,14 +102,16 @@ Read the raw JSON file and provide analysis. Your analysis MUST include:
 - What could the user make that would stand out?
 - Suggested video ideas based on gaps in the results
 
-### Step 4: Present to User
+### Step 5: Present to User
 
 Show the user:
 1. The summary stats
 2. The top videos table
-3. Key content patterns
-4. Your top 3-5 video ideas based on the data
-5. The file path where the full report lives
+3. The top 3-5 thumbnails (show the actual images)
+4. Thumbnail analysis (patterns, what's working)
+5. Key content patterns
+6. Your top 3-5 video ideas based on the data
+7. The file paths: report, JSON, and thumbnails folder
 
 Ask if they want to dig deeper into any specific video, channel, or trend.
 

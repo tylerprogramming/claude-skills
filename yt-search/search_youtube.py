@@ -5,13 +5,16 @@ import argparse
 import json
 import subprocess
 import sys
+import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
 
 def search_youtube(keywords, search_count=50, days=30, top_n=15):
     query = " ".join(keywords)
-    search_term = f"ytsearchdate{search_count}:{query}"
+    # Quote multi-word queries for phrase matching instead of loose keyword matching
+    quoted_query = f'"{query}"' if len(keywords) > 1 else query
+    search_term = f"ytsearchdate{search_count}:{quoted_query}"
 
     print(f"Searching YouTube for: {query}")
     print(f"Fetching {search_count} most recent results...")
@@ -51,10 +54,17 @@ def search_youtube(keywords, search_count=50, days=30, top_n=15):
         except json.JSONDecodeError:
             continue
 
+    # Filter to videos whose title contains at least one keyword (relevance check)
+    kw_lower = [k.lower() for k in keywords]
+    relevant = [v for v in videos if any(k in v["title"].lower() for k in kw_lower)]
+    # Fall back to unfiltered if relevance filter removes everything
+    if relevant:
+        videos = relevant
+
     videos.sort(key=lambda x: x["views"], reverse=True)
     top_videos = videos[:top_n]
 
-    print(f"Found {len(videos)} videos in last {days} days. Returning top {min(top_n, len(videos))}.")
+    print(f"Found {len(videos)} relevant videos in last {days} days. Returning top {min(top_n, len(videos))}.")
 
     return {
         "query": query,
@@ -112,6 +122,30 @@ def generate_markdown(data):
     return "\n".join(lines)
 
 
+def download_thumbnails(videos, thumb_dir: Path):
+    """Download thumbnails directly from YouTube's CDN (fast, no yt-dlp needed)."""
+    thumb_dir.mkdir(parents=True, exist_ok=True)
+    downloaded = 0
+    for i, video in enumerate(videos, 1):
+        video_id = video.get("id")
+        if not video_id:
+            continue
+        out_path = thumb_dir / f"{i:02d}-{video_id}.jpg"
+        # Try HD first, fall back to HQ
+        for quality in ["maxresdefault", "hqdefault"]:
+            url = f"https://i.ytimg.com/vi/{video_id}/{quality}.jpg"
+            try:
+                urllib.request.urlretrieve(url, out_path)
+                # maxresdefault returns a small placeholder if unavailable — check file size
+                if out_path.stat().st_size > 5000:
+                    downloaded += 1
+                    break
+            except Exception:
+                continue
+    print(f"Downloaded {downloaded}/{len(videos)} thumbnails to {thumb_dir}")
+    return downloaded
+
+
 def main():
     parser = argparse.ArgumentParser(description="Search YouTube via yt-dlp")
     parser.add_argument("keywords", nargs="+", help="Search keywords")
@@ -120,12 +154,12 @@ def main():
     parser.add_argument("--top", type=int, default=15, help="Number of top videos to include (default: 15)")
     parser.add_argument("--output-dir", type=str, default=str(Path.home() / "yt-research"), help="Output directory")
     parser.add_argument("--json", action="store_true", help="Also save raw JSON data")
+    parser.add_argument("--no-thumbnails", action="store_true", help="Skip thumbnail downloading")
     args = parser.parse_args()
 
     data = search_youtube(args.keywords, args.search_count, args.days, args.top)
     markdown = generate_markdown(data)
 
-    # Write markdown report
     today = datetime.now().strftime("%Y-%m-%d")
     slug = "-".join(args.keywords).lower().replace(" ", "-")
     output_dir = Path(args.output_dir)
@@ -135,11 +169,15 @@ def main():
     md_path.write_text(markdown)
     print(f"\nReport saved: {md_path}")
 
-    # Optionally save raw JSON
     if args.json:
         json_path = output_dir / f"{today}-{slug}.json"
         json_path.write_text(json.dumps(data, indent=2))
         print(f"Raw JSON saved: {json_path}")
+
+    # Download thumbnails by default unless --no-thumbnails
+    if not args.no_thumbnails and data["videos"]:
+        thumb_dir = output_dir / f"{today}-{slug}-thumbnails"
+        download_thumbnails(data["videos"], thumb_dir)
 
     print(f"\n{markdown}")
 
