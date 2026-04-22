@@ -144,6 +144,14 @@ Ask if they want:
 
 ---
 
+## Blotato scheduling reminder
+
+When scheduling flash videos via Blotato for TikTok or Instagram Reels, always remind the user:
+
+> **Add music in Blotato before confirming the schedule.** Flash videos have no audio - TikTok and Instagram heavily favor videos with music. Set `autoAddMusic: true` in the Blotato post params, or remind Tyler to manually select a trending audio track in the Blotato draft before it goes live.
+
+---
+
 ## Step 5: Update status.md
 
 After rendering (and again after scheduling), update `~/content/flash-video/status.md`:
@@ -153,6 +161,50 @@ After rendering (and again after scheduling), update `~/content/flash-video/stat
 | my-video | statement | dark | 2026-04-09 | Apr 10 12pm | Apr 10 12pm | - | - |
 
 Fill in scheduled times when posting via Blotato. Mark Posted when confirmed live.
+
+---
+
+## X/Twitter Cover Slide Scheduling
+
+After generating flash videos for the week, schedule the cover slide (slide_1.png from `~/content/carousel/<carouselId>/`) on X as a standalone image post with a Skool reply thread.
+
+### Timing
+- 9 PM EDT = 01:00 UTC the next calendar day
+- e.g. Apr 23 9PM EDT → `scheduledTime: "2026-04-24T01:00:00.000Z"`
+
+### Upload pattern — presigned URL fields
+The Blotato presigned URL response returns `presignedUrl` (for PUT upload) and `publicUrl` (for post mediaUrls). Do NOT use `url`, `signedUrl`, or `uploadUrl` — those fields don't exist and return None.
+
+```python
+r = mcp_call(session_id, "tools/call", {
+    "name": "blotato_create_presigned_upload_url",
+    "arguments": {"filename": "flash_cover_<carouselId>.png"}
+})
+data = json.loads(r["result"]["content"][0]["text"])
+presigned_url = data["presignedUrl"]  # PUT upload target
+public_url    = data["publicUrl"]     # use in mediaUrls
+```
+
+**Critical**: Never copy presigned URLs through bash heredocs or JSON strings — the base64url token gets corrupted. Always fetch and upload in the same Python session.
+
+### Post structure
+```python
+{
+    "accountId": "5910",
+    "platform": "twitter",
+    "text": "<X-native caption — no hashtags, under 230 chars, punchy>",
+    "mediaUrls": [public_url],
+    "scheduledTime": "2026-04-24T01:00:00.000Z",
+    "additionalPosts": [
+        {"text": "join us at skool.com/the-ai-agency — free templates and full community 👇", "mediaUrls": []}
+    ]
+}
+```
+
+### TikTok scheduling
+Always set `autoAddMusic: true` when scheduling flash videos on TikTok — no audio by default.
+
+Reference script: `/tmp/schedule_x_flash.py`
 
 ---
 
