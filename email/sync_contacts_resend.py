@@ -45,73 +45,32 @@ def get_members():
 
 
 def get_resend_contacts():
-    """Fetch all contacts from Resend, handling pagination."""
+    """Fetch all contacts from Resend."""
     all_contacts = {}
-    params = {"limit": 100}
 
-    while True:
-        result = resend.Contacts.list(**params) if params.get("after") else resend.Contacts.list(limit=100)
+    # list() with no params returns all contacts
+    result = resend.Contacts.list()
+    data = result.get("data", []) if isinstance(result, dict) else getattr(result, "data", [])
 
-        data = result.get("data", []) if isinstance(result, dict) else getattr(result, "data", [])
+    for contact in data:
+        if isinstance(contact, dict):
+            email = contact.get("email", "")
+            cid = contact.get("id", "")
+            first = contact.get("first_name", "")
+            last = contact.get("last_name", "")
+        else:
+            email = getattr(contact, "email", "")
+            cid = getattr(contact, "id", "")
+            first = getattr(contact, "first_name", "")
+            last = getattr(contact, "last_name", "")
 
-        if not data:
-            break
-
-        for contact in data:
-            if isinstance(contact, dict):
-                email = contact.get("email", "")
-                cid = contact.get("id", "")
-                first = contact.get("first_name", "")
-                last = contact.get("last_name", "")
-            else:
-                email = getattr(contact, "email", "")
-                cid = getattr(contact, "id", "")
-                first = getattr(contact, "first_name", "")
-                last = getattr(contact, "last_name", "")
-
-            if email:
-                all_contacts[email.lower()] = {
-                    "id": cid,
-                    "email": email,
-                    "first_name": first or "",
-                    "last_name": last or "",
-                }
-
-        # Check for more pages
-        last_item = data[-1]
-        last_id = last_item.get("id") if isinstance(last_item, dict) else getattr(last_item, "id", None)
-
-        if len(data) < 100:
-            break
-
-        # Paginate
-        try:
-            next_result = resend.Contacts.list(limit=100, after=last_id)
-            next_data = next_result.get("data", []) if isinstance(next_result, dict) else getattr(next_result, "data", [])
-            if not next_data:
-                break
-            for contact in next_data:
-                if isinstance(contact, dict):
-                    email = contact.get("email", "")
-                    cid = contact.get("id", "")
-                    first = contact.get("first_name", "")
-                    last = contact.get("last_name", "")
-                else:
-                    email = getattr(contact, "email", "")
-                    cid = getattr(contact, "id", "")
-                    first = getattr(contact, "first_name", "")
-                    last = getattr(contact, "last_name", "")
-                if email:
-                    all_contacts[email.lower()] = {
-                        "id": cid, "email": email,
-                        "first_name": first or "", "last_name": last or "",
-                    }
-            if len(next_data) < 100:
-                break
-            last_item = next_data[-1]
-            last_id = last_item.get("id") if isinstance(last_item, dict) else getattr(last_item, "id", None)
-        except Exception:
-            break
+        if email:
+            all_contacts[email.lower()] = {
+                "id": cid,
+                "email": email,
+                "first_name": first or "",
+                "last_name": last or "",
+            }
 
     return all_contacts
 
