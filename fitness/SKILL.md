@@ -21,7 +21,7 @@ bun run dev   # or: npm run dev
 ```
 
 - **Frontend**: React + Vite at http://localhost:5173
-- **Backend**: Hono API server (Bun) at http://localhost:3001
+- **Backend**: Hono API server (Bun) at http://localhost:3003
 - **Database**: SQLite auto-created at `~/fitness-app/fitness.db` on first run
 - **Start**: `cd ~/fitness-app && bun run dev`
 
@@ -35,12 +35,25 @@ bun run dev   # or: npm run dev
 
 ---
 
+## Training Plan
+
+Tyler's current training schedule lives at `~/fitness/march-plan.md`. Always read this file when:
+- Answering "what am I doing today / tomorrow for exercise"
+- Generating daily briefings or summaries
+- Giving workout recommendations
+
+The file contains a weekly structure (Mon-Sun focus) plus week-by-week targets and end-of-month strength/pace goals. When the month changes, a new plan file will appear at `~/fitness/<month>-plan.md` — always check for the most recent one.
+
+**Current file:** `~/fitness/march-plan.md`
+
+---
+
 ## Data Backend (API-first, fallback to files)
 
 **Always try the API first:**
 
 ```bash
-curl -s --max-time 2 http://localhost:3001/api/health
+curl -s --max-time 2 http://localhost:3003/api/health
 ```
 
 - If it returns `{"ok":true}` → use **API mode**
@@ -112,7 +125,7 @@ When the user mentions food items (with or without images):
 
 1. **Check the Nutrition DB first** (API mode):
    ```bash
-   curl -s http://localhost:3001/api/nutrition
+   curl -s http://localhost:3003/api/nutrition
    ```
    Search the returned list for the food by name. Use stored values if found.
 
@@ -123,7 +136,7 @@ When the user mentions food items (with or without images):
 
 3. **Add new items to the Nutrition DB** after logging (API mode):
    ```bash
-   curl -s -X POST http://localhost:3001/api/nutrition \
+   curl -s -X POST http://localhost:3003/api/nutrition \
      -H "Content-Type: application/json" \
      -d '{"name":"Item Name","serving_size":"1 serving (Xg)","calories":0,"protein":0,"fat":0,"carbs":0,"sodium":0,"fiber":0,"sugar":0}'
    ```
@@ -151,10 +164,10 @@ When the user references a different day ("yesterday", "last night", a specific 
 
 GET existing day first, then POST merged data:
 ```bash
-curl -s http://localhost:3001/api/activity/2026-03-10
+curl -s http://localhost:3003/api/activity/2026-03-10
 ```
 
-POST to `http://localhost:3001/api/activity`:
+POST to `http://localhost:3003/api/activity`:
 ```json
 {
   "date": "2026-03-10",
@@ -184,21 +197,21 @@ The API uses upsert — posting to an existing date overwrites it with the merge
 
 **Water** — adds to the daily cumulative total:
 ```bash
-curl -s -X POST http://localhost:3001/api/hydration/water \
+curl -s -X POST http://localhost:3003/api/hydration/water \
   -H "Content-Type: application/json" \
   -d '{"date":"2026-03-10","oz":16}'
 ```
 
 **Caffeine** — add a timestamped entry (use current time if not specified, HH:MM format):
 ```bash
-curl -s -X POST http://localhost:3001/api/hydration/caffeine \
+curl -s -X POST http://localhost:3003/api/hydration/caffeine \
   -H "Content-Type: application/json" \
   -d '{"date":"2026-03-10","time":"08:30","source":"Coffee (8oz)","mg":95}'
 ```
 
 **Get current hydration totals** (to report back to user):
 ```bash
-curl -s http://localhost:3001/api/hydration/2026-03-10
+curl -s http://localhost:3003/api/hydration/2026-03-10
 ```
 
 Common caffeine values:
@@ -211,7 +224,7 @@ After logging, report back: current oz vs goal, total caffeine mg, warn if over 
 
 To upsert meal plan entries for a date (POST accepts an array):
 ```bash
-curl -s -X POST http://localhost:3001/api/meal-plan \
+curl -s -X POST http://localhost:3003/api/meal-plan \
   -H "Content-Type: application/json" \
   -d '[
     {"date":"2026-03-10","meal_code":"B","name":"Meal description","calories":300,"protein":20},
@@ -223,7 +236,7 @@ Meal codes: `B` (Breakfast), `S1` (Snack 1), `L` (Lunch), `S2` (Snack 2), `D` (D
 
 To toggle a meal as completed/eaten:
 ```bash
-curl -s -X POST http://localhost:3001/api/meal-plan/toggle \
+curl -s -X POST http://localhost:3003/api/meal-plan/toggle \
   -H "Content-Type: application/json" \
   -d '{"date":"2026-03-10","meal_code":"S1"}'
 ```
