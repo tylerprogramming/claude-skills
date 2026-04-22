@@ -12,7 +12,7 @@ Creates 6-slide Instagram carousels in the @aiwithanushka style that drives save
 
 ## Design system (hardcoded in renderer)
 
-- Background: warm cream `#F5F0E8`
+- Background: warm cream `#F5F0E8` (default) or a custom image passed as 3rd arg to the renderer
 - Primary text: near-black `#1C1C1C`, bold
 - Accent: terra cotta `#C4713A` on key words
 - Font: Arial Bold, clean and large
@@ -157,6 +157,15 @@ Create the JSON following this exact structure. Headlines must be SHORT lines (3
      ~/content/instagram/<slug>/
    ```
 
+   To use a custom background image (e.g. a watercolor texture from Kie.ai):
+   ```bash
+   python3 ~/.claude/skills/instagram-writer/instagram_writer.py \
+     ~/content/instagram/<slug>/slides.json \
+     ~/content/instagram/<slug>/ \
+     ~/path/to/background.png
+   ```
+   The image is cover-cropped to 1080x1350 with a subtle white overlay for text readability.
+
    Output:
    - `slide_01.png` through `slide_06.png` - individual slides
    - `carousel.pdf` - combined PDF for Blotato upload
@@ -210,3 +219,37 @@ Show the user:
    - PDF: `~/content/instagram/<slug>/carousel.pdf`
    - Caption: `~/content/instagram/<slug>/caption.md`
 4. Ask if they want to schedule via Blotato or adjust any slides
+
+## Step 7: Save to carousel app Library
+
+After generating carousel content, also save a JSON to the carousel maker app so it appears in the Library drawer:
+
+```
+~/carousel-maker/carousels/carousel_<timestamp>.json
+```
+
+JSON format:
+```json
+{
+  "id": "carousel_<timestamp>",
+  "title": "Carousel Title",
+  "platform": "instagram",
+  "slides": [
+    {
+      "id": "slide_0_<timestamp>",
+      "type": "cover|content|cta",
+      "slideNumber": 1,
+      "headline": "Main Headline",
+      "emphasisLine": "Accent line",
+      "bodyText": "Body text.",
+      "bgColor": "#F5F0EB",
+      "textColor": "#1B1B1B",
+      "accentColor": "#E07355"
+    }
+  ]
+}
+```
+
+Slide types: `cover` (slide 1), `content` (slides 2-5, include `stepNumber`), `cta` (slide 6).
+
+This keeps the carousel app Library and `~/content/carousel/<slug>/` in sync. Always write to both locations.

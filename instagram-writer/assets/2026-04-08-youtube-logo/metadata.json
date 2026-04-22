@@ -1,0 +1,19 @@
+{
+  "generations": [
+    {
+      "prompt": "Official YouTube logo. Red rounded rectangle play button with white play triangle in the center. Clean flat design. Pure white background. No text, no shadows, no extra elements. Just the YouTube play button icon centered with plenty of white space around it. High quality, crisp edges.",
+      "mode": "Text-to-image",
+      "model": "nano-banana-pro",
+      "model_name": "Nano Banana Pro",
+      "count": 1,
+      "aspect_ratio": "16:9",
+      "resolution": "1K",
+      "format": "png",
+      "reference_images": [],
+      "generated_at": "2026-04-08T19:31:30.305177",
+      "image_urls": [
+        "https://tempfile.aiquickdraw.com/images/1775691089222-mukn8478c1i.png"
+      ]
+    }
+  ]
+}
