@@ -158,7 +158,19 @@ For each short (#1 through #5):
 ### Instagram Reels
 [Same as TikTok caption or slight variation]
 #claudecode #claudeai #ai #claudecodetips #aiautomation
+
+### X / Twitter
+[Punchy standalone insight — no hashtags, under 230 chars]
+[Platform-native tone: lowercase, direct, no fluff]
+[No CTA needed — the video is the hook]
+
+### LinkedIn
+[Teach-don't-sell tone — 3-4 sentences, no hashtags, no bold, no markdown]
+[Expand on the practical takeaway]
+[End with a genuine observation, not a hard sell]
 ```
+
+X rules: no hashtags, under 230 chars, lowercase and punchy, reads as a standalone insight even without watching the video. Reuses the same video URL already uploaded to Blotato for TikTok.
 
 ---
 
