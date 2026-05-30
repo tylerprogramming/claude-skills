@@ -5,6 +5,9 @@
 
 # Cached tokens and credentials
 analytics/yt_token.json
+youtube/token.json
+**/credentials.json
+**/client_secret*.json
 __pycache__/
 *.pyc
 
@@ -16,3 +19,24 @@ __pycache__/
 
 # Skills excluded from version control
 skool/
+
+# Local-only agent state (not part of the public skills repo)
+.claude/
+
+# Backup archives
+*.zip
+
+# Symlinks to local-only agent skills (point outside this repo)
+claude-design-hyperframes
+find-skills
+gsap
+hyperframes
+hyperframes-cli
+hyperframes-registry
+
+# Runtime data — local state, logs, scraped content, browser profiles
+youtube/data/
+youtube/__pycache__/
+tiktok-replier/data/
+tiktok-replier/__pycache__/
+harut/chroma_db/
