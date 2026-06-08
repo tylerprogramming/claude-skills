@@ -34,6 +34,21 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **YouTube** | `/yt-upload` | Upload videos to YouTube and manage existing videos via the YouTube Data API v3 (titles, descriptions, tags, thumbnails, scheduling, comments) |
 | **TikTok Replier** | `/tiktok-replier` | Two-stage TikTok comment management: Apify reads comments, Playwright posts replies using a persistent logged-in browser profile |
 
+### AI Media Generation — Kie.ai
+
+One skill per model, all sharing `_kie/kie_client.py` (need `KIE_API_KEY` in `~/.claude/.env`). See `_kie/MODELS.md` for the full model id + schema reference.
+
+| Skill | Command | Description |
+|-------|---------|-------------|
+| **Kie Seedance Video** | `/kie-seedance-video` | ByteDance Seedance text-to-video + image-to-video (Seedance 2 / 2-Fast / 1.5 Pro / 1.0 Pro·Lite, optional audio) |
+| **Kie Seedance Image** | `/kie-seedance-image` | ByteDance Seedream text-to-image + multi-image edit (2K/4K) |
+| **Kie Kling Video** | `/kie-kling-video` | Kling (Kuaishou) text/image-to-video (2.6 / 3.0 / 2.1 Master·Pro, native sound, multi-shot) |
+| **Kie Veo Video** | `/kie-veo-video` | Google Veo 3 / 3.1 video — native audio, up to 4K (Quality/Fast/Lite). Uses Kie's dedicated `/veo` endpoint |
+| **Kie Wan Video** | `/kie-wan-video` | Alibaba Wan text/image-to-video (2.7 / 2.6 / 2.5, first+last frame, audio drive) |
+| **Kie Nano Banana** | `/kie-nano-banana` | Google Nano Banana image gen/edit — all 3 variants (Nano Banana, 2, Pro), up to 4K |
+
+**Higgsfield** is handled by the official first-party skills (`npx skills add higgsfield-ai/skills` → `/higgsfield-generate`, `/higgsfield-soul-id`, `/higgsfield-product-photoshoot`, `/higgsfield-marketplace-cards`), which auth via the Higgsfield CLI (`higgsfield auth login`) — no API key needed.
+
 ## Installation
 
 These are global skills. To use them, copy the skill folders to your Claude Code skills directory:

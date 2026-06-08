@@ -59,9 +59,24 @@ env_path = Path.home() / ".claude" / ".env"
 
 Required keys (see `.env.example`):
 - `OPENAI_API_KEY` — Whisper transcription
-- `KIE_API_KEY` — thumbnail generation
+- `KIE_API_KEY` — thumbnail + all `/kie-*` image/video generation
 - `APIFY_API_TOKEN` — TikTok scraping
 - `GMAIL_ADDRESS` + `GMAIL_APP_PASSWORD` — journal email summaries
+
+## AI Media Generation Skills
+
+**Kie.ai** — one skill per model, all sharing `_kie/kie_client.py` so the HTTP/auth/poll/upload logic lives in one place. Unified jobs API: `createTask` → poll `recordInfo` → download `resultUrls`. Skills import the client via `sys.path.insert(0, Path(__file__).resolve().parent.parent / "_kie")` (`.resolve()` follows the `~/.claude/skills` symlink to the real repo). `_kie/MODELS.md` is the verified model-id + input-schema reference. The clients use `certifi` for SSL (macOS python.org builds don't trust the system store). Validated live (Seedream image, 2026-06-08).
+
+| Skill | Model(s) | Output |
+|-------|----------|--------|
+| `/kie-seedance-video` | `bytedance/seedance-2`, `…-2-fast`, `seedance-1.5-pro`, `v1-pro/lite-*` | `~/videos/seedance/` |
+| `/kie-seedance-image` | `seedream/4.5-text-to-image`, `4.5-edit`, `5-lite-text-to-image` | `~/images/seedream/` |
+| `/kie-kling-video` | `kling-2.6/*`, `kling-3.0/video`, `kling/v2-1-*` | `~/videos/kling/` |
+| `/kie-veo-video` | `veo3`/`veo3_fast`/`veo3_lite` (dedicated `/veo/generate` endpoint) | `~/videos/veo/` |
+| `/kie-wan-video` | `wan/2-7-*`, `wan/2-6-image-to-video`, `wan/2-5-text-to-video` | `~/videos/wan/` |
+| `/kie-nano-banana` | `google/nano-banana(-edit)`, `nano-banana-2`, `nano-banana-pro` | `~/images/nano-banana/` |
+
+**Higgsfield** — NOT in this repo. Uses the official first-party skills, installed separately with `npx skills add higgsfield-ai/skills` (lands in `~/.agents/skills/`, symlinked to Claude Code): `/higgsfield-generate`, `/higgsfield-soul-id`, `/higgsfield-product-photoshoot`, `/higgsfield-marketplace-cards`. They auth via the Higgsfield CLI (`higgsfield auth login`), not an API key. (An earlier hand-built `/higgsfield-*` set was removed in favor of these.)
 
 ## Python Script Conventions
 
