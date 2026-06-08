@@ -47,7 +47,22 @@ One skill per model, all sharing `_kie/kie_client.py` (need `KIE_API_KEY` in `~/
 | **Kie Wan Video** | `/kie-wan-video` | Alibaba Wan text/image-to-video (2.7 / 2.6 / 2.5, first+last frame, audio drive) |
 | **Kie Nano Banana** | `/kie-nano-banana` | Google Nano Banana image gen/edit — all 3 variants (Nano Banana, 2, Pro), up to 4K |
 
-**Higgsfield** is handled by the official first-party skills (`npx skills add higgsfield-ai/skills` → `/higgsfield-generate`, `/higgsfield-soul-id`, `/higgsfield-product-photoshoot`, `/higgsfield-marketplace-cards`), which auth via the Higgsfield CLI (`higgsfield auth login`) — no API key needed.
+### AI Media Generation — Higgsfield
+
+Higgsfield uses the **official first-party skills** (not vendored in this repo). Install them once with:
+
+```bash
+npx skills add higgsfield-ai/skills
+```
+
+They land in `~/.agents/skills/` (symlinked to Claude Code) and authenticate via the Higgsfield CLI — run `higgsfield auth login` once (needs a Higgsfield account with credits). No API key in `.env`.
+
+| Skill | Command | Description |
+|-------|---------|-------------|
+| **Higgsfield Generate** | `/higgsfield-generate` | Image/video across 30+ models (Soul V2/Cinema, Seedance 2.0, Kling 3.0, Nano Banana, GPT Image 2), image-to-image, image-to-video, Marketing Studio ads, and the Virality Predictor |
+| **Higgsfield Soul ID** | `/higgsfield-soul-id` | Train a Soul Character (face/identity model) from a few photos; reuse via `--soul-id` for consistent faces |
+| **Higgsfield Product Photoshoot** | `/higgsfield-product-photoshoot` | Brand-quality product imagery (studio, lifestyle, hero/banner, ad creative, virtual try-on…) |
+| **Higgsfield Marketplace Cards** | `/higgsfield-marketplace-cards` | Marketplace listing images — main + secondary product shots and A+ content modules |
 
 ## Installation
 
