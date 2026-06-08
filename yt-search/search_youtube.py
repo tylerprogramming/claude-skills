@@ -152,7 +152,7 @@ def main():
     parser.add_argument("--search-count", type=int, default=50, help="Number of results to fetch from YouTube (default: 50)")
     parser.add_argument("--days", type=int, default=30, help="Only include videos from the last N days (default: 30)")
     parser.add_argument("--top", type=int, default=15, help="Number of top videos to include (default: 15)")
-    parser.add_argument("--output-dir", type=str, default=str(Path.home() / "yt-research"), help="Output directory")
+    parser.add_argument("--output-dir", type=str, default=str(Path.home() / "content" / "research"), help="Base output directory (reports -> searches/, raw json + thumbnails -> _raw/)")
     parser.add_argument("--json", action="store_true", help="Also save raw JSON data")
     parser.add_argument("--no-thumbnails", action="store_true", help="Skip thumbnail downloading")
     args = parser.parse_args()
@@ -163,20 +163,25 @@ def main():
     today = datetime.now().strftime("%Y-%m-%d")
     slug = "-".join(args.keywords).lower().replace(" ", "-")
     output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
 
-    md_path = output_dir / f"{today}-{slug}.md"
+    # Organized layout: readable reports in searches/, raw data + thumbnails in _raw/
+    searches_dir = output_dir / "searches"
+    raw_dir = output_dir / "_raw"
+    searches_dir.mkdir(parents=True, exist_ok=True)
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    md_path = searches_dir / f"{today}-{slug}.md"
     md_path.write_text(markdown)
     print(f"\nReport saved: {md_path}")
 
     if args.json:
-        json_path = output_dir / f"{today}-{slug}.json"
+        json_path = raw_dir / f"{today}-{slug}.json"
         json_path.write_text(json.dumps(data, indent=2))
         print(f"Raw JSON saved: {json_path}")
 
     # Download thumbnails by default unless --no-thumbnails
     if not args.no_thumbnails and data["videos"]:
-        thumb_dir = output_dir / f"{today}-{slug}-thumbnails"
+        thumb_dir = raw_dir / f"{today}-{slug}-thumbnails"
         download_thumbnails(data["videos"], thumb_dir)
 
     print(f"\n{markdown}")

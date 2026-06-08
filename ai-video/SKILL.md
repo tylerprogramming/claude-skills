@@ -65,7 +65,7 @@ cd ~/my-video && npm install
 | S2VideoStats | S2VideoStats.tsx | Single video analytics dashboard, stat cards + ring |
 | S3EmailCopy | S3EmailCopy.tsx | Email being written by Claude Code, typing + transitions |
 | S4VideoPlan | S4VideoPlan.tsx | "5 min to plan YouTube video" + checklist pop-in |
-| S4ClaudeTerminal | S4ClaudeTerminal.tsx | `/yt` command in VS Code Claude Code interface |
+| S4ClaudeTerminal | S4ClaudeTerminal.tsx | `/yt-package` command in VS Code Claude Code interface |
 | S5SkillReveal | S5SkillReveal.tsx | "What a Claude Code skill is" kinetic text reveal |
 | S5TextFile | S5TextFile.tsx | SKILL.md typing in VS Code editor, syntax highlighting |
 | S5PinterestSkill | S5PinterestSkill.tsx | `/pinterest-writer` executing in Claude Code terminal |

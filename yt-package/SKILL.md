@@ -1,5 +1,5 @@
 ---
-name: yt
+name: yt-package
 description: Plan a YouTube video from a reference transcript and your own ideas. Analyzes source video structure, researches the topic online, asks for your angle, then generates titles, hooks, description, full script, and a filming guide. Triggers on: youtube video, video script, plan a video, video from transcript, yt plan.
 argument-hint: [transcript_path]
 allowed-tools: Read, Write, Glob, Grep, WebSearch, WebFetch, Bash(python3:*), Bash(yt-dlp:*)
@@ -12,7 +12,7 @@ Plan a YouTube video inspired by a reference transcript at $ARGUMENTS.
 
 **Step 3 of the weekly content pipeline** (after `/yt-search` → `/transcribe`).
 
-Run twice per week — once per long-form video topic. Each run produces a full package at `~/youtube/<slug>/`. After this, run `/seo` to optimize titles/descriptions, then `/content` to generate the LinkedIn + YT Community text posts for that video.
+Run twice per week — once per long-form video topic. Each run produces a full package at `~/youtube/<slug>/`. After this, run `/yt-seo` to optimize titles/descriptions, then `/content` to generate the LinkedIn + YT Community text posts for that video.
 
 ## Data Location
 

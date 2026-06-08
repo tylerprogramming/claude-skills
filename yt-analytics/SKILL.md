@@ -1,5 +1,5 @@
 ---
-name: analytics
+name: yt-analytics
 description: YouTube channel analytics - views, CTR, retention, traffic sources, search terms, per-video breakdown. Supports long-form vs shorts split, single video deep dives, and trend analysis. Triggers on: analytics, how are my videos doing, youtube stats, channel performance, video performance, check my analytics, how did my video do.
 argument-hint: [--days 28] [--video VIDEO_ID] [--shorts] [--top N]
 allowed-tools: Bash(python3:*), Read, Write, Edit, Glob, Grep, WebSearch
@@ -32,17 +32,17 @@ Parse $ARGUMENTS for:
 Run the Python script:
 
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --days 28 --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --days 28 --json
 ```
 
 For a single video deep dive:
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
 ```
 
 For shorts only:
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --shorts --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --shorts --json
 ```
 
 Capture the JSON output (printed to stdout). Stderr has status messages.
@@ -157,7 +157,7 @@ Each video package at `~/youtube/<slug>/` should have a `performance.md` file th
 1. Read the existing `performance.md` to see what's been tried
 2. Read `titles.md` and `seo.md` if they exist - there may be unused title variants
 3. Never suggest a title that's already been tried
-4. Use `/seo` research data to inform suggestions
+4. Use `/yt-seo` research data to inform suggestions
 5. For thumbnails, suggest specific changes (text, colors, expression, layout) not vague "make it better"
 
 ### Step 6: Save Report (optional)

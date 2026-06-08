@@ -30,7 +30,7 @@ except ImportError:
 
 # Scopes needed: YouTube readonly + YouTube Analytics readonly
 SCOPES = [
-    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/yt-upload.readonly",
     "https://www.googleapis.com/auth/yt-analytics.readonly",
 ]
 

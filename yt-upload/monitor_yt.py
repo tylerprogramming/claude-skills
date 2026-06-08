@@ -17,8 +17,8 @@ What it does:
 
 Cron setup (every hour at :07 to space out from the TikTok one):
     7 * * * * /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 \\
-      /Users/tylerreed/.claude/skills/youtube/monitor_yt.py \\
-      >> /Users/tylerreed/.claude/skills/youtube/data/monitor_yt.log 2>&1
+      /Users/tylerreed/.claude/skills/yt-upload/monitor_yt.py \\
+      >> /Users/tylerreed/.claude/skills/yt-upload/data/monitor_yt.log 2>&1
 """
 
 import json

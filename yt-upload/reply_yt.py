@@ -6,7 +6,7 @@ Usage:
   python3 reply_yt.py                 # dry-run on default queue
   python3 reply_yt.py --post          # publish all in default queue
   python3 reply_yt.py --post --limit 1
-  python3 reply_yt.py --post --queue ~/.claude/skills/youtube/data/drafts_queue_yt.json
+  python3 reply_yt.py --post --queue ~/.claude/skills/yt-upload/data/drafts_queue_yt.json
 """
 
 import argparse

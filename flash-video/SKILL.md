@@ -96,7 +96,7 @@ If not provided, default to `dark` + `statement`.
     "/instagram-writer — 6 slides",
     "/shorts — 5 short scripts",
     "/content — LinkedIn, X, IG posts",
-    "/yt — full video + script"
+    "/yt-package — full video + script"
   ],
   "stat": "Saves me 3+ hours. Every single week.",
   "accent_words": ["yt-search", "instagram-writer", "shorts", "content", "yt", "3+"],

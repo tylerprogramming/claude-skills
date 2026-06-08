@@ -35,12 +35,12 @@ Skills write to these home directory locations (create them if they don't exist)
 | fitness | `~/fitness-app/fitness.db` (SQLite, auto-created); `~/fitness/` fallback HTML files |
 | journal | `~/journal/YYYY-MM-DD.txt` |
 | transcribe | `~/scripts/transcript_<id>.txt` |
-| yt | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
-| analytics | `~/youtube/analytics/` (channel snapshots); `~/youtube/<slug>/performance.md` (per-video A/B tracking) |
-| save-idea | `~/youtube/video-ideas.md` |
+| yt-package | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
+| yt-analytics | `~/youtube/analytics/` (channel snapshots); `~/youtube/<slug>/performance.md` (per-video A/B tracking) |
+| yt-save-idea | `~/youtube/video-ideas.md` |
 | thumbnail | `~/youtube/thumbnails/` |
 | tiktok | `~/youtube/tiktok-research/<hashtag>-report.md` |
-| yt-search | `~/yt-research/<date>-<keywords>.md` |
+| yt-search | `~/content/research/searches/<date>-<keywords>.md` (report); `~/content/research/_raw/` (json + thumbnails) |
 | shorts | `~/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
 | resize | `~/images/resized/` |
 | rmbg | `~/images/nobg/` |
@@ -83,25 +83,25 @@ The fitness skill uses a full-stack app at `fitness/app/` (React + Vite frontend
 Skills that work together as a pipeline (run in this order):
 
 ```
-/yt-search → /transcribe → /yt → /seo          (long-form track)
+/yt-search → /transcribe → /yt-package → /yt-seo          (long-form track)
                  ↓
              /shorts                             (short-form track — feeds from same research)
                  ↓
-             /content → /chapters                  (publish track — /content handles Blotato directly)
+             /content → /yt-chapters                  (publish track — /content handles Blotato directly)
 ```
 
-- `/yt-search` feeds both `/yt` (via transcripts) and `/shorts` (via research reports)
+- `/yt-search` feeds both `/yt-package` (via transcripts) and `/shorts` (via research reports)
 - `/shorts` generates 5 short scripts + 2 Instagram carousel outlines per week
 - `/content` handles text posts (LinkedIn, YT Community) — separate from `/shorts`
-- `/chapters` runs post-edit on the final .mp4, not before filming
+- `/yt-chapters` runs post-edit on the final .mp4, not before filming
 - `/content` handles publishing via Blotato directly (no separate post skill needed)
 
 ## Skills That Compose
 
-- `/yt` calls `/thumbnail` at the end of its flow
-- `/shorts` reads `/yt-search` output from `~/yt-research/`
+- `/yt-package` calls `/thumbnail` at the end of its flow
+- `/shorts` reads `/yt-search` output from `~/content/research/searches/`
 - `/content` can render Instagram carousels outlined by `/shorts`
-- `/chapters` reuses `/transcribe`'s script for audio transcription
+- `/yt-chapters` reuses `/transcribe`'s script for audio transcription
 - `/ralph` expects an existing PRD (from `/prd`) as input
 
 ## Adding a New Skill

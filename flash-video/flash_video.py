@@ -28,7 +28,7 @@ content.json fields (all optional except type + lines/items):
     "/instagram-writer — 6 slides, one command",
     "/shorts — 5 short scripts from research",
     "/content — LinkedIn, X, IG posts",
-    "/yt — full video package with script"
+    "/yt-package — full video package with script"
   ],
   "accent_words": ["yt-search", "instagram-writer"],
   "cta": "skool.com/the-ai-agency",

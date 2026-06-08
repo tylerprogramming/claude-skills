@@ -1,5 +1,5 @@
 ---
-name: seo
+name: yt-seo
 description: Optimize YouTube titles, descriptions, and tags using competitive research. Analyzes top-performing videos on the topic, identifies keyword patterns and CTR hooks, and generates SEO-optimized titles with scorecards. Optionally generates social media titles. Triggers on: seo optimize, optimize title, youtube seo, optimize description, title ideas, seo this video, improve my title.
 argument-hint: [topic or ~/youtube/<slug>/]
 allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, AskUserQuestion
@@ -10,12 +10,12 @@ Optimize YouTube SEO for the video topic or package at $ARGUMENTS.
 
 ## Workflow Context
 
-**Step 4 of the weekly content pipeline** (after `/yt`). Run once per long-form video package. After this, run `/content` to generate the LinkedIn + YT Community text posts for that video.
+**Step 4 of the weekly content pipeline** (after `/yt-package`). Run once per long-form video package. After this, run `/content` to generate the LinkedIn + YT Community text posts for that video.
 
 ## Data Location
 
 - If a video package exists at `~/youtube/<slug>/`: updates `titles.md` and `description.md` in place (adds SEO section)
-- Standalone: outputs to `~/youtube/<slug>/seo.md`
+- Standalone: outputs to `~/youtube/<slug>/yt-seo.md`
 
 ## Flow
 
@@ -38,7 +38,7 @@ Check if `--social` flag is present in $ARGUMENTS — if so, also generate socia
 
 This step is NOT optional — always do real research.
 
-**First, check for existing research from `/yt`:** If a video package exists at `~/youtube/<slug>/analysis.md`, read it. The `/yt` skill already runs 4-6 web searches and saves competitor data, content gaps, and community sentiment. Extract what's already there:
+**First, check for existing research from `/yt-package`:** If a video package exists at `~/youtube/<slug>/analysis.md`, read it. The `/yt-package` skill already runs 4-6 web searches and saves competitor data, content gaps, and community sentiment. Extract what's already there:
 - Competitor video titles and view counts
 - Keywords and phrases already identified
 - Content gaps already noted
@@ -50,7 +50,7 @@ This step is NOT optional — always do real research.
 3. **Related keywords**: Search for synonyms, related terms, and long-tail variations
 4. **Trending angles**: Search for recent news/developments about the topic that could inform timely title angles (skip if analysis.md has recent news)
 
-**If no analysis.md exists** (standalone SEO run without `/yt`), run the full 5-6 searches:
+**If no analysis.md exists** (standalone SEO run without `/yt-package`), run the full 5-6 searches:
 
 1. **Top videos on this topic**: Search `"<topic>" site:youtube.com` and `<topic> youtube` to find the top-performing videos
 2. **Title patterns**: Search for variations of the topic to see how different creators title similar content
@@ -161,7 +161,7 @@ If a video package exists at `~/youtube/<slug>/`:
 - **Update `description.md`**: Add a `## SEO-Optimized Version` section with the new description and tags
 
 If standalone (no existing package):
-- **Create `~/youtube/<slug>/seo.md`**: Contains all titles, scorecard, description, tags, research data, and social titles
+- **Create `~/youtube/<slug>/yt-seo.md`**: Contains all titles, scorecard, description, tags, research data, and social titles
 
 Always include the research data (competitor titles with view counts) in the output so the user can see WHY each title works.
 

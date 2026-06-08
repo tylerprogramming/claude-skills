@@ -1,5 +1,5 @@
 ---
-name: youtube
+name: yt-upload
 description: Upload videos to YouTube and manage existing videos via the YouTube Data API v3. Replaces Blotato for long-form YouTube uploads (proper tags, scheduling, custom thumbnails). Edit titles, descriptions, tags, thumbnails, privacy, and publish-at on already-uploaded videos. Post comments on videos. Triggers on - upload to youtube, schedule youtube video, swap youtube thumbnail, edit youtube title, edit youtube description, comment on youtube, post youtube comment, my youtube uploads, youtube api.
 argument-hint: [action] e.g. "upload claude design video", "swap thumbnail on VIDEO_ID", "list my uploads"
 allowed-tools: Bash(python3:*), Bash(ls:*), Bash(file:*), Read, Write, Edit, Glob, Grep
@@ -13,21 +13,21 @@ Upload to YouTube and manage existing videos using the YouTube Data API v3. Use 
 The skill reuses Tyler's existing Google OAuth client at `~/credentials.json` (same one Drive and Gmail use). The first run will need to authorize the YouTube scopes — that's a one-time browser flow.
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py auth
+python3 ~/.claude/skills/yt-upload/yt.py auth
 ```
 
-A browser opens, Tyler approves both scopes (`youtube.upload` + `youtube.force-ssl`), token saves to `~/.claude/skills/youtube/token.json`.
+A browser opens, Tyler approves both scopes (`youtube.upload` + `youtube.force-ssl`), token saves to `~/.claude/skills/yt-upload/token.json`.
 
 If you see "missing OAuth client" error: `~/credentials.json` was deleted. Tell Tyler to re-export from Google Cloud Console.
 
 ## Subcommands
 
-All actions go through one CLI: `python3 ~/.claude/skills/youtube/yt.py <subcommand> [args]`. Outputs JSON on stdout for downstream parsing.
+All actions go through one CLI: `python3 ~/.claude/skills/yt-upload/yt.py <subcommand> [args]`. Outputs JSON on stdout for downstream parsing.
 
 ### upload — schedule or publish a long-form video
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py upload \
+python3 ~/.claude/skills/yt-upload/yt.py upload \
   --video "/Users/tylerreed/Downloads/claude design in 23 minutes.mp4" \
   --title "Claude Design + Claude Code: Prompt to Live URL in 23 Minutes" \
   --description-file ~/youtube/claude-design/description.md \
@@ -51,11 +51,11 @@ The description file should be plain text. If you have a `description.md` with a
 ### update — edit metadata on an already-uploaded video
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py update VIDEO_ID --title "New title"
-python3 ~/.claude/skills/youtube/yt.py update VIDEO_ID --description-file new.md
-python3 ~/.claude/skills/youtube/yt.py update VIDEO_ID --tags-file tags.txt
-python3 ~/.claude/skills/youtube/yt.py update VIDEO_ID --privacy public
-python3 ~/.claude/skills/youtube/yt.py update VIDEO_ID --publish-at 2026-05-01T13:00:00-04:00
+python3 ~/.claude/skills/yt-upload/yt.py update VIDEO_ID --title "New title"
+python3 ~/.claude/skills/yt-upload/yt.py update VIDEO_ID --description-file new.md
+python3 ~/.claude/skills/yt-upload/yt.py update VIDEO_ID --tags-file tags.txt
+python3 ~/.claude/skills/yt-upload/yt.py update VIDEO_ID --privacy public
+python3 ~/.claude/skills/yt-upload/yt.py update VIDEO_ID --publish-at 2026-05-01T13:00:00-04:00
 ```
 
 Only specified fields are updated; everything else is preserved (the script reads current snippet/status first).
@@ -63,7 +63,7 @@ Only specified fields are updated; everything else is preserved (the script read
 ### thumbnail — replace thumbnail on a published video
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py thumbnail VIDEO_ID --image ~/youtube/claude-design/thumbnail-backup-A.jpg
+python3 ~/.claude/skills/yt-upload/yt.py thumbnail VIDEO_ID --image ~/youtube/claude-design/thumbnail-backup-A.jpg
 ```
 
 Image must be JPG or PNG, under 2 MB. If your source thumbnail is bigger:
@@ -76,16 +76,16 @@ sips -s format jpeg -s formatOptions 80 input.png --out output.jpg
 
 ```bash
 # Top-level comment on a video
-python3 ~/.claude/skills/youtube/yt.py comment VIDEO_ID --text "🎯 link to my Skool community in the description!"
+python3 ~/.claude/skills/yt-upload/yt.py comment VIDEO_ID --text "🎯 link to my Skool community in the description!"
 
 # Reply to a specific comment
-python3 ~/.claude/skills/youtube/yt.py comment --reply-to COMMENT_ID --text "thanks!"
+python3 ~/.claude/skills/yt-upload/yt.py comment --reply-to COMMENT_ID --text "thanks!"
 ```
 
 ### list — list my recent uploads
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py list --max 10
+python3 ~/.claude/skills/yt-upload/yt.py list --max 10
 ```
 
 Returns JSON array with video_id, title, published_at, url for each. Useful when Tyler wants to find a video ID without opening the browser.
@@ -93,7 +93,7 @@ Returns JSON array with video_id, title, published_at, url for each. Useful when
 ### get — fetch full metadata for a single video
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py get VIDEO_ID
+python3 ~/.claude/skills/yt-upload/yt.py get VIDEO_ID
 ```
 
 Returns title, description, tags, category, privacy_status, publish_at, duration, stats (views/likes/comments), URL.
@@ -128,7 +128,7 @@ Returns title, description, tags, category, privacy_status, publish_at, duration
 ### Post a comment
 
 ```bash
-python3 ~/.claude/skills/youtube/yt.py comment VIDEO_ID --text "$(cat comment.txt)"
+python3 ~/.claude/skills/yt-upload/yt.py comment VIDEO_ID --text "$(cat comment.txt)"
 ```
 
 ## Rules
@@ -157,7 +157,7 @@ If quota errors hit, tell Tyler to wait 24 hours or request a quota bump in Goog
 ## Troubleshooting
 
 **`invalid_grant: Token has been expired or revoked`**
-Run `python3 ~/.claude/skills/youtube/yt.py auth --reauth` to redo the browser flow.
+Run `python3 ~/.claude/skills/yt-upload/yt.py auth --reauth` to redo the browser flow.
 
 **`forbidden: The user is not enabled for using the YouTube Partner Program`**
 Some scopes (like setting custom thumbnails) require the YouTube channel to have verified the phone number on the channel. Tyler did this when he set up the channel — should not hit this in practice.

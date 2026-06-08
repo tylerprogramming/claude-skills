@@ -11,9 +11,9 @@ Search YouTube for videos matching the given keywords.
 ## Workflow Context
 
 **Step 1 of the weekly content pipeline.** Run this first — its output feeds everything else:
-- `/transcribe` uses the top video URLs to get reference transcripts for `/yt`
-- `/shorts` reads the research reports from `~/yt-research/` to generate short-form scripts
-- `/yt` uses the transcripts + research context to plan the long-form video
+- `/transcribe` uses the top video URLs to get reference transcripts for `/yt-package`
+- `/shorts` reads the research reports from `~/content/research/searches/` to generate short-form scripts
+- `/yt-package` uses the transcripts + research context to plan the long-form video
 
 Run once per topic per week. Two topics = two `/yt-search` runs.
 
@@ -39,23 +39,27 @@ This will:
 - Search YouTube via yt-dlp for recent videos matching the keywords
 - Filter to only videos uploaded within the specified timeframe
 - Sort by view count (highest first)
-- Save a markdown report to `~/yt-research/<date>-<keywords>.md`
-- Save raw JSON to `~/yt-research/<date>-<keywords>.json`
+- Save a markdown report to `~/content/research/searches/<date>-<keywords>.md`
+- Save raw JSON to `~/content/research/_raw/<date>-<keywords>.json`
+- Save thumbnails to `~/content/research/_raw/<date>-<keywords>-thumbnails/`
 
+The script creates the `searches/` and `_raw/` subfolders automatically.
 Wait for it to finish. If it fails, check that `yt-dlp` is installed.
 
 ### Step 2: Download Thumbnails
 
-After the search completes, download thumbnails for the top results. Create a thumbnails folder for this search:
+Thumbnails are downloaded automatically by the script (Step 1) into
+`~/content/research/_raw/<date>-<keywords>-thumbnails/`. Only run the manual
+commands below if you passed `--no-thumbnails` or need to re-fetch:
 
 ```bash
-mkdir -p ~/yt-research/<date>-<keywords>-thumbnails
+mkdir -p ~/content/research/_raw/<date>-<keywords>-thumbnails
 ```
 
 For each video in the top results, download its thumbnail using yt-dlp:
 
 ```bash
-yt-dlp --write-thumbnail --skip-download --convert-thumbnails png -o "~/yt-research/<date>-<keywords>-thumbnails/%(playlist_index)s-%(id)s" "https://youtu.be/<video_id>"
+yt-dlp --write-thumbnail --skip-download --convert-thumbnails png -o "~/content/research/_raw/<date>-<keywords>-thumbnails/%(playlist_index)s-%(id)s" "https://youtu.be/<video_id>"
 ```
 
 This saves each thumbnail as a PNG named with the rank number and video ID (e.g., `01-ntDIxaeo3Wg.png`).
@@ -69,7 +73,7 @@ After downloading, show the user a few of the top thumbnails so they can see wha
 
 ### Step 3: Read the Report
 
-Read the generated markdown report from `~/yt-research/`. Present the summary table to the user.
+Read the generated markdown report from `~/content/research/searches/`. Present the summary table to the user.
 
 ### Step 4: Analysis
 
@@ -80,7 +84,7 @@ Read the raw JSON file and provide analysis. Your analysis MUST include:
 - Face vs no face? Text overlay style? Color schemes?
 - What makes them clickable at small sizes?
 - Recommend 2-3 thumbnail approaches for Tyler's video based on what's working
-- Reference the downloaded thumbnails at `~/yt-research/<date>-<keywords>-thumbnails/`
+- Reference the downloaded thumbnails at `~/content/research/_raw/<date>-<keywords>-thumbnails/`
 
 #### Performance Overview
 - Total videos found vs. the top N shown
@@ -117,7 +121,7 @@ Ask if they want to dig deeper into any specific video, channel, or trend.
 
 ## Rules
 
-- All output goes to `~/yt-research/`
+- Output base is `~/content/research/`: readable reports go to `searches/`, raw JSON + thumbnails go to `_raw/`
 - Report filenames include today's date: `<YYYY-MM-DD>-<keywords>.md`
 - Always pass `--json` so we have the data for analysis
 - Don't hallucinate data — only analyze what yt-dlp actually returned

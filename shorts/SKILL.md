@@ -1,7 +1,7 @@
 ---
 name: shorts
 description: Generate a weekly short-form content package from yt-search research. Takes top-performing competitor videos, extracts the 5 best angles, and creates ready-to-film short scripts (YT Shorts, TikTok, Reels) plus 2 Instagram carousel outlines. Part of the weekly content pipeline — runs after /yt-search. Triggers on: create shorts, shorts for the week, short form content, weekly shorts, shorts package, make shorts from research, short-form scripts.
-argument-hint: [~/yt-research/<report>.md or ~/yt-research/<report>.json] [--topic <topic>]
+argument-hint: [~/content/research/searches/<report>.md] [--topic <topic>]
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion
 user-invocable: true
 ---
@@ -13,7 +13,7 @@ Generate a weekly short-form content package from yt-search research at $ARGUMEN
 This skill is part of the **weekly content pipeline**:
 
 ```
-/yt-search → /transcribe → /yt → /seo  ← long-form track
+/yt-search → /transcribe → /yt-package → /yt-seo  ← long-form track
                 ↓
             /shorts  ← short-form track (this skill)
                 ↓
@@ -34,11 +34,11 @@ All output goes to `~/youtube/shorts/YYYY-MM-DD/` (today's date).
 
 Parse $ARGUMENTS:
 
-- **Report path** (`~/yt-research/<file>.md` or `.json`): Use it directly
-- **--topic flag**: Glob `~/yt-research/` for reports matching the topic
-- **No argument**: Glob `~/yt-research/` and use the most recent report(s)
+- **Report path** (`~/content/research/searches/<file>.md`): Use it directly
+- **--topic flag**: Glob `~/content/research/searches/` for reports matching the topic
+- **No argument**: Glob `~/content/research/searches/` and use the most recent report(s)
 
-Read all matching research files. If JSON files exist alongside the markdown reports, read both — the JSON has raw metadata useful for deeper analysis.
+Read all matching research files. The raw JSON for each report lives alongside in `~/content/research/_raw/<same-name>.json` — read it too when you need raw metadata for deeper analysis.
 
 If no research reports exist at all, tell the user:
 > "No yt-search reports found. Run `/yt-search <topic>` first to generate research."

@@ -89,7 +89,7 @@ Show the user:
 3. The full deep analysis
 4. File paths for the report, transcripts, and analysis
 
-Ask if they want to dig deeper into anything specific or use either transcript for `/yt`.
+Ask if they want to dig deeper into anything specific or use either transcript for `/yt-package`.
 
 ## Rules
 

@@ -1,5 +1,5 @@
 ---
-name: save-idea
+name: yt-save-idea
 description: Save a new YouTube video idea to the video ideas tracker. Use when the user has a new video idea, wants to log a content concept, or says things like "save this idea", "add this to my video ideas", "I have an idea for a video". Triggers on: save idea, video idea, add idea, log idea, new video concept.
 argument-hint: [idea title or description]
 allowed-tools: Read, Edit, Write
@@ -38,7 +38,7 @@ Save a new video idea to the tracker at `~/youtube/video-ideas.md`.
 
 Ideas move through these statuses:
 - **Planned** — idea saved, not started
-- **In Progress** — `/yt` is building a video package for this idea (set automatically by `/yt` Step 0)
+- **In Progress** — `/yt-package` is building a video package for this idea (set automatically by `/yt-package` Step 0)
 - **Uploaded** — video is live (move to Completed section manually or via this skill)
 - **Backlog** — parked for later
 

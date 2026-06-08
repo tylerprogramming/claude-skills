@@ -58,7 +58,7 @@ Build reusable skills
 A skill is a saved prompt template
 that runs with one command.
 
-/transcribe, /thumbnail, /seo
+/transcribe, /thumbnail, /yt-seo
 One command. Full workflow.
 ---
 Chain skills into pipelines

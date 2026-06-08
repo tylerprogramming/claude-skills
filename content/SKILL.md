@@ -10,7 +10,7 @@ Create platform-ready social media posts and visuals from $ARGUMENTS.
 
 ## Workflow Context
 
-**Text content step of the weekly content pipeline** - runs after `/seo` for each long-form video, and after `/shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
+**Text content step of the weekly content pipeline** - runs after `/yt-seo` for each long-form video, and after `/shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
 
 Run twice per week (once per video) for:
 - 2 LinkedIn posts (one per video)
