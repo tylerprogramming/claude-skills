@@ -13,12 +13,8 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
 | **Standup** | `/standup` | Daily standup logger — asks what you worked on, what's next, and blockers, then writes a clean dated standup |
 | **Peeps** | `/peeps` | Personal people tracker — save details about people (birthday, how you know them, family, notes) and generate a searchable HTML page |
-| **OPM** | `/opm` | One Punch Man workout logger — logs the 100/100/100 circuit, runs, and water to the Supabase `fitness-tracker` project, with Saitama-style coaching |
-| **Nutrition** | `/nutrition` | Food logging, eating review vs targets, meal suggestions, and recipe cards on the Supabase `fitness-tracker` project |
-| **OPM Graph** | `/opm-graph` | Live training dashboard (self-contained HTML) reading charts directly from the Supabase `fitness-tracker` project |
-| **OPM Review** | `/opm-review` | Weekly training + nutrition review written to the `weekly_review` table |
-| **Fitness** | `/fitness` | (Legacy SQLite version — superseded by `/opm` + `/nutrition`.) Track workouts and nutrition in a GitHub-style contribution grid. Powered by a full React + Hono + SQLite app (included in `fitness/app/`). |
-| **Meal Plan** | `/meal-plan` | (Legacy — superseded by `/nutrition`.) Generate a weekly meal plan with shopping list from your recipe folder |
+| **Lifestyle** | `/lifestyle` | Whole-life OS logger — runs, lifts, meals, water, caffeine, weight, reading, business, YouTube, and the daily check-in — to the `lifestyle` Supabase project via the Supabase MCP. Supports run screenshots and nutrition-label photos. (Consolidates the former `/opm`, `/nutrition`, `/opm-graph`, `/opm-review`, and `/fitness` skills.) |
+| **Meal Plan** | `/meal-plan` | (Legacy — superseded by `/lifestyle`.) Generate a weekly meal plan with shopping list from your recipe folder |
 | **PRD** | `/prd` | Generate a Product Requirements Document for a new feature |
 | **Quiz** | `/quiz` | Interactive quiz/coaching from any document — mock interviews, rapid fire, deep practice, study review |
 | **Ralph** | `/ralph` | Convert PRDs to prd.json format for the Ralph autonomous agent system |
@@ -80,20 +76,9 @@ git clone https://github.com/tylerprogramming/claude-skills.git
 cp -r claude-skills/* ~/.claude/skills/
 ```
 
-### Fitness App Setup
+### Lifestyle Backend
 
-The `/fitness` skill includes a full-stack app. After installing the skills:
-
-```bash
-cp -r ~/.claude/skills/fitness/app ~/fitness-app
-cd ~/fitness-app
-bun install   # or: npm install
-bun run dev   # starts both React frontend and Hono API server
-```
-
-- Frontend: http://localhost:5173
-- API: http://localhost:3001
-- SQLite DB is auto-created at `~/fitness-app/fitness.db` on first run
+The `/lifestyle` skill (which consolidates the former `/fitness`, `/opm`, and `/nutrition` skills) logs to the **`lifestyle` Supabase project** via the Supabase MCP — there is no local app or server to run. The deprecated full-stack React + Hono + SQLite app source remains under `lifestyle/app/` for reference only.
 
 ## Skill Structure
 

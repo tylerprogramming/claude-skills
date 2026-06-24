@@ -32,7 +32,7 @@ Skills write to these home directory locations (create them if they don't exist)
 
 | Skill | Output Location |
 |-------|----------------|
-| fitness | `~/fitness-app/fitness.db` (SQLite, auto-created); `~/fitness/` fallback HTML files |
+| lifestyle | Supabase project `lifestyle` (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP — no local files |
 | journal | `~/journal/YYYY-MM-DD.txt` |
 | transcribe | `~/scripts/transcript_<id>.txt` |
 | yt-package | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
@@ -86,13 +86,13 @@ Required keys (see `.env.example`):
 - Return data that Claude can parse (JSON or plain text)
 - Accept arguments via `sys.argv`, not stdin
 
-## Fitness Skill Architecture
+## Lifestyle Skill Architecture
 
-The fitness skill uses a full-stack app at `fitness/app/` (React + Vite frontend, Hono/Bun backend, SQLite database). The app is included in the repo — copy it to `~/fitness-app/` and run `bun install && bun run dev` to start.
+The `lifestyle` skill (consolidating the former `fitness`, `opm`, `nutrition`, `opm-graph`, and `opm-review` skills) logs Tyler's whole-life OS to the **`lifestyle` Supabase project** (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP. There is no local app or file fallback — the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase.
 
-- **Primary storage**: SQLite at `~/fitness-app/fitness.db` via Hono API (port 3001)
-- **Fallback**: `~/fitness/data.js` and `strength.js` use `window.FITNESS_DATA` format for browser rendering in `tracker.html` — do not convert to JSON
-- **Tables**: `activity_log`, `meal_plan`, `nutrition_items`, `exercises`, `strength_entries`, `strength_sets` — all auto-created on first run via `CREATE TABLE IF NOT EXISTS`
+- **Storage**: Supabase Postgres (fitness/diet + life-OS keystone + business/YouTube + planning tables).
+- **Gotchas**: id sequences are out of sync → insert with explicit `(select coalesce(max(id),0)+1 from <table>)`; no `date` unique constraint → check-then-insert; `activity_log` macros are cumulative daily totals.
+- **Deprecated app**: the full-stack React + Hono + SQLite source remains under `lifestyle/app/` for reference only (reads the retired SQLite, not Supabase).
 
 ## Weekly Content Pipeline
 
