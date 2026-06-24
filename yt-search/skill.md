@@ -1,19 +1,19 @@
 ---
 name: yt-search
-description: Search YouTube by keywords using yt-dlp. Finds recent videos, sorts by views, and generates a markdown report with full metadata. Triggers on: youtube search, search youtube, yt search, what's trending on youtube, youtube research.
-argument-hint: [keywords] [--days 30] [--top 15] [--search-count 50]
+description: Search YouTube by keywords using yt-dlp. Finds recent videos, splits them into long-form and Shorts, ranks each by views, downloads thumbnails, and writes a research report to ~/content/research/. Use whenever the user wants to research what's working on YouTube for a topic, scout competitors, find proven angles, or kick off the weekly content pipeline. Triggers on: youtube search, search youtube, yt search, what's trending on youtube, youtube research, research this topic on youtube, what's working on youtube, scout videos about.
+argument-hint: [keywords] [--days 30] [--top 15] [--search-count 50] [--short-max 60]
 allowed-tools: Bash(python3:*), Read, Write, Glob, Grep
 user-invocable: true
 ---
 
-Search YouTube for videos matching the given keywords.
+Search YouTube for videos matching the given keywords and turn the results into an actionable research report.
 
 ## Workflow Context
 
 **Step 1 of the weekly content pipeline.** Run this first — its output feeds everything else:
-- `/transcribe` uses the top video URLs to get reference transcripts for `/yt-package`
-- `/shorts` reads the research reports from `~/content/research/searches/` to generate short-form scripts
-- `/yt-package` uses the transcripts + research context to plan the long-form video
+- `/transcribe` uses the top long-form URLs to get reference transcripts for `/yt-package`
+- `/shorts` reads the research reports from `~/content/research/` to generate short-form scripts (it cares about the Shorts section)
+- `/yt-package` uses the transcripts + research context to plan the long-form video (it cares about the long-form section)
 
 Run once per topic per week. Two topics = two `/yt-search` runs.
 
@@ -22,8 +22,9 @@ Run once per topic per week. Two topics = two `/yt-search` runs.
 Parse `$ARGUMENTS` for:
 - **Keywords**: One or more search terms. Required.
 - **--days**: How many days back to include. Default: `30`.
-- **--top**: How many top results to show. Default: `15`.
+- **--top**: How many top results to show **per section**. Default: `15`.
 - **--search-count**: How many raw results to fetch from YouTube before filtering. Default: `50`. Increase to 100+ for broad topics.
+- **--short-max**: Max duration in seconds for a video to count as a Short. Default: `60`. Bump to `180` to capture YouTube's longer Shorts.
 
 If the user just provides keywords with no flags, use the defaults.
 
@@ -35,95 +36,66 @@ If the user just provides keywords with no flags, use the defaults.
 python3 ~/.claude/skills/yt-search/search_youtube.py <keywords> --days <days> --top <top> --search-count <search-count> --json
 ```
 
-This will:
-- Search YouTube via yt-dlp for recent videos matching the keywords
-- Filter to only videos uploaded within the specified timeframe
-- Sort by view count (highest first)
-- Save a markdown report to `~/content/research/searches/<date>-<keywords>.md`
-- Save raw JSON to `~/content/research/_raw/<date>-<keywords>.json`
-- Save thumbnails to `~/content/research/_raw/<date>-<keywords>-thumbnails/`
+This single command does everything mechanical:
+- Searches YouTube via yt-dlp for recent videos matching the keywords
+- Filters to videos uploaded within the timeframe and whose title matches the keywords
+- **Splits results into two ranked sections — Long-form and Shorts** — each sorted by view count
+- Saves a markdown report to `~/content/research/<date>-<keywords>.md`
+- Saves raw JSON to `~/content/research/<date>-<keywords>.json`
+- **Downloads thumbnails automatically** to `~/content/research/<date>-<keywords>-thumbnails/`, named `long-NN-<id>.jpg` and `short-NN-<id>.jpg`
 
-The script creates the `searches/` and `_raw/` subfolders automatically.
-Wait for it to finish. If it fails, check that `yt-dlp` is installed.
+Wait for it to finish. The script already handles the output folder and thumbnails — do **not** re-run yt-dlp to fetch thumbnails again; that work is done. If it fails, check that `yt-dlp` is installed (`yt-dlp --version`).
 
-### Step 2: Download Thumbnails
+### Step 2: Read the Report and Thumbnails
 
-Thumbnails are downloaded automatically by the script (Step 1) into
-`~/content/research/_raw/<date>-<keywords>-thumbnails/`. Only run the manual
-commands below if you passed `--no-thumbnails` or need to re-fetch:
+Read the generated markdown report and the raw JSON from `~/content/research/`. The thumbnails are already on disk in the `-thumbnails/` folder. Show the user the top 3-5 thumbnails from the **section they care about** (long-form by default — ask if it's a Shorts research run) by referencing the actual `.jpg` files so they render.
 
-```bash
-mkdir -p ~/content/research/_raw/<date>-<keywords>-thumbnails
-```
+### Step 3: Analysis
 
-For each video in the top results, download its thumbnail using yt-dlp:
+This is the part that matters — the user can read a table themselves; what they need from you is the pattern recognition they can act on. Read the JSON and the thumbnails, then deliver analysis that is concrete and grounded in the actual data. Cite specific videos by title and view count. Never invent numbers.
 
-```bash
-yt-dlp --write-thumbnail --skip-download --convert-thumbnails png -o "~/content/research/_raw/<date>-<keywords>-thumbnails/%(playlist_index)s-%(id)s" "https://youtu.be/<video_id>"
-```
-
-This saves each thumbnail as a PNG named with the rank number and video ID (e.g., `01-ntDIxaeo3Wg.png`).
-
-After downloading, show the user a few of the top thumbnails so they can see what's working visually. Note any patterns:
-- Clean vs busy designs
-- Face vs no face
-- Text placement and style
-- Color schemes
-- Arrows, circles, or other visual elements
-
-### Step 3: Read the Report
-
-Read the generated markdown report from `~/content/research/searches/`. Present the summary table to the user.
-
-### Step 4: Analysis
-
-Read the raw JSON file and provide analysis. Your analysis MUST include:
+Keep long-form and Shorts analysis separate where it makes sense — what works as a Short rarely maps 1:1 to a long-form video.
 
 #### Thumbnail Analysis
-- What visual patterns do the top-performing thumbnails share?
-- Face vs no face? Text overlay style? Color schemes?
-- What makes them clickable at small sizes?
-- Recommend 2-3 thumbnail approaches for Tyler's video based on what's working
-- Reference the downloaded thumbnails at `~/content/research/_raw/<date>-<keywords>-thumbnails/`
+Look at the downloaded thumbnails (don't guess from titles). For the top performers:
+- Face vs no face? Expression? Text overlay style, length, and placement? Color scheme and contrast? Arrows, circles, brackets, product UI?
+- What reads clearly at the small mobile size where the click actually happens?
+- Recommend 2-3 specific thumbnail directions for the user's next video, tied to what the data shows is working.
 
-#### Performance Overview
-- Total videos found vs. the top N shown
-- View count range (highest to lowest)
-- Average views, likes, and comments across results
+#### Title Patterns
+- Recurring words, hooks, and structures in the top titles (numbers, brackets, "I built…", tool-vs-tool, dollar outcomes).
+- Title length patterns of the winners.
+- Cross-check against the user's proven formula (specific number + specific outcome + specific tool — see global CLAUDE.md). Call out which top titles follow it.
 
-#### Content Patterns
-- What video formats dominate? (tutorials, reviews, news, podcasts, etc.)
-- What durations perform best?
-- Which channels appear multiple times?
+#### Content & Performance Patterns
+- View/like/comment ranges per section; which channels appear more than once (and why they might be winning).
+- Dominant formats (tutorial, build-along, news, reaction, listicle) and the durations that perform.
+- Note any outlier — a video massively over-indexing its channel's norm is a signal worth naming.
 
-#### Title & Thumbnail Patterns
-- Common words/phrases in top-performing titles
-- Title length patterns
-- Use of numbers, brackets, emojis, power words
+#### Opportunities (the payoff)
+- Underserved angles: what's getting searched/made but done poorly, or not made at all.
+- 3-5 specific video ideas the user could film, each with a working title in their formula and a one-line reason it would land. Bias toward AI-tools content (Claude Code, etc.) since that's the channel.
+- Separate the long-form ideas from the Shorts ideas.
 
-#### Opportunities
-- What angles or topics are underrepresented?
-- What could the user make that would stand out?
-- Suggested video ideas based on gaps in the results
+### Step 4: Present to User
 
-### Step 5: Present to User
+Show, in this order:
+1. Headline stats (videos found, long-form vs Shorts counts, view ranges)
+2. The top long-form table, then the top Shorts table
+3. The top 3-5 thumbnails (actual images) for the relevant section
+4. Thumbnail + title pattern analysis
+5. Your top 3-5 video ideas, split long-form vs Shorts, each with a formula-fit title
+6. The file paths: report, JSON, and thumbnails folder
 
-Show the user:
-1. The summary stats
-2. The top videos table
-3. The top 3-5 thumbnails (show the actual images)
-4. Thumbnail analysis (patterns, what's working)
-5. Key content patterns
-6. Your top 3-5 video ideas based on the data
-7. The file paths: report, JSON, and thumbnails folder
-
-Ask if they want to dig deeper into any specific video, channel, or trend.
+Then ask if they want to dig into a specific video, channel, or trend, or kick off `/transcribe` on the top long-form results.
 
 ## Rules
 
-- Output base is `~/content/research/`: readable reports go to `searches/`, raw JSON + thumbnails go to `_raw/`
+- All output goes to `~/content/research/` — the script defaults there, so don't override `--output-dir` unless asked
 - Report filenames include today's date: `<YYYY-MM-DD>-<keywords>.md`
-- Always pass `--json` so we have the data for analysis
-- Don't hallucinate data — only analyze what yt-dlp actually returned
-- Keep the analysis practical and actionable — this is for content planning
-- When suggesting ideas, consider that the user makes AI tools content (Claude Code, etc.)
+- Always pass `--json` so the analysis has structured data to work from
+- Thumbnails are `.jpg` and already downloaded by the script — reference them, don't re-fetch
+- Don't hallucinate data — only analyze what yt-dlp actually returned; cite titles and real view counts
+- Keep the analysis practical and actionable — this is for content planning, not a stats dump
+- The user makes AI-tools content (Claude Code, AntiGravity, etc.) — weight ideas and patterns toward that
+- Never use em dashes in any saved or presented content — use a plain hyphen with spaces or a comma

@@ -28,7 +28,7 @@ If the user just provides keywords with no flags, use the defaults.
 python3 ~/.claude/skills/yt-search/search_youtube.py <keywords> --days <days> --top <top> --search-count <search-count> --json
 ```
 
-Wait for it to finish. Read the generated JSON from `~/yt-research/`.
+Wait for it to finish. Read the generated JSON from `~/content/research/`.
 
 ### Step 2: Present the Search Results
 
@@ -43,7 +43,7 @@ python3 ~/.claude/skills/transcribe/transcribe_video.py "<video_url_1>"
 python3 ~/.claude/skills/transcribe/transcribe_video.py "<video_url_2>"
 ```
 
-Run these sequentially (not in parallel) to avoid rate limits. Read both saved transcripts from `~/scripts/`.
+Run these sequentially (not in parallel) to avoid rate limits. Read both saved transcripts from `~/content/transcripts/`.
 
 ### Step 4: Deep Analysis
 
@@ -76,7 +76,7 @@ After reading both transcripts, provide a comprehensive analysis that covers:
 
 Save the full analysis to:
 ```
-~/yt-research/<date>-<keywords>-deep-analysis.md
+~/content/research/<date>-<keywords>-deep-analysis.md
 ```
 
 Include the video URLs, titles, and transcript file paths at the top for reference.
@@ -93,7 +93,7 @@ Ask if they want to dig deeper into anything specific or use either transcript f
 
 ## Rules
 
-- All output goes to `~/yt-research/`
+- All output goes to `~/content/research/`
 - Always pass `--json` to the search script
 - Only transcribe the top 2 by view count - don't transcribe more unless the user asks
 - Don't hallucinate transcript content - only analyze what Whisper actually returned

@@ -33,15 +33,15 @@ Skills write to these home directory locations (create them if they don't exist)
 | Skill | Output Location |
 |-------|----------------|
 | lifestyle | Supabase project `lifestyle` (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP — no local files |
-| journal | `~/journal/YYYY-MM-DD.txt` |
-| transcribe | `~/scripts/transcript_<id>.txt` |
-| yt-package | `~/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
-| yt-analytics | `~/youtube/analytics/` (channel snapshots); `~/youtube/<slug>/performance.md` (per-video A/B tracking) |
-| yt-save-idea | `~/youtube/video-ideas.md` |
-| thumbnail | `~/youtube/thumbnails/` |
-| tiktok | `~/youtube/tiktok-research/<hashtag>-report.md` |
+| journal | `~/content/journal/YYYY-MM-DD.txt` |
+| transcribe | `~/content/transcripts/transcript_<id>.txt` |
+| yt-package | `~/content/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
+| yt-analytics | `~/content/youtube/analytics/` (channel snapshots); `~/content/youtube/<slug>/performance.md` (per-video A/B tracking) |
+| yt-save-idea | `~/content/youtube/video-ideas.md` |
+| thumbnail | `~/content/youtube/thumbnails/` |
+| tiktok | `~/content/youtube/tiktok-research/<hashtag>-report.md` |
 | yt-search | `~/content/research/searches/<date>-<keywords>.md` (report); `~/content/research/_raw/` (json + thumbnails) |
-| shorts | `~/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
+| shorts | `~/content/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
 | resize | `~/images/resized/` |
 | rmbg | `~/images/nobg/` |
 | email | Sends via Resend API, tracks in `~/.claude/skills/skool/data/skool.db` |

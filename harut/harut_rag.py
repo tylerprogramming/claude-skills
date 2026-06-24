@@ -207,7 +207,7 @@ def cmd_status():
         print("Ready. Run: python harut_rag.py query \"<your question>\"")
     else:
         print("No index found.")
-        print("Run: python harut_rag.py index ~/scripts/transcript_u2hmXbhTTLE.txt")
+        print("Run: python harut_rag.py index ~/content/transcripts/transcript_u2hmXbhTTLE.txt")
 
 
 def cmd_index(transcript_path):

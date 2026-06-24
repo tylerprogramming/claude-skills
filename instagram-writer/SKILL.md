@@ -142,26 +142,26 @@ Create the JSON following this exact structure. Headlines must be SHORT lines (3
 
 1. Create a 2-3 word kebab-case slug from the topic.
 
-2. Set `OUTPUT_DIR=~/content/instagram/<slug>/`
+2. Set `OUTPUT_DIR=~/content/platform/instagram/<slug>/`
 
 3. Save the JSON:
    ```bash
-   mkdir -p ~/content/instagram/<slug>/
+   mkdir -p ~/content/platform/instagram/<slug>/
    ```
-   Write the JSON to `~/content/instagram/<slug>/slides.json`
+   Write the JSON to `~/content/platform/instagram/<slug>/slides.json`
 
 4. Run the renderer:
    ```bash
    python3 ~/.claude/skills/instagram-writer/instagram_writer.py \
-     ~/content/instagram/<slug>/slides.json \
-     ~/content/instagram/<slug>/
+     ~/content/platform/instagram/<slug>/slides.json \
+     ~/content/platform/instagram/<slug>/
    ```
 
    To use a custom background image (e.g. a watercolor texture from Kie.ai):
    ```bash
    python3 ~/.claude/skills/instagram-writer/instagram_writer.py \
-     ~/content/instagram/<slug>/slides.json \
-     ~/content/instagram/<slug>/ \
+     ~/content/platform/instagram/<slug>/slides.json \
+     ~/content/platform/instagram/<slug>/ \
      ~/path/to/background.png
    ```
    The image is cover-cropped to 1080x1350 with a subtle white overlay for text readability.
@@ -195,13 +195,13 @@ Caption rules:
 - Exactly 5 hashtags, always the same set
 - No em dashes
 
-Save the caption to `~/content/instagram/<slug>/caption.md`
+Save the caption to `~/content/platform/instagram/<slug>/caption.md`
 
 ---
 
 ## Step 5: Update status.md
 
-After rendering (and again after scheduling), update `~/content/instagram/status.md`:
+After rendering (and again after scheduling), update `~/content/platform/instagram/status.md`:
 
 | Slug | Topic | Created | Scheduled | Posted |
 |------|-------|---------|-----------|--------|
@@ -215,9 +215,9 @@ Show the user:
 1. A summary of each slide's content (1 line each)
 2. The full caption
 3. File paths:
-   - Slides: `~/content/instagram/<slug>/slide_01.png` through `slide_06.png`
-   - PDF: `~/content/instagram/<slug>/carousel.pdf`
-   - Caption: `~/content/instagram/<slug>/caption.md`
+   - Slides: `~/content/platform/instagram/<slug>/slide_01.png` through `slide_06.png`
+   - PDF: `~/content/platform/instagram/<slug>/carousel.pdf`
+   - Caption: `~/content/platform/instagram/<slug>/caption.md`
 4. Ask if they want to schedule via Blotato or adjust any slides
 
 ## Step 7: Save to carousel app Library
@@ -252,4 +252,4 @@ JSON format:
 
 Slide types: `cover` (slide 1), `content` (slides 2-5, include `stepNumber`), `cta` (slide 6).
 
-This keeps the carousel app Library and `~/content/carousel/<slug>/` in sync. Always write to both locations.
+This keeps the carousel app Library and `~/content/platform/carousels/<slug>/` in sync. Always write to both locations.

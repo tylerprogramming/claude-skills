@@ -17,8 +17,8 @@ Transcribe the video or audio at $ARGUMENTS.
 2. The script will:
    - For YouTube URLs: Download the audio using yt-dlp, then transcribe
    - For local files: Transcribe directly (supports mp4, mp3, wav, m4a, etc.)
-   - Save a timestamped transcript to `~/scripts/transcript_<id>.txt`
-3. After the script finishes, read the saved transcript file from `~/scripts/` and present the full contents to the user.
+   - Save a timestamped transcript to `~/content/transcripts/transcript_<id>.txt`
+3. After the script finishes, read the saved transcript file from `~/content/transcripts/` and present the full contents to the user.
 4. If the script fails, check:
    - Is `OPENAI_API_KEY` set in the environment?
    - Is `yt-dlp` installed? (only needed for YouTube URLs)

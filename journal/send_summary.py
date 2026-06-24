@@ -3,7 +3,7 @@ Send the weekly journal summary via Gmail.
 
 Usage: python3 ~/.claude/skills/journal/send_summary.py
 
-Reads ~/journal/weekly_summary.txt and emails it.
+Reads ~/content/journal/weekly_summary.txt and emails it.
 
 Requires:
   - GMAIL_ADDRESS environment variable (your Gmail address)
@@ -18,7 +18,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
-SUMMARY_FILE = os.path.expanduser("~/journal/weekly_summary.txt")
+SUMMARY_FILE = os.path.expanduser("~/content/journal/weekly_summary.txt")
 
 
 def main():

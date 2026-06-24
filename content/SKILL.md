@@ -1,7 +1,7 @@
 ---
 name: content
 description: Create platform-ready social media text posts and static visuals from a YouTube video package or any topic. Generates X/Twitter, LinkedIn (text + carousel + image), Instagram, YouTube Community, and Skool posts. Triggers on: create a post, social media post, make a linkedin post, write a tweet, content for, post ideas from this video, create content from, make a post about.
-argument-hint: [~/youtube/<slug>/ or topic or url]
+argument-hint: [~/content/youtube/<slug>/ or topic or url]
 allowed-tools: Read, Write, Glob, Grep, Bash(python3:*), WebSearch, AskUserQuestion, Skill(post), mcp__blotato__blotato_list_visual_templates, mcp__blotato__blotato_create_visual, mcp__blotato__blotato_get_visual_status, mcp__blotato__blotato_list_accounts, mcp__blotato__blotato_create_post, mcp__blotato__blotato_get_post_status
 user-invocable: true
 ---
@@ -25,7 +25,7 @@ Run twice per week (once per video) for:
 This skill generates text posts + static visuals for X/Twitter, LinkedIn, Instagram, and YouTube Community - from either a YouTube video package or a standalone topic/URL/idea. It is distinct from `/repurpose` (which makes short-form video scripts). This skill also handles publishing directly via Blotato MCP.
 
 **Output locations:**
-- YT video mode -> `~/youtube/<slug>/social/`
+- YT video mode -> `~/content/youtube/<slug>/social/`
 - Standalone mode -> `~/social/YYYY-MM-DD-<slug>/`
 
 ---
@@ -34,13 +34,13 @@ This skill generates text posts + static visuals for X/Twitter, LinkedIn, Instag
 
 Parse $ARGUMENTS to determine the input type:
 
-- **YouTube video package** - path like `~/youtube/<slug>/` or just a slug name
+- **YouTube video package** - path like `~/content/youtube/<slug>/` or just a slug name
 - **Topic / URL** - a subject, article link, or research query
 - **Direct text** - user provides raw copy or idea to adapt
 
 If $ARGUMENTS is empty or ambiguous, ask:
 > "What's the source for this content? You can give me:
-> 1. A YouTube video package path (e.g. `~/youtube/claude-code-btw/`)
+> 1. A YouTube video package path (e.g. `~/content/youtube/claude-code-btw/`)
 > 2. A topic or URL to research
 > 3. Raw text or idea to adapt into posts"
 
@@ -50,10 +50,10 @@ If $ARGUMENTS is empty or ambiguous, ask:
 
 ### YouTube Video Mode
 Read these files if they exist (in order of priority):
-- `~/youtube/<slug>/script.md` - full script for deep insight extraction
-- `~/youtube/<slug>/description.md` - polished summary + key points
-- `~/youtube/<slug>/hooks.md` - strong angles and hooks already written
-- `~/youtube/<slug>/titles.md` - for post headline ideas
+- `~/content/youtube/<slug>/script.md` - full script for deep insight extraction
+- `~/content/youtube/<slug>/description.md` - polished summary + key points
+- `~/content/youtube/<slug>/hooks.md` - strong angles and hooks already written
+- `~/content/youtube/<slug>/titles.md` - for post headline ideas
 
 Also look up the YouTube URL for the video by running:
 ```bash
@@ -191,7 +191,7 @@ python3 ~/.claude/skills/carousel/gamma_carousel.py "<slides_file>" \
 
 ### Instagram Carousel - Visual Carousel Maker
 
-All Instagram carousels go through the visual carousel maker at `http://localhost:3010`. Exports land in `~/content/carousel/<slug>/`.
+All Instagram carousels go through the visual carousel maker at `http://localhost:3010`. Exports land in `~/content/platform/carousels/<slug>/`.
 
 **Two ways to create carousels:**
 
@@ -230,7 +230,7 @@ Tell the user to click the ⚡ Batch button in the carousel maker header. They p
 After the user exports the PDF from the carousel maker, post using Blotato:
 - Upload the PDF as the carousel asset
 - Use only slides 1-6 (the exported PDF is already correct)
-- The export saves to `~/content/carousel/<slug>/<slug>.pdf`
+- The export saves to `~/content/platform/carousels/<slug>/<slug>.pdf`
 
 **Instagram Caption rules:**
 - 150-250 words
@@ -291,7 +291,7 @@ Show all content clearly, organized by platform. Ask if anything needs revision 
 
 ## Step 7: Save Outputs
 
-**YT video mode** -> `~/youtube/<slug>/social/`
+**YT video mode** -> `~/content/youtube/<slug>/social/`
 **Standalone mode** -> `~/content/YYYY-MM-DD-<topic-slug>/`
 
 Files to write:

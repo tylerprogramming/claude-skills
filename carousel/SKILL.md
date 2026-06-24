@@ -17,7 +17,7 @@ Generate LinkedIn carousel PDFs using the Gamma API. Takes slide content, applie
 Parse `$ARGUMENTS` for one of:
 - A **topic or concept** to build slides from scratch
 - A **file path** to an existing carousel outline (e.g. from `/content` or `/shorts`)
-- A **video slug** to pull carousel content from `~/youtube/<slug>/social/`
+- A **video slug** to pull carousel content from `~/content/youtube/<slug>/social/`
 
 If given a topic, write the slide content yourself. If given a file, read it and adapt.
 
@@ -132,8 +132,8 @@ After generation:
 
 ## Output
 
-All carousels save to `~/content/carousel/` regardless of source:
-- Default: `~/content/carousel/<slug>/<slug>_carousel.pdf`
+All carousels save to `~/content/platform/carousels/` regardless of source:
+- Default: `~/content/platform/carousels/<slug>/<slug>_carousel.pdf`
 - User can override with `--output`
 
 Note: This skill generates **LinkedIn PDF carousels** via Gamma API. For **Instagram visual carousels** with AI backgrounds, use `/carousel-app` instead.

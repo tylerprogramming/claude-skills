@@ -30,14 +30,14 @@ This will:
 - Hit the Apify TikTok Scraper API
 - Poll until the run completes
 - Deduplicate and filter results
-- Save a markdown report to `~/youtube/tiktok-research/<hashtags>-report.md`
-- Save raw JSON to `~/youtube/tiktok-research/<hashtags>-raw.json`
+- Save a markdown report to `~/content/youtube/tiktok-research/<hashtags>-report.md`
+- Save raw JSON to `~/content/youtube/tiktok-research/<hashtags>-raw.json`
 
 Wait for it to finish. If it fails, check that `APIFY_API_TOKEN` is set in `~/.claude/.env`.
 
 ### Step 2: Read the Report
 
-Read the generated report file from `~/youtube/tiktok-research/`. Present the **Overview** and **Top Videos** table to the user.
+Read the generated report file from `~/content/youtube/tiktok-research/`. Present the **Overview** and **Top Videos** table to the user.
 
 ### Step 3: Deep Analysis
 
@@ -79,7 +79,7 @@ Ask if they want to dig deeper into any specific video, creator, or theme.
 
 ## Rules
 
-- All output goes to `~/youtube/tiktok-research/`
+- All output goes to `~/content/youtube/tiktok-research/`
 - Always pass `--raw-json` so we have the data for analysis
 - If the scraper costs money, mention the estimated cost from the output
 - Don't hallucinate data — only analyze what the scraper actually returned

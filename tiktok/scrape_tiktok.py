@@ -411,7 +411,7 @@ def main():
     parser.add_argument("--hashtags", nargs="+", required=True, help="Hashtags to search (without #)")
     parser.add_argument("--timeframe", default="3 months", help="How far back to look (e.g. '3 months', '30 days')")
     parser.add_argument("--limit", type=int, default=100, help="Max results per hashtag")
-    parser.add_argument("--output", default=None, help="Output directory (default: ~/youtube/tiktok-research/)")
+    parser.add_argument("--output", default=None, help="Output directory (default: ~/content/youtube/tiktok-research/)")
     parser.add_argument("--raw-json", action="store_true", help="Also save raw JSON data")
 
     args = parser.parse_args()
@@ -431,7 +431,7 @@ def main():
     relevant.sort(key=lambda x: x.get("playCount", 0) or 0, reverse=True)
 
     # Build output
-    output_dir = args.output or os.path.expanduser("~/youtube/tiktok-research")
+    output_dir = args.output or os.path.expanduser("~/content/youtube/tiktok-research")
     os.makedirs(output_dir, exist_ok=True)
 
     # Generate slug from hashtags

@@ -8,7 +8,7 @@ Usage:
 For YouTube URLs: Downloads audio via yt-dlp, then transcribes.
 For local files: Transcribes directly (supports mp4, mp3, wav, m4a, etc.)
 
-Saves the transcript to ~/scripts/transcript_<id>.txt
+Saves the transcript to ~/content/transcripts/transcript_<id>.txt
 
 For large files (>24MB), automatically splits into 30-min chunks via ffmpeg.
 
@@ -239,7 +239,7 @@ def main():
         transcript_text = response.text
 
     # Save
-    scripts_dir = os.path.expanduser("~/scripts")
+    scripts_dir = os.path.expanduser("~/content/scripts")
     os.makedirs(scripts_dir, exist_ok=True)
     out_file = os.path.join(scripts_dir, f"transcript_{file_id}.txt")
     with open(out_file, "w") as f:

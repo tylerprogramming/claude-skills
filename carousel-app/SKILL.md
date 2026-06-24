@@ -117,12 +117,12 @@ This is what the carousel maker app reads. JSON format with the carousel's slide
 
 Slide types: `cover` (slide 1), `content` (slides 2-5, include `stepNumber`), `cta` (slide 6).
 
-### 2. Content folder — `~/content/carousel/<slug>/`
+### 2. Content folder — `~/content/platform/carousels/<slug>/`
 
 This is where the copy, captions, and exported files live:
 
 ```
-~/content/carousel/<slug>/
+~/content/platform/carousels/<slug>/
   content.md      # 6-slide copy (Cover/Pain/Solution/How/Results/CTA)
   captions.md     # Instagram caption (5 hashtags) + LinkedIn caption (no hashtags)
   slide_1.png     # Exported from app (after building)
@@ -140,7 +140,7 @@ When generating carousel content, save the app JSON **and** the content folder i
 - **Instagram**: upload slides 1-6 as a carousel (skip CTA slide 7)
 - **LinkedIn**: upload the PDF
 - **X/Twitter**: post as a 7-post thread (see below)
-- Captions at `~/content/carousel/<slug>/captions.md`
+- Captions at `~/content/platform/carousels/<slug>/captions.md`
 
 ## X/Twitter Thread Scheduling
 
@@ -161,7 +161,7 @@ Blotato presigned URL tokens get corrupted when passed through bash heredocs or 
 
 ```python
 def upload_slide(session_id, carousel_id, slide_num):
-    path = os.path.expanduser(f"~/content/carousel/{carousel_id}/slide_{slide_num}.png")
+    path = os.path.expanduser(f"~/content/platform/carousels/{carousel_id}/slide_{slide_num}.png")
     r = mcp_call(session_id, "tools/call", {
         "name": "blotato_create_presigned_upload_url",
         "arguments": {"filename": f"carousel_{carousel_id}_slide{slide_num}.png"}

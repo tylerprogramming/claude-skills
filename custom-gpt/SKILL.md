@@ -15,7 +15,7 @@ This skill produces everything needed to set up an OpenAI Custom GPT:
 - `kb-*.md` — 2–4 knowledge base files, logically grouped, concise but complete
 - `README.md` — Setup steps, sample test questions, video/topic coverage map
 
-**Output location:** `~/custom-gpts/<project>/<gpt-slug>/`
+**Output location:** `~/content/custom-gpts/<project>/<gpt-slug>/`
 
 ---
 
@@ -73,7 +73,7 @@ Aim for each KB file to be self-contained and focused.
 
 ## Step 4: Generate the Files
 
-Create the output directory: `~/custom-gpts/<project>/<gpt-slug>/`
+Create the output directory: `~/content/custom-gpts/<project>/<gpt-slug>/`
 
 Where:
 - `<project>` = the platform/course name in kebab-case (e.g., `kourse`)
@@ -234,4 +234,4 @@ If they're happy, confirm the output path and remind them:
 - **Out-of-scope = hallucination prevention.** Always include a clear out-of-scope section with redirect language.
 - **Sample test questions should be hard enough to actually test coverage.** Not "what is X" but "walk me through how to do X" or "someone said Y — what do I do?"
 - **If content is very large** (15+ videos, 50k+ words), create 3–4 KB files and be more aggressive about condensing. If content is small (3–5 short videos), one KB file may be enough.
-- Save all files to `~/custom-gpts/<project>/<gpt-slug>/` — never anywhere else.
+- Save all files to `~/content/custom-gpts/<project>/<gpt-slug>/` — never anywhere else.

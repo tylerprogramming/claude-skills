@@ -24,7 +24,7 @@ Everything is driven by **keyword SEO**, not hashtags or social engagement. Thin
 
 ## The Winning Design System (Proven)
 
-Tyler's top-performing pin is `~/content/pinterest/001-5-skills/pin.png` (Day 1). All new pins should match its design system:
+Tyler's top-performing pin is `~/content/platform/pinterest/001-5-skills/pin.png` (Day 1). All new pins should match its design system:
 
 - **Background:** warm cream / off-white (`#FAF7F2`) with a very subtle circuit-pattern texture (barely visible). NOT purple, NOT lavender.
 - **Icons:** square icon per card, Claude terracotta orange gradient (`#D97757 → #C96342`). This is the Anthropic/Claude brand color.
@@ -37,7 +37,7 @@ Tyler's top-performing pin is `~/content/pinterest/001-5-skills/pin.png` (Day 1)
 ### Consistency trick
 When generating a new pin, **pass Day 1 as a reference image** so Nano Banana keeps the design system matched:
 ```
---reference-images ~/content/pinterest/001-5-skills/pin.png
+--reference-images ~/content/platform/pinterest/001-5-skills/pin.png
 ```
 
 ## Title Formulas That Work (Pinterest SEO)
@@ -98,7 +98,7 @@ Tyler's boards:
 
 ### Step 3: Folder + File Layout
 
-Create folder `~/content/pinterest/NNN-slug/` where NNN is zero-padded (001, 002, ... 028). This sorts correctly in Finder and matches the established pattern.
+Create folder `~/content/platform/pinterest/NNN-slug/` where NNN is zero-padded (001, 002, ... 028). This sorts correctly in Finder and matches the established pattern.
 
 Inside each folder:
 - `pin.png` - the generated image (1000x1500, 2:3)
@@ -115,7 +115,7 @@ python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" \
   --resolution 2K \
   --slug pinterest-NNN \
   --count 1 \
-  --reference-images ~/content/pinterest/001-5-skills/pin.png
+  --reference-images ~/content/platform/pinterest/001-5-skills/pin.png
 ```
 
 Prompt template (fill in the bracketed bits):
@@ -134,7 +134,7 @@ After generation, `mv` the image from the thumbnail output dir into the pin fold
 
 ### Step 5: Copy File Template
 
-Save to `~/content/pinterest/NNN-slug/copy.md`:
+Save to `~/content/platform/pinterest/NNN-slug/copy.md`:
 
 ```markdown
 # Pinterest Pin - [Day Number or Topic]
@@ -165,7 +165,7 @@ Save to `~/content/pinterest/NNN-slug/copy.md`:
 1. Call `mcp__blotato__blotato_create_presigned_upload_url` with `filename: "NNN-slug.png"` — returns `presignedUrl` + `publicUrl`
 2. PUT the local pin.png to the presignedUrl via curl:
    ```bash
-   curl -sS -X PUT "<presignedUrl>" --data-binary "@~/content/pinterest/NNN-slug/pin.png" -H "Content-Type: image/png"
+   curl -sS -X PUT "<presignedUrl>" --data-binary "@~/content/platform/pinterest/NNN-slug/pin.png" -H "Content-Type: image/png"
    ```
 3. Call `mcp__blotato__blotato_create_post` with:
    ```
@@ -186,7 +186,7 @@ Save to `~/content/pinterest/NNN-slug/copy.md`:
 
 ### Step 7: Update status.md
 
-Append each new pin to `~/content/pinterest/status.md`:
+Append each new pin to `~/content/platform/pinterest/status.md`:
 
 | Slug | Board | Created | Scheduled | Posted | Blotato Submission ID |
 |------|-------|---------|-----------|--------|----------------------|
@@ -237,10 +237,10 @@ Before writing pin content, check Pinterest search trends:
 
 ## Tyler's Content Sources
 
-- YouTube video packages: `~/youtube/<slug>/`
-- Shorts packages: `~/youtube/shorts/NNN - Title/`
-- LinkedIn text posts: `~/content/linkedin/text-posts/`
-- Carousel slides: `~/content/carousel/<slug>/`
+- YouTube video packages: `~/content/youtube/<slug>/`
+- Shorts packages: `~/content/youtube/shorts/NNN - Title/`
+- LinkedIn text posts: `~/content/platform/linkedin/text-posts/`
+- Carousel slides: `~/content/platform/carousels/<slug>/`
 - Content tracker: `~/content/tracker.md`
 
 ## Rules

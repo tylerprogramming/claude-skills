@@ -164,7 +164,7 @@ For remixing a previously generated thumbnail:
 
 ## Rules
 
-- All output goes to `~/youtube/thumbnails/` organized by date and slug
+- All output goes to `~/content/youtube/thumbnails/` organized by date and slug
 - Always ask which model to use — don't assume
 - Always ask for settings interactively — don't assume
 - Show the crafted prompt to the user before generating

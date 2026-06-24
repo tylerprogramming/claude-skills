@@ -10,7 +10,7 @@ Repurpose the video content at $ARGUMENTS into platform-ready social media conte
 
 ## Data Location
 
-Repurposed content is saved to `~/youtube/<slug>/repurposed/` where the slug is derived from the source video or transcript.
+Repurposed content is saved to `~/content/youtube/<slug>/repurposed/` where the slug is derived from the source video or transcript.
 
 ## Flow
 
@@ -18,12 +18,12 @@ Repurposed content is saved to `~/youtube/<slug>/repurposed/` where the slug is 
 
 Determine the input type from $ARGUMENTS:
 
-- **Transcript path** (`~/scripts/transcript_*.txt`): Read it directly
-- **Script path** (`~/youtube/<slug>/script.md`): Read it directly
+- **Transcript path** (`~/content/transcripts/transcript_*.txt`): Read it directly
+- **Script path** (`~/content/youtube/<slug>/script.md`): Read it directly
 - **YouTube URL**: Call the `/transcribe` skill first to get a transcript, then read the resulting file
 - **No argument**: Ask the user for a transcript path, script path, or YouTube URL
 
-If the source is from a video package (`~/youtube/<slug>/`), also read `titles.md` and `description.md` if they exist — they provide context for better repurposing.
+If the source is from a video package (`~/content/youtube/<slug>/`), also read `titles.md` and `description.md` if they exist — they provide context for better repurposing.
 
 ### Step 2: Identify the Top 5 Most Compelling Moments
 
@@ -57,7 +57,7 @@ Also ask: **"Do you have the YouTube video URL?"** — needed for the community 
 
 ### Step 4: Generate Content Files
 
-Create the `~/youtube/<slug>/repurposed/` directory and generate the requested files:
+Create the `~/content/youtube/<slug>/repurposed/` directory and generate the requested files:
 
 #### `repurposed-shorts.md` — 3-5 Short-Form Video Scripts
 
@@ -154,8 +154,8 @@ Ask: **"Want to revise anything, or post any of these now?"**
 
 ## Rules
 
-- Always save to `~/youtube/<slug>/repurposed/` — derive the slug from the video topic or existing package
-- If a video package already exists at `~/youtube/<slug>/`, use that slug
+- Always save to `~/content/youtube/<slug>/repurposed/` — derive the slug from the video topic or existing package
+- If a video package already exists at `~/content/youtube/<slug>/`, use that slug
 - Shorts scripts must be self-contained — no "as I mentioned in the full video"
 - Every short needs a hook in the first 3 seconds — no exceptions
 - LinkedIn posts should NOT be promotional — teach, don't sell

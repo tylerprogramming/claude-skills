@@ -118,13 +118,13 @@ If not provided, default to `dark` + `statement`.
 
 1. Create a 2-3 word slug.
 
-2. Save JSON to `~/content/flash-video/<slug>-<layout>-<bg>.json`
+2. Save JSON to `~/content/platform/flash-video/<slug>-<layout>-<bg>.json`
 
 3. Run renderer:
 ```bash
 python3 ~/.claude/skills/flash-video/flash_video.py \
-  ~/content/flash-video/<slug>-<layout>-<bg>.json \
-  ~/content/flash-video/
+  ~/content/platform/flash-video/<slug>-<layout>-<bg>.json \
+  ~/content/platform/flash-video/
 ```
 
 Output:
@@ -154,7 +154,7 @@ When scheduling flash videos via Blotato for TikTok or Instagram Reels, always r
 
 ## Step 5: Update status.md
 
-After rendering (and again after scheduling), update `~/content/flash-video/status.md`:
+After rendering (and again after scheduling), update `~/content/platform/flash-video/status.md`:
 
 | Slug | Layout | BG | Created | IG Scheduled | TikTok Scheduled | IG Posted | TikTok Posted |
 |------|--------|----|---------|-------------|-----------------|-----------|---------------|
@@ -166,7 +166,7 @@ Fill in scheduled times when posting via Blotato. Mark Posted when confirmed liv
 
 ## X/Twitter Cover Slide Scheduling
 
-After generating flash videos for the week, schedule the cover slide (slide_1.png from `~/content/carousel/<carouselId>/`) on X as a standalone image post with a Skool reply thread.
+After generating flash videos for the week, schedule the cover slide (slide_1.png from `~/content/platform/carousels/<carouselId>/`) on X as a standalone image post with a Skool reply thread.
 
 ### Timing
 - 9 PM EDT = 01:00 UTC the next calendar day

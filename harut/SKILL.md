@@ -23,7 +23,7 @@ The transcript must be indexed before querying. The skill handles this automatic
 
 2. **If not indexed yet**, index the transcript:
    ```bash
-   python3 ~/.claude/skills/harut/harut_rag.py index ~/scripts/transcript_u2hmXbhTTLE.txt
+   python3 ~/.claude/skills/harut/harut_rag.py index ~/content/transcripts/transcript_u2hmXbhTTLE.txt
    ```
    This takes a few minutes and only needs to run once. It will print progress.
 

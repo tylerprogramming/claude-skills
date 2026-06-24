@@ -12,7 +12,7 @@ Track your TikTok video performance over time using a SQLite database. Combines 
 3. **Screenshot reading** - you screenshot TikTok's per-video analytics and I extract the deep metrics (watch time, retention, traffic sources, followers)
 
 Database: `~/.claude/skills/tiktok-analytics/data/tiktok.db`
-Analysis files: `~/youtube/tiktok-analytics/`
+Analysis files: `~/content/youtube/tiktok-analytics/`
 
 ## Parsing Arguments
 
@@ -98,7 +98,7 @@ With deep metrics columns if available:
 **Recommendations**
 - Based on what's working, suggest what to make next
 
-Save the report to `~/youtube/tiktok-analytics/YYYY-MM-DD-report.md`
+Save the report to `~/content/youtube/tiktok-analytics/YYYY-MM-DD-report.md`
 
 ### Mode: `log <search-term> <metrics>`
 Quick manual entry for a single video's deep metrics. The user will say something like:
@@ -155,5 +155,5 @@ Extract ALL of these fields. Don't skip any.
 - Profile is always `@codewithtyler` unless the user says otherwise
 - When showing reports, include engagement rate: `(likes + comments + shares) / views * 100`
 - Deep metrics are the most valuable - encourage the user to screenshot their top performers
-- Save analysis reports to `~/youtube/tiktok-analytics/` not in the skill directory
+- Save analysis reports to `~/content/youtube/tiktok-analytics/` not in the skill directory
 - When processing screenshots, always confirm what you extracted before saving to DB

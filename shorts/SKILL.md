@@ -1,7 +1,7 @@
 ---
 name: shorts
 description: Generate a weekly short-form content package from yt-search research. Takes top-performing competitor videos, extracts the 5 best angles, and creates ready-to-film short scripts (YT Shorts, TikTok, Reels) plus 2 Instagram carousel outlines. Part of the weekly content pipeline — runs after /yt-search. Triggers on: create shorts, shorts for the week, short form content, weekly shorts, shorts package, make shorts from research, short-form scripts.
-argument-hint: [~/content/research/searches/<report>.md] [--topic <topic>]
+argument-hint: [~/content/research/<report>.md or ~/content/research/<report>.json] [--topic <topic>]
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion
 user-invocable: true
 ---
@@ -24,7 +24,7 @@ Run `/shorts` after `/yt-search` to turn competitor research into 5 original sho
 
 ## Data Location
 
-All output goes to `~/youtube/shorts/YYYY-MM-DD/` (today's date).
+All output goes to `~/content/youtube/shorts/YYYY-MM-DD/` (today's date).
 
 ---
 
@@ -34,16 +34,16 @@ All output goes to `~/youtube/shorts/YYYY-MM-DD/` (today's date).
 
 Parse $ARGUMENTS:
 
-- **Report path** (`~/content/research/searches/<file>.md`): Use it directly
-- **--topic flag**: Glob `~/content/research/searches/` for reports matching the topic
-- **No argument**: Glob `~/content/research/searches/` and use the most recent report(s)
+- **Report path** (`~/content/research/<file>.md` or `.json`): Use it directly
+- **--topic flag**: Glob `~/content/research/` for reports matching the topic
+- **No argument**: Glob `~/content/research/` and use the most recent report(s)
 
-Read all matching research files. The raw JSON for each report lives alongside in `~/content/research/_raw/<same-name>.json` — read it too when you need raw metadata for deeper analysis.
+Read all matching research files. If JSON files exist alongside the markdown reports, read both — the JSON has raw metadata useful for deeper analysis.
 
 If no research reports exist at all, tell the user:
 > "No yt-search reports found. Run `/yt-search <topic>` first to generate research."
 
-Also check `~/scripts/` for any transcripts of top-performing videos from the research (filenames like `transcript_<video_id>.txt`). Read any that exist — they give deeper insight into what those videos actually say.
+Also check `~/content/transcripts/` for any transcripts of top-performing videos from the research (filenames like `transcript_<video_id>.txt`). Read any that exist — they give deeper insight into what those videos actually say.
 
 ---
 
@@ -226,7 +226,7 @@ Note in the output: use `/content` to generate the actual Blotato carousel visua
 
 ### Step 7: Save All Outputs
 
-Create `~/youtube/shorts/YYYY-MM-DD/` and save:
+Create `~/content/youtube/shorts/YYYY-MM-DD/` and save:
 
 | File | Contents |
 |------|----------|
@@ -282,7 +282,7 @@ Ask: **"Want to adjust any scripts, swap an idea, or generate the carousel visua
 - Scripts: **80-150 words max** — if it can't be said in 90 seconds, it's not a short
 - **Vary the 5 formats** — at least 2 talking head, 1 screen recording, 1 mixed
 - Instagram gets **2 carousels, not reels** — static slides are the format for Instagram
-- Save to `~/youtube/shorts/YYYY-MM-DD/` — always date-stamped
+- Save to `~/content/youtube/shorts/YYYY-MM-DD/` — always date-stamped
 - If a shorts folder already exists for today, ask before overwriting
 - Never auto-post — always show content and get confirmation first
 - The carousel outlines are for `/content` to render — don't try to render them here

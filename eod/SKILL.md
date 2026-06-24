@@ -34,35 +34,35 @@ Run these checks IN PARALLEL using the Agent tool or multiple Bash calls:
 - Run `yt-dlp --flat-playlist --print "%(upload_date)s %(title)s" "https://www.youtube.com/@TylerReedAI/videos" 2>/dev/null | head -5` to check for uploads today
 
 ### Nutrition / Fitness
-- Query the fitness database for today's entries:
+- Query the **`lifestyle` Supabase project** (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP for today's entries (replace the date):
+  ```sql
+  select * from activity_log   where date = 'YYYY-MM-DD';  -- flags + macro totals
+  select * from cardio_log     where date = 'YYYY-MM-DD';  -- runs
+  select * from strength_entries where date = 'YYYY-MM-DD'; -- lifts
+  select * from water_log      where date = 'YYYY-MM-DD';
+  select * from caffeine_log   where date = 'YYYY-MM-DD';
+  select * from reading_log    where date = 'YYYY-MM-DD';
+  select * from daily_checkin  where date = 'YYYY-MM-DD';
   ```
-  sqlite3 ~/fitness-app/fitness.db "SELECT * FROM activity_log WHERE date = 'YYYY-MM-DD';"
-  sqlite3 ~/fitness-app/fitness.db "SELECT * FROM nutrition_items WHERE date = 'YYYY-MM-DD';"
-  ```
-- Check water intake and caffeine for the day
-- Check for workout/exercise entries:
-  ```
-  sqlite3 ~/fitness-app/fitness.db "SELECT * FROM strength_entries WHERE date = 'YYYY-MM-DD';"
-  ```
-- Compare against meal plan if one exists for the current week at `~/meal-plans/`
+- Compare against `meal_plan` rows for the day (planned vs `actual_*`)
 - If water or caffeine is not logged, flag it and ask "Did you track water and caffeine today?"
 
 ### Content Created
 - Check `~/content/YYYY-MM-DD/` for any files created today
-- Check `~/youtube/shorts/` for shorts created today
-- Check `~/youtube/*/social/` for social posts created today
+- Check `~/content/youtube/shorts/` for shorts created today
+- Check `~/content/youtube/*/social/` for social posts created today
 - Check for any new carousel slides, PDFs, or other visual content
 
 ### Files Modified Today
 - Run `find ~ -maxdepth 4 -name "*.md" -newer /tmp/eod-marker -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | head -30` (create marker file for start of day if needed)
-- Or use: `find ~/content ~/youtube ~/yt-research ~/scripts -name "*.md" -mtime 0 2>/dev/null`
+- Or use: `find ~/content ~/content/youtube ~/content/research ~/content/scripts -name "*.md" -mtime 0 2>/dev/null`
 
 ### Journal Entry
-- Check if `~/journal/YYYY-MM-DD.txt` exists and read it
+- Check if `~/content/journal/YYYY-MM-DD.txt` exists and read it
 
 ### Weekly Schedule Check
 - Look for the most recent `filming-schedule.md` in `~/content/` subdirectories
-- Look for `~/youtube/shorts/*/filming-plan.md`
+- Look for `~/content/youtube/shorts/*/filming-plan.md`
 - Determine what was supposed to happen today vs what actually happened
 - Also pull TOMORROW's schedule items for the "Tomorrow" section
 
@@ -112,7 +112,7 @@ Format the output as a clean report:
 
 ## Step 4: Save the summary
 
-Save to `~/journal/eod-YYYY-MM-DD.md`
+Save to `~/content/journal/eod-YYYY-MM-DD.md`
 
 If the user says "don't save" or "just show me", skip saving.
 
