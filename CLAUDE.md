@@ -75,6 +75,7 @@ Required keys (see `.env.example`):
 | `/kie-veo-video` | `veo3`/`veo3_fast`/`veo3_lite` (dedicated `/veo/generate` endpoint) | `~/videos/veo/` |
 | `/kie-wan-video` | `wan/2-7-*`, `wan/2-6-image-to-video`, `wan/2-5-text-to-video` | `~/videos/wan/` |
 | `/kie-nano-banana` | `google/nano-banana(-edit)`, `nano-banana-2`, `nano-banana-pro` | `~/images/nano-banana/` |
+| `/kie-gpt-image` | `gpt-image-2-text-to-image`, `gpt-image-2-image-to-image` | `~/images/gpt-image/` |
 
 **Higgsfield** — NOT in this repo. Uses the official first-party skills, installed separately with `npx skills add higgsfield-ai/skills` (lands in `~/.agents/skills/`, symlinked to Claude Code): `/higgsfield-generate`, `/higgsfield-soul-id`, `/higgsfield-product-photoshoot`, `/higgsfield-marketplace-cards`. They auth via the Higgsfield CLI (`higgsfield auth login`), not an API key. (An earlier hand-built `/higgsfield-*` set was removed in favor of these.)
 

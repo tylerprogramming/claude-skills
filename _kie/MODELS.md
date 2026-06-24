@@ -41,6 +41,11 @@ GET  https://api.kie.ai/api/v1/jobs/recordInfo?taskId=...  -> resultJson.resultU
 - `nano-banana-2` — t2i+edit. input: prompt(≤20000), image_input?[≤14], aspect_ratio(+1:4,1:8,4:1,8:1...=auto), resolution(1K|2K|4K), output_format(jpg|png)
 - `nano-banana-pro` — t2i+edit. input: prompt(≤10000), image_input?[≤8], aspect_ratio, resolution(1K|2K|4K), output_format(png|jpg)
 
+### GPT Image 2 (OpenAI)
+- `gpt-image-2-text-to-image` — t2i. input: prompt(≤20000), aspect_ratio(auto|1:1|3:2|2:3|4:3|3:4|5:4|4:5|16:9|9:16|2:1|1:2|3:1|1:3|21:9|9:21=auto), resolution(1K|2K|4K). Output PNG.
+- `gpt-image-2-image-to-image` — edit. input: prompt, input_urls[≤16], aspect_ratio, resolution. Output PNG.
+- Constraints: 5:4 & 4:5 are 1K-only; 1:1 can't go 4K; `auto` aspect ratio limited to 1K.
+
 ## Dedicated endpoint — Veo (Google)
 POST https://api.kie.ai/api/v1/veo/generate  (flat camelCase body)
 GET  https://api.kie.ai/api/v1/veo/record-info?taskId=...

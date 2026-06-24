@@ -46,6 +46,7 @@ One skill per model, all sharing `_kie/kie_client.py` (need `KIE_API_KEY` in `~/
 | **Kie Veo Video** | `/kie-veo-video` | Google Veo 3 / 3.1 video — native audio, up to 4K (Quality/Fast/Lite). Uses Kie's dedicated `/veo` endpoint |
 | **Kie Wan Video** | `/kie-wan-video` | Alibaba Wan text/image-to-video (2.7 / 2.6 / 2.5, first+last frame, audio drive) |
 | **Kie Nano Banana** | `/kie-nano-banana` | Google Nano Banana image gen/edit — all 3 variants (Nano Banana, 2, Pro), up to 4K |
+| **Kie GPT Image** | `/kie-gpt-image` | OpenAI GPT Image 2 — text-to-image + image-to-image (up to 16 refs), 1K/2K/4K. Strong photorealism + text rendering |
 
 ### AI Media Generation — Higgsfield
 
