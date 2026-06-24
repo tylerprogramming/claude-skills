@@ -64,7 +64,7 @@ python3 ~/.claude/skills/yt-replier/reply_yt.py --post
 python3 ~/.claude/skills/yt-replier/auth_yt.py
 ```
 
-A browser opens, Tyler approves the YouTube scope, token saves to `token.json`. (The token was migrated from the `/youtube` skill on creation, so this is usually already done.)
+A browser opens, Tyler approves the YouTube scope, token saves to `token.json`. (The token was migrated from the `/yt-upload` skill on creation, so this is usually already done.)
 
 ### 1. Fetch unreplied comments
 

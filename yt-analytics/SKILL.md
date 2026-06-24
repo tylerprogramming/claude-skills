@@ -32,17 +32,17 @@ Parse $ARGUMENTS for:
 Run the Python script:
 
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --days 28 --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --days 28 --json
 ```
 
 For a single video deep dive:
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
 ```
 
 For shorts only:
 ```bash
-python3 ~/.claude/skills/analytics/yt_analytics.py --shorts --json
+python3 ~/.claude/skills/yt-analytics/yt_analytics.py --shorts --json
 ```
 
 Capture the JSON output (printed to stdout). Stderr has status messages.

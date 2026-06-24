@@ -13,7 +13,7 @@ Subcommands:
 
 OAuth:
   Reuses ~/credentials.json (same Google client as Drive/Gmail skills).
-  Token stored at ~/.claude/skills/youtube/token.json.
+  Token stored at ~/.claude/skills/yt-upload/token.json.
   Required scopes: youtube.upload + youtube.force-ssl.
   First run will open a browser to authorize.
 
@@ -54,7 +54,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
 CREDS_PATH = os.path.expanduser("~/credentials.json")
-TOKEN_PATH = os.path.expanduser("~/.claude/skills/youtube/token.json")
+TOKEN_PATH = os.path.expanduser("~/.claude/skills/yt-upload/token.json")
 DEFAULT_CATEGORY_ID = "28"  # Science & Technology
 TAGS_MAX_CHARS = 500
 
