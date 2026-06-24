@@ -12,17 +12,17 @@ Plan a YouTube video inspired by a reference transcript at $ARGUMENTS.
 
 **Step 3 of the weekly content pipeline** (after `/yt-search` → `/transcribe`).
 
-Run twice per week — once per long-form video topic. Each run produces a full package at `~/youtube/<slug>/`. After this, run `/yt-seo` to optimize titles/descriptions, then `/content` to generate the LinkedIn + YT Community text posts for that video.
+Run twice per week — once per long-form video topic. Each run produces a full package at `~/content/youtube/<slug>/`. After this, run `/yt-seo` to optimize titles/descriptions, then `/content` to generate the LinkedIn + YT Community text posts for that video.
 
 ## Data Location
 
-All video packages are saved to `~/youtube/<video-slug>/` where the slug is derived from the working title.
+All video packages are saved to `~/content/youtube/<video-slug>/` where the slug is derived from the working title.
 
 ## Flow
 
 ### Step 0: Check Video Ideas Tracker
 
-Before doing anything else, read `~/youtube/video-ideas.md` and scan for ideas related to the topic of this video.
+Before doing anything else, read `~/content/youtube/video-ideas.md` and scan for ideas related to the topic of this video.
 
 1. **Duplicate check** — If an Active or Backlog idea closely matches this topic, tell the user:
    > "Found a matching idea in your tracker: **[title]** ([status], [priority]). Want me to use this as the starting point?"
@@ -49,12 +49,12 @@ Read the transcript file provided. Produce a thorough analysis and present it to
 **Download the reference thumbnail:** If the transcript came from a YouTube video (check for a video ID in the filename like `transcript_<video_id>.txt`), download the thumbnail for reference:
 
 ```
-yt-dlp --write-thumbnail --skip-download -o "~/youtube/<slug>/reference-thumbnails/<source-name>" "https://youtu.be/<video_id>"
+yt-dlp --write-thumbnail --skip-download -o "~/content/youtube/<slug>/reference-thumbnails/<source-name>" "https://youtu.be/<video_id>"
 ```
 
-Save it to `~/youtube/<slug>/reference-thumbnails/` and show it to the user during the analysis.
+Save it to `~/content/youtube/<slug>/reference-thumbnails/` and show it to the user during the analysis.
 
-**Analyze the reference thumbnail:** After downloading, read/view the thumbnail image and create `~/youtube/<slug>/thumbnail.md` with a detailed breakdown:
+**Analyze the reference thumbnail:** After downloading, read/view the thumbnail image and create `~/content/youtube/<slug>/thumbnail.md` with a detailed breakdown:
 
 - **Layout** — Where are elements positioned? (left/right thirds, centered, split-screen, etc.)
 - **Color scheme** — Background colors, accent colors, overall palette (dark/light, warm/cool)
@@ -93,7 +93,7 @@ If the user gives short answers, that's fine — don't over-ask. If they give de
 
 ### Step 4: Generate the Video Package
 
-After collecting answers, create the `~/youtube/<video-slug>/` directory and generate these files:
+After collecting answers, create the `~/content/youtube/<video-slug>/` directory and generate these files:
 
 #### `titles.md`
 - 5 title options, each under 70 characters
@@ -152,7 +152,7 @@ After generating all written files, generate thumbnail options using the `/thumb
 
 2. Based on the thumbnail analysis, video title, script, and overall concept, craft 2-3 different thumbnail prompts. Each should be a distinct visual concept but grounded in the reference analysis:
    - One that closely follows the reference thumbnail's proven style/layout
-   - One that takes the reference style but adds the user's face (use `--reference-images ~/youtube/tyler-reference-images/tylerai.png`)
+   - One that takes the reference style but adds the user's face (use `--reference-images ~/content/youtube/tyler-reference-images/tylerai.png`)
    - One that differentiates — a fresh take that still incorporates elements that work from the analysis
 
 2. For each prompt, run the thumbnail generator:
@@ -160,7 +160,7 @@ After generating all written files, generate thumbnail options using the `/thumb
    python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" --count 1 --resolution 2K --slug <video-slug> --aspect-ratio 16:9
    ```
 
-3. Thumbnails are saved to `~/youtube/thumbnails/<date>-<video-slug>/`
+3. Thumbnails are saved to `~/content/youtube/thumbnails/<date>-<video-slug>/`
 
 4. Show the user the generated thumbnails and ask which direction they prefer. Offer to:
    - Generate more variants of a style they like
@@ -188,7 +188,7 @@ If they want changes, update the relevant files or regenerate thumbnails. If the
 
 ## Rules
 
-- Always save to `~/youtube/<slug>/` — never save video files elsewhere
+- Always save to `~/content/youtube/<slug>/` — never save video files elsewhere
 - Slug should be lowercase, hyphenated, derived from the topic (e.g., `claude-code-skills`)
 - Be honest in the analysis — calling out weaknesses is useful, not rude
 - Scripts should sound like a person talking, not an article being read aloud

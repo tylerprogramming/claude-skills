@@ -1,7 +1,7 @@
 ---
 name: yt-seo
 description: Optimize YouTube titles, descriptions, and tags using competitive research. Analyzes top-performing videos on the topic, identifies keyword patterns and CTR hooks, and generates SEO-optimized titles with scorecards. Optionally generates social media titles. Triggers on: seo optimize, optimize title, youtube seo, optimize description, title ideas, seo this video, improve my title.
-argument-hint: [topic or ~/youtube/<slug>/]
+argument-hint: [topic or ~/content/youtube/<slug>/]
 allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, AskUserQuestion
 user-invocable: true
 ---
@@ -14,8 +14,8 @@ Optimize YouTube SEO for the video topic or package at $ARGUMENTS.
 
 ## Data Location
 
-- If a video package exists at `~/youtube/<slug>/`: updates `titles.md` and `description.md` in place (adds SEO section)
-- Standalone: outputs to `~/youtube/<slug>/yt-seo.md`
+- If a video package exists at `~/content/youtube/<slug>/`: updates `titles.md` and `description.md` in place (adds SEO section)
+- Standalone: outputs to `~/content/youtube/<slug>/seo.md`
 
 ## Flow
 
@@ -23,7 +23,7 @@ Optimize YouTube SEO for the video topic or package at $ARGUMENTS.
 
 Determine the input:
 
-- **Video package path** (`~/youtube/<slug>/`): Read `titles.md`, `script.md`, `description.md`, `analysis.md`, and `performance.md` if they exist. The `performance.md` file tracks previously tried titles and thumbnails - never suggest a title that's already been tried.
+- **Video package path** (`~/content/youtube/<slug>/`): Read `titles.md`, `script.md`, `description.md`, `analysis.md`, and `performance.md` if they exist. The `performance.md` file tracks previously tried titles and thumbnails - never suggest a title that's already been tried.
 - **Topic/title string**: Use it directly as the starting point
 - **No argument**: Ask the user for their video topic or title
 
@@ -38,7 +38,7 @@ Check if `--social` flag is present in $ARGUMENTS — if so, also generate socia
 
 This step is NOT optional — always do real research.
 
-**First, check for existing research from `/yt-package`:** If a video package exists at `~/youtube/<slug>/analysis.md`, read it. The `/yt-package` skill already runs 4-6 web searches and saves competitor data, content gaps, and community sentiment. Extract what's already there:
+**First, check for existing research from `/yt-package`:** If a video package exists at `~/content/youtube/<slug>/analysis.md`, read it. The `/yt-package` skill already runs 4-6 web searches and saves competitor data, content gaps, and community sentiment. Extract what's already there:
 - Competitor video titles and view counts
 - Keywords and phrases already identified
 - Content gaps already noted
@@ -156,12 +156,12 @@ Options:
 
 ## Output
 
-If a video package exists at `~/youtube/<slug>/`:
+If a video package exists at `~/content/youtube/<slug>/`:
 - **Update `titles.md`**: Add a `## SEO-Optimized Titles` section with the new titles, scorecard, and research data
 - **Update `description.md`**: Add a `## SEO-Optimized Version` section with the new description and tags
 
 If standalone (no existing package):
-- **Create `~/youtube/<slug>/yt-seo.md`**: Contains all titles, scorecard, description, tags, research data, and social titles
+- **Create `~/content/youtube/<slug>/seo.md`**: Contains all titles, scorecard, description, tags, research data, and social titles
 
 Always include the research data (competitor titles with view counts) in the output so the user can see WHY each title works.
 

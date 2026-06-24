@@ -6,11 +6,11 @@ allowed-tools: Read, Edit, Write
 user-invocable: true
 ---
 
-Save a new video idea to the tracker at `~/youtube/video-ideas.md`.
+Save a new video idea to the tracker at `~/content/youtube/video-ideas.md`.
 
 ## Instructions
 
-1. First, read the current file at `~/youtube/video-ideas.md` to understand the existing format and avoid duplicates.
+1. First, read the current file at `~/content/youtube/video-ideas.md` to understand the existing format and avoid duplicates.
 
 2. **Keep it fast.** The user might just say "save idea: Claude Code memory system deep dive" - that's enough. Don't interrogate them.
    - **Title** (required): If not obvious, ask for one. Otherwise infer from what they said.

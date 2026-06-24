@@ -5,7 +5,9 @@
 
 # Cached tokens and credentials
 analytics/yt_token.json
+yt-analytics/yt_token.json
 youtube/token.json
+yt-upload/token.json
 yt-replier/token.json
 **/token.json
 **/credentials.json
@@ -39,6 +41,9 @@ hyperframes-registry
 # Runtime data — local state, logs, scraped content, browser profiles
 youtube/data/
 youtube/__pycache__/
+yt-upload/data/
+yt-upload/__pycache__/
+yt-analytics/__pycache__/
 tiktok-replier/data/
 tiktok-replier/__pycache__/
 yt-replier/data/

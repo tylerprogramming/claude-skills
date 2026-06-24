@@ -32,17 +32,17 @@ Parse $ARGUMENTS for:
 Run the Python script:
 
 ```bash
-python3 ~/.claude/skills/yt-analytics/yt_analytics.py --days 28 --json
+python3 ~/.claude/skills/analytics/yt_analytics.py --days 28 --json
 ```
 
 For a single video deep dive:
 ```bash
-python3 ~/.claude/skills/yt-analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
+python3 ~/.claude/skills/analytics/yt_analytics.py --video VIDEO_ID --days 90 --json
 ```
 
 For shorts only:
 ```bash
-python3 ~/.claude/skills/yt-analytics/yt_analytics.py --shorts --json
+python3 ~/.claude/skills/analytics/yt_analytics.py --shorts --json
 ```
 
 Capture the JSON output (printed to stdout). Stderr has status messages.
@@ -104,9 +104,9 @@ When analyzing a specific video, show:
 
 ### Step 5: Title/Thumbnail A/B Tracking
 
-Each video package at `~/youtube/<slug>/` should have a `performance.md` file that tracks what's been tried and what to try next. When the user asks to update a title or thumbnail, or when a video is underperforming, create or update this file.
+Each video package at `~/content/youtube/<slug>/` should have a `performance.md` file that tracks what's been tried and what to try next. When the user asks to update a title or thumbnail, or when a video is underperforming, create or update this file.
 
-**Create `~/youtube/<slug>/performance.md`:**
+**Create `~/content/youtube/<slug>/performance.md`:**
 
 ```markdown
 # Performance Tracker: [Video Title]
@@ -165,8 +165,8 @@ Each video package at `~/youtube/<slug>/` should have a `performance.md` file th
 If the user asks to save or the data is particularly insightful, save a snapshot:
 
 ```
-~/youtube/analytics/YYYY-MM-DD-overview.md
-~/youtube/analytics/YYYY-MM-DD-VIDEO_ID.md
+~/content/youtube/analytics/YYYY-MM-DD-overview.md
+~/content/youtube/analytics/YYYY-MM-DD-VIDEO_ID.md
 ```
 
 ## Rules

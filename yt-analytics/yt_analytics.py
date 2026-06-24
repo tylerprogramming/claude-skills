@@ -30,7 +30,7 @@ except ImportError:
 
 # Scopes needed: YouTube readonly + YouTube Analytics readonly
 SCOPES = [
-    "https://www.googleapis.com/auth/yt-upload.readonly",
+    "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/yt-analytics.readonly",
 ]
 
@@ -144,47 +144,39 @@ def _is_short(iso_duration):
 
 
 def get_analytics(yt_analytics, channel_id, start_date, end_date, video_id=None):
-    """Fetch YouTube Analytics data (CTR, impressions, retention, etc.)."""
-    metrics = "views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained,subscribersLost,likes,comments,shares,annotationImpressions,annotationClickThroughRate"
+    """Fetch YouTube Analytics data (views, retention, impressions, thumbnail CTR, etc.)."""
+    filters = f"video=={video_id}" if video_id else None
+    result = {}
 
-    # Channel-level analytics
-    params = {
-        "ids": "channel==MINE",
-        "startDate": start_date,
-        "endDate": end_date,
-        "metrics": metrics,
-    }
-
-    if video_id:
-        params["filters"] = f"video=={video_id}"
-
-    try:
+    def _run(metrics):
+        params = {
+            "ids": "channel==MINE",
+            "startDate": start_date,
+            "endDate": end_date,
+            "metrics": metrics,
+        }
+        if filters:
+            params["filters"] = filters
         resp = yt_analytics.reports().query(**params).execute()
         if resp.get("rows") and len(resp["rows"]) > 0:
-            row = resp["rows"][0]
             headers = [h["name"] for h in resp["columnHeaders"]]
-            return dict(zip(headers, row))
-    except Exception as e:
-        # Some metrics may not be available, try simpler set
-        pass
+            return dict(zip(headers, resp["rows"][0]))
+        return {}
 
-    # Fallback to core metrics
+    # Core metrics: views, watch time, retention, subs, engagement
     try:
-        resp = yt_analytics.reports().query(
-            ids="channel==MINE",
-            startDate=start_date,
-            endDate=end_date,
-            metrics="views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained,likes,comments,shares",
-            filters=f"video=={video_id}" if video_id else None,
-        ).execute()
-        if resp.get("rows") and len(resp["rows"]) > 0:
-            row = resp["rows"][0]
-            headers = [h["name"] for h in resp["columnHeaders"]]
-            return dict(zip(headers, row))
+        result.update(_run(
+            "views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,"
+            "subscribersGained,subscribersLost,likes,comments,shares"
+        ))
     except Exception as e:
-        print(f"Analytics query error: {e}", file=sys.stderr)
+        print(f"Core analytics error: {e}", file=sys.stderr)
 
-    return {}
+    # NOTE: thumbnail `impressions` and `impressionClickThroughRate` are NOT exposed by the
+    # YouTube Analytics API (confirmed: "Unknown identifier"). They are Studio-only metrics.
+    # CTR/impressions are captured from a Studio screenshot, not this script.
+
+    return result
 
 
 def get_traffic_sources(yt_analytics, start_date, end_date, video_id=None):

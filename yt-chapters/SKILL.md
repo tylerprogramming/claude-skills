@@ -18,11 +18,11 @@ Generate accurate YouTube chapters from the final edited video at $ARGUMENTS.
 
 From $ARGUMENTS, extract:
 - **Video path**: The local `.mp4` file (required)
-- **Slug** (optional): `--slug <video-slug>` to identify the video package at `~/yt-upload/<slug>/`
+- **Slug** (optional): `--slug <video-slug>` to identify the video package at `~/content/youtube/<slug>/`
 
 If no slug is provided:
-- Check if the video filename or parent folder matches an existing `~/yt-upload/<slug>/` package
-- If not, ask the user: **"Which video package does this belong to?"** and list existing packages from `~/yt-upload/`
+- Check if the video filename or parent folder matches an existing `~/content/youtube/<slug>/` package
+- If not, ask the user: **"Which video package does this belong to?"** and list existing packages from `~/content/youtube/`
 
 If the video path doesn't exist, ask the user for the correct path.
 
@@ -31,7 +31,7 @@ If the video path doesn't exist, ask the user for the correct path.
 Extract the audio track from the video using ffmpeg:
 
 ```
-ffmpeg -i "<video_path>" -vn -acodec libmp3lame -q:a 2 ~/scripts/yt-chapters_audio_<slug>.mp3 -y
+ffmpeg -i "<video_path>" -vn -acodec libmp3lame -q:a 2 ~/content/transcripts/chapters_audio_<slug>.mp3 -y
 ```
 
 This is faster and smaller than processing the full video file.
@@ -41,7 +41,7 @@ This is faster and smaller than processing the full video file.
 Transcribe the extracted audio using the transcribe skill's script:
 
 ```
-python3 ~/.claude/skills/transcribe/transcribe_video.py ~/scripts/yt-chapters_audio_<slug>.mp3
+python3 ~/.claude/skills/transcribe/transcribe_video.py ~/content/transcripts/chapters_audio_<slug>.mp3
 ```
 
 Read the resulting transcript file. It should contain timestamped segments.
@@ -68,7 +68,7 @@ The first chapter MUST be `0:00 - Introduction` (or a more specific hook title).
 
 ### Step 5: Read Existing Description
 
-Read `~/yt-upload/<slug>/description.md` if it exists. Identify:
+Read `~/content/youtube/<slug>/description.md` if it exists. Identify:
 - Is there an existing chapters section with `[UPDATE]` placeholders?
 - What's the overall structure of the description?
 
@@ -96,7 +96,7 @@ After the user approves (or after revisions):
 - Add a chapters section in the appropriate location (after the main body, before links/tags)
 
 **If no `description.md` exists:**
-- Create `~/yt-upload/<slug>/description.md` with just the chapters section and a note to fill in the rest
+- Create `~/content/youtube/<slug>/description.md` with just the chapters section and a note to fill in the rest
 
 Show the user the updated description and confirm the file was saved.
 
@@ -104,7 +104,7 @@ Show the user the updated description and confirm the file was saved.
 
 Delete the temporary audio file:
 ```
-rm ~/scripts/yt-chapters_audio_<slug>.mp3
+rm ~/content/transcripts/chapters_audio_<slug>.mp3
 ```
 
 Report what was done:
