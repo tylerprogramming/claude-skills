@@ -6,6 +6,8 @@
 # Cached tokens and credentials
 analytics/yt_token.json
 youtube/token.json
+yt-replier/token.json
+**/token.json
 **/credentials.json
 **/client_secret*.json
 __pycache__/
@@ -39,4 +41,7 @@ youtube/data/
 youtube/__pycache__/
 tiktok-replier/data/
 tiktok-replier/__pycache__/
+yt-replier/data/
+yt-replier/__pycache__/
+tiktok-analytics/data/
 harut/chroma_db/

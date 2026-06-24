@@ -11,6 +11,8 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | Skill | Command | Description |
 |-------|---------|-------------|
 | **Journal** | `/journal` | Daily standup logger with weekly summaries |
+| **Standup** | `/standup` | Daily standup logger — asks what you worked on, what's next, and blockers, then writes a clean dated standup |
+| **Peeps** | `/peeps` | Personal people tracker — save details about people (birthday, how you know them, family, notes) and generate a searchable HTML page |
 | **OPM** | `/opm` | One Punch Man workout logger — logs the 100/100/100 circuit, runs, and water to the Supabase `fitness-tracker` project, with Saitama-style coaching |
 | **Nutrition** | `/nutrition` | Food logging, eating review vs targets, meal suggestions, and recipe cards on the Supabase `fitness-tracker` project |
 | **OPM Graph** | `/opm-graph` | Live training dashboard (self-contained HTML) reading charts directly from the Supabase `fitness-tracker` project |
@@ -33,6 +35,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **Analytics** | `/yt-analytics` | YouTube channel analytics - views, retention, traffic sources, per-video breakdown, title/thumbnail A/B tracking |
 | **YouTube** | `/yt-upload` | Upload videos to YouTube and manage existing videos via the YouTube Data API v3 (titles, descriptions, tags, thumbnails, scheduling, comments) |
 | **TikTok Replier** | `/tiktok-replier` | Two-stage TikTok comment management: Apify reads comments, Playwright posts replies using a persistent logged-in browser profile |
+| **YouTube Replier** | `/yt-replier` | Manage YouTube comments via the official Data API v3 — monitors uploads for unreplied comments, auto-drafts Skool-link CTA replies, posts approved replies. Self-contained OAuth + data dir |
 
 ### AI Media Generation — Kie.ai
 
