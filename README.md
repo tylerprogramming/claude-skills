@@ -10,11 +10,10 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 
 | Skill | Command | Description |
 |-------|---------|-------------|
-| **Journal** | `/journal` | Daily standup logger with weekly summaries |
-| **Standup** | `/standup` | Daily standup logger — asks what you worked on, what's next, and blockers, then writes a clean dated standup |
+| **Journal** | `/journal` | Daily logger with three modes — a personal journal entry, a technical standup, and a full automated end-of-day (eod) report (pulls from Supabase, Skool, Blotato, YouTube) — plus weekly summaries. (Consolidates the former `/standup` and `/eod` skills.) |
 | **Peeps** | `/peeps` | Personal people tracker — save details about people (birthday, how you know them, family, notes) and generate a searchable HTML page |
-| **Lifestyle** | `/lifestyle` | Whole-life OS logger — runs, lifts, meals, water, caffeine, weight, reading, business, YouTube, and the daily check-in — to the `lifestyle` Supabase project via the Supabase MCP. Supports run screenshots and nutrition-label photos. (Consolidates the former `/opm`, `/nutrition`, `/opm-graph`, `/opm-review`, and `/fitness` skills.) |
-| **Meal Plan** | `/meal-plan` | (Legacy — superseded by `/lifestyle`.) Generate a weekly meal plan with shopping list from your recipe folder |
+| **Lifestyle** | `/lifestyle` | Whole-life OS logger — runs, lifts, meals, water, caffeine, weight, reading, business, YouTube, and the daily check-in — to the `lifestyle` Supabase project via the Supabase MCP. Supports run screenshots and nutrition-label photos. (Consolidates the former `/opm`, `/nutrition`, `/opm-graph`, `/opm-review`, `/fitness`, and `/meal-plan` skills.) |
+| **Lifestyle Show** | `/lifestyle-show` | Builds a self-contained `dashboard.html` for the Lifestyle OS — GitHub-style movement grid, consistency ring, four pillar cards with trend sparklines, and a today strip with smart nudges. Pure renderer: pulls a fresh snapshot via the Supabase MCP, bakes it into HTML, no secrets in the file. |
 | **PRD** | `/prd` | Generate a Product Requirements Document for a new feature |
 | **Quiz** | `/quiz` | Interactive quiz/coaching from any document — mock interviews, rapid fire, deep practice, study review |
 | **Ralph** | `/ralph` | Convert PRDs to prd.json format for the Ralph autonomous agent system |

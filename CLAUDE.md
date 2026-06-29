@@ -32,7 +32,8 @@ Skills write to these home directory locations (create them if they don't exist)
 
 | Skill | Output Location |
 |-------|----------------|
-| lifestyle | Supabase project `lifestyle` (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP — no local files |
+| lifestyle | Supabase project `lifestyle` (project id in your own config) via the Supabase MCP — no local files |
+| lifestyle-show | `~/lifestyle/dashboard.html` (self-contained, rebuilt from a Supabase snapshot) |
 | journal | `~/content/journal/YYYY-MM-DD.txt` |
 | transcribe | `~/content/transcripts/transcript_<id>.txt` |
 | yt-package | `~/content/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
@@ -88,7 +89,7 @@ Required keys (see `.env.example`):
 
 ## Lifestyle Skill Architecture
 
-The `lifestyle` skill (consolidating the former `fitness`, `opm`, `nutrition`, `opm-graph`, and `opm-review` skills) logs Tyler's whole-life OS to the **`lifestyle` Supabase project** (id `mvxwtltzxkvhmvwkuzvh`) via the Supabase MCP. There is no local app or file fallback — the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase.
+The `lifestyle` skill (consolidating the former `fitness`, `opm`, `nutrition`, `opm-graph`, and `opm-review` skills) logs Tyler's whole-life OS to the **`lifestyle` Supabase project** (project id kept in private config, not this repo) via the Supabase MCP. There is no local app or file fallback — the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase. The companion `lifestyle-show` skill renders that data into a self-contained `dashboard.html` (pure view layer, no DB access).
 
 - **Storage**: Supabase Postgres (fitness/diet + life-OS keystone + business/YouTube + planning tables).
 - **Gotchas**: id sequences are out of sync → insert with explicit `(select coalesce(max(id),0)+1 from <table>)`; no `date` unique constraint → check-then-insert; `activity_log` macros are cumulative daily totals.

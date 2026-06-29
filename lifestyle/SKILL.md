@@ -10,7 +10,7 @@ Log Tyler's whole life to the **lifestyle Supabase project**. This is the day-to
 
 ## Backend (this is the source of truth)
 
-**Supabase project `lifestyle`**, project id `mvxwtltzxkvhmvwkuzvh`, via the Supabase MCP (service role bypasses RLS). Read/write here directly - there is NO local app or file fallback anymore (the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase).
+**Supabase project `lifestyle`** (the project id lives in your own config, not in this repo), via the Supabase MCP (service role bypasses RLS). Read/write here directly - there is NO local app or file fallback anymore (the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase).
 
 The full human-readable reference lives in `~/lifestyle/`: `README.md` (mission/pillars/rhythm), `TABLES.md` (all 19 tables + columns), `DAILY-LOGGING.md` (what to say → which table). Read those if unsure where something goes.
 
@@ -65,5 +65,7 @@ Coffee 8oz ≈ 95mg · Cold brew 12oz ≈ 155mg · Espresso ≈ 63mg · Pre-work
 ## Training plan
 The weekly split lives in the `workout_plan` table (day_of_week 0=Sun..6=Sat). Read it for "what am I doing today/tomorrow." Month-specific plan notes may also live at `~/lifestyle/` if present.
 
-## Showing the grid / data
-There is no bundled local viewer wired to Supabase yet. To show status, query Supabase directly (e.g. per-pillar last-logged date, today's totals, current streak). The deprecated React app source remains in `app/` and `templates/` for reference only - it reads the retired local SQLite, not Supabase, so do not start it for logging.
+## Showing the dashboard
+To visualize this data (movement grid, consistency ring, pillar cards, nudges), use the companion **`/lifestyle-show`** skill. It rebuilds a self-contained `dashboard.html` from a fresh Supabase snapshot. Trigger it on "show my dashboard", "show the grid", "how am I doing", etc.
+
+The deprecated React app source remains in `app/` and `templates/` for reference only - it reads the retired local SQLite, not Supabase, so do not start it.
