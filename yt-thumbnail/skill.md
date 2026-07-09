@@ -1,5 +1,5 @@
 ---
-name: thumbnail
+name: yt-thumbnail
 description: Generate YouTube thumbnails using Kie.ai image APIs (Nano Banana 2, Nano Banana Pro, or Seedream 4.5). Supports text-to-image and remix (image + text). Creates multiple variants with configurable settings. Triggers on: create thumbnail, generate thumbnail, thumbnail for, make a thumbnail, youtube thumbnail, remix thumbnail.
 argument-hint: [video title or concept]
 allowed-tools: Bash(python3:*), Read, Write, Glob, Grep
@@ -113,7 +113,7 @@ Show the user the prompt you've crafted and ask if they want to adjust it before
 Run the script with the collected settings:
 
 ```
-python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" \
+python3 ~/.claude/skills/yt-thumbnail/generate_thumbnail.py "<prompt>" \
   --model <nano-banana-2|nano-banana-pro|seedream> \
   --count <count> \
   --aspect-ratio <ratio> \

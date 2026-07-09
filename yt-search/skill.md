@@ -12,7 +12,7 @@ Search YouTube for videos matching the given keywords and turn the results into 
 
 **Step 1 of the weekly content pipeline.** Run this first — its output feeds everything else:
 - `/transcribe` uses the top long-form URLs to get reference transcripts for `/yt-package`
-- `/shorts` reads the research reports from `~/content/research/` to generate short-form scripts (it cares about the Shorts section)
+- `/yt-shorts` reads the research reports from `~/content/research/` to generate short-form scripts (it cares about the Shorts section)
 - `/yt-package` uses the transcripts + research context to plan the long-form video (it cares about the long-form section)
 
 Run once per topic per week. Two topics = two `/yt-search` runs.

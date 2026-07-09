@@ -20,12 +20,12 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **Resize** | `/resize` | Batch resize images to social media presets |
 | **Remove BG** | `/rmbg` | Remove backgrounds from images to transparent PNGs |
 | **Save Idea** | `/yt-save-idea` | Save a YouTube video idea to your ideas tracker |
-| **Thumbnail** | `/thumbnail` | Generate YouTube thumbnails via Kie.ai (Nano Banana 2, Nano Banana Pro, Seedream 4.5) |
+| **Thumbnail** | `/yt-thumbnail` | Generate YouTube thumbnails via Kie.ai (Nano Banana 2, Nano Banana Pro, Seedream 4.5) |
 | **TikTok** | `/tiktok` | Research TikTok trends by hashtag via Apify — scrape, analyze, and suggest content ideas |
 | **Transcribe** | `/transcribe` | Transcribe YouTube videos or local audio/video files using OpenAI Whisper |
 | **YT** | `/yt-package` | Full YouTube video package — analysis, research, titles, hooks, script, description, filming guide |
 | **YT Search** | `/yt-search` | Search YouTube by keywords via yt-dlp, sort by views, generate report |
-| **Shorts** | `/shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
+| **Shorts** | `/yt-shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
 | **Custom GPT** | `/custom-gpt` | Build a complete Custom GPT package (system-prompt, KB files, README) from course transcripts or raw text |
 | **Analytics** | `/yt-analytics` | YouTube channel analytics - views, retention, traffic sources, per-video breakdown, title/thumbnail A/B tracking |
 | **YouTube** | `/yt-upload` | Upload videos to YouTube and manage existing videos via the YouTube Data API v3 (titles, descriptions, tags, thumbnails, scheduling, comments) |
@@ -62,6 +62,32 @@ They land in `~/.agents/skills/` (symlinked to Claude Code) and authenticate via
 | **Higgsfield Soul ID** | `/higgsfield-soul-id` | Train a Soul Character (face/identity model) from a few photos; reuse via `--soul-id` for consistent faces |
 | **Higgsfield Product Photoshoot** | `/higgsfield-product-photoshoot` | Brand-quality product imagery (studio, lifestyle, hero/banner, ad creative, virtual try-on…) |
 | **Higgsfield Marketplace Cards** | `/higgsfield-marketplace-cards` | Marketplace listing images — main + secondary product shots and A+ content modules |
+
+## Video Workflows
+
+These are the end-to-end systems I actually run on my channel, each built from the skills above. Every one has a free companion Google Doc you can open and copy from - the skills it uses, the flow in order, and any one-time setup. Follow along with the video, grab the doc.
+
+### 1. The YouTube Workflow
+
+Take one YouTube video from idea to scheduled, all inside Claude Code. Research what's working, generate the full package, optimize it, make the thumbnail, cut the Shorts, and schedule the upload.
+
+- **Skills:** `/yt-search` · `/yt-deep-research` · `/transcribe` · `/yt-package` · `/yt-seo` · `/yt-thumbnail` · `/yt-shorts` · `/yt-chapters` · `/yt-upload`
+- **Doc:** https://docs.google.com/document/d/1JgGYBcrfcDhXowmYt6CRRkZATggf695ZL9umDb1ffFE/edit
+
+### 2. Your First AI Agent
+
+Build a real AI agent the easy way - no framework, no code, about ten minutes. The doc includes the full `SKILL.md` for a Research Agent (give it a topic, it searches the web, reads sources, writes a one-page brief). Copy it, change the topic, run it.
+
+- **Skills / tools:** Claude Code · web search · a single `SKILL.md` (this *is* the agent)
+- **Doc:** https://docs.google.com/document/d/1GWUvTLREviFxcneyqkFSSNGXnx9teyvHCZY6Ob1FC0c/edit
+
+### 3. The Publishing Stack
+
+Take one finished video and push it to every platform without opening a single app. Upload and schedule to YouTube, cut the short-form scripts, write the platform posts, generate the pins and carousel, and queue the newsletter - all reviewed before anything goes out.
+
+- **Skills:** `/yt-upload` · `/repurpose` · `/social-copy` · `/pinterest-writer` · `/instagram-writer` · `/email` · `/skool` (+ Blotato for scheduling)
+- **Setup:** `/yt-upload` needs a one-time `token.json` (10-min Google setup, walked through in the doc)
+- **Doc:** https://docs.google.com/document/d/1u9v2Ekpxwq00i2jci5WIoyNpLpG0Ap8aJcIJlEYwYk8/edit
 
 ## Installation
 

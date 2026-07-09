@@ -12,7 +12,7 @@ Plan a YouTube video inspired by a reference transcript at $ARGUMENTS.
 
 **Step 3 of the weekly content pipeline** (after `/yt-search` → `/transcribe`).
 
-Run twice per week — once per long-form video topic. Each run produces a full package at `~/content/youtube/<slug>/`. After this, run `/yt-seo` to optimize titles/descriptions, then `/content` to generate the LinkedIn + YT Community text posts for that video.
+Run twice per week — once per long-form video topic. Each run produces a full package at `~/content/youtube/<slug>/`. After this, run `/yt-seo` to optimize titles/descriptions, then `/social-copy` to generate the LinkedIn + YT Community text posts for that video.
 
 ## Data Location
 
@@ -54,7 +54,7 @@ yt-dlp --write-thumbnail --skip-download -o "~/content/youtube/<slug>/reference-
 
 Save it to `~/content/youtube/<slug>/reference-thumbnails/` and show it to the user during the analysis.
 
-**Analyze the reference thumbnail:** After downloading, read/view the thumbnail image and create `~/content/youtube/<slug>/thumbnail.md` with a detailed breakdown:
+**Analyze the reference thumbnail:** After downloading, read/view the thumbnail image and create `~/content/youtube/<slug>/yt-thumbnail.md` with a detailed breakdown:
 
 - **Layout** — Where are elements positioned? (left/right thirds, centered, split-screen, etc.)
 - **Color scheme** — Background colors, accent colors, overall palette (dark/light, warm/cool)
@@ -107,11 +107,13 @@ After collecting answers, create the `~/content/youtube/<video-slug>/` directory
 - Note which technique each hook uses
 
 #### `description.md`
-- YouTube description with:
-  - 2-3 sentence summary (front-loaded for search)
-  - "In this video:" bullet list of what's covered
+- YouTube description, kept SHORT and tight:
+  - 1-2 tight paragraphs on what the video is (front-loaded for search). No multi-paragraph intros.
   - Chapters section with `00:00 - Title` format (use placeholder timestamps, mark with [UPDATE])
-  - Relevant tags/keywords at the bottom
+  - CTA / links
+  - Do NOT add a "What's covered" bullet list when the chapters already cover it
+  - Do NOT put a tags line or a hashtag line at the bottom of the description
+- `tags.txt` — relevant tags/keywords (comma-separated) for the YouTube tags field via `/yt-upload`. Tags never go in the description text.
 
 #### `script.md`
 - Full video script organized by sections
@@ -146,7 +148,7 @@ After collecting answers, create the `~/content/youtube/<video-slug>/` directory
 
 ### Step 5: Generate Thumbnails
 
-After generating all written files, generate thumbnail options using the `/thumbnail` skill's script.
+After generating all written files, generate thumbnail options using the `/yt-thumbnail` skill's script.
 
 1. **Read `thumbnail.md` first.** Use the reference thumbnail analysis and recommended approaches from Step 1 to craft your prompts. The prompts should be informed by what's proven to work in the reference, not generic guesses. If `thumbnail.md` recommends specific layouts, colors, or compositions — use those.
 
@@ -157,7 +159,7 @@ After generating all written files, generate thumbnail options using the `/thumb
 
 2. For each prompt, run the thumbnail generator:
    ```
-   python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" --count 1 --resolution 2K --slug <video-slug> --aspect-ratio 16:9
+   python3 ~/.claude/skills/yt-thumbnail/generate_thumbnail.py "<prompt>" --count 1 --resolution 2K --slug <video-slug> --aspect-ratio 16:9
    ```
 
 3. Thumbnails are saved to `~/content/youtube/thumbnails/<date>-<video-slug>/`

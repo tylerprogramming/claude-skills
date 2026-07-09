@@ -6,7 +6,7 @@ allowed-tools: Bash(python3:*), Read, Write, Glob, Grep
 user-invocable: true
 ---
 
-Generate and edit images with **Google Nano Banana** through the Kie.ai jobs API. General-purpose image skill across all three Nano Banana variants. (For tuned YouTube thumbnails, `/thumbnail` is still the dedicated tool.)
+Generate and edit images with **Google Nano Banana** through the Kie.ai jobs API. General-purpose image skill across all three Nano Banana variants. (For tuned YouTube thumbnails, `/yt-thumbnail` is still the dedicated tool.)
 
 > **Setup:** needs `KIE_API_KEY` in `~/.claude/.env`.
 

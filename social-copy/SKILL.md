@@ -1,5 +1,5 @@
 ---
-name: content
+name: social-copy
 description: Create platform-ready social media text posts and static visuals from a YouTube video package or any topic. Generates X/Twitter, LinkedIn (text + carousel + image), Instagram, YouTube Community, and Skool posts. Triggers on: create a post, social media post, make a linkedin post, write a tweet, content for, post ideas from this video, create content from, make a post about.
 argument-hint: [~/content/youtube/<slug>/ or topic or url]
 allowed-tools: Read, Write, Glob, Grep, Bash(python3:*), WebSearch, AskUserQuestion, Skill(post), mcp__blotato__blotato_list_visual_templates, mcp__blotato__blotato_create_visual, mcp__blotato__blotato_get_visual_status, mcp__blotato__blotato_list_accounts, mcp__blotato__blotato_create_post, mcp__blotato__blotato_get_post_status
@@ -10,7 +10,7 @@ Create platform-ready social media posts and visuals from $ARGUMENTS.
 
 ## Workflow Context
 
-**Text content step of the weekly content pipeline** - runs after `/yt-seo` for each long-form video, and after `/shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
+**Text content step of the weekly content pipeline** - runs after `/yt-seo` for each long-form video, and after `/yt-shorts` to render the 2 Instagram carousel outlines into actual Blotato visuals.
 
 Run twice per week (once per video) for:
 - 2 LinkedIn posts (one per video)
@@ -18,7 +18,7 @@ Run twice per week (once per video) for:
 - 2 Skool video posts (one per video)
 - 5 standalone LinkedIn posts (same video topics)
 - 5 standalone YT Community posts/polls (same video topics)
-- 2 Instagram carousels (from `/shorts` outlines)
+- 2 Instagram carousels (from `/yt-shorts` outlines)
 
 ## Overview
 

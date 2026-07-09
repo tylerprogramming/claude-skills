@@ -39,10 +39,10 @@ Skills write to these home directory locations (create them if they don't exist)
 | yt-package | `~/content/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
 | yt-analytics | `~/content/youtube/analytics/` (channel snapshots); `~/content/youtube/<slug>/performance.md` (per-video A/B tracking) |
 | yt-save-idea | `~/content/youtube/video-ideas.md` |
-| thumbnail | `~/content/youtube/thumbnails/` |
+| yt-thumbnail | `~/content/youtube/thumbnails/` |
 | tiktok | `~/content/youtube/tiktok-research/<hashtag>-report.md` |
 | yt-search | `~/content/research/searches/<date>-<keywords>.md` (report); `~/content/research/_raw/` (json + thumbnails) |
-| shorts | `~/content/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
+| yt-shorts | `~/content/youtube/shorts/YYYY-MM-DD/` (shorts.md, captions.md, instagram-carousels.md, filming-plan.md) |
 | resize | `~/images/resized/` |
 | rmbg | `~/images/nobg/` |
 | email | Sends via Resend API, tracks in `~/.claude/skills/skool/data/skool.db` |
@@ -102,22 +102,22 @@ Skills that work together as a pipeline (run in this order):
 ```
 /yt-search → /transcribe → /yt-package → /yt-seo          (long-form track)
                  ↓
-             /shorts                             (short-form track — feeds from same research)
+             /yt-shorts                             (short-form track — feeds from same research)
                  ↓
-             /content → /yt-chapters                  (publish track — /content handles Blotato directly)
+             /social-copy → /yt-chapters                  (publish track — /social-copy handles Blotato directly)
 ```
 
-- `/yt-search` feeds both `/yt-package` (via transcripts) and `/shorts` (via research reports)
-- `/shorts` generates 5 short scripts + 2 Instagram carousel outlines per week
-- `/content` handles text posts (LinkedIn, YT Community) — separate from `/shorts`
+- `/yt-search` feeds both `/yt-package` (via transcripts) and `/yt-shorts` (via research reports)
+- `/yt-shorts` generates 5 short scripts + 2 Instagram carousel outlines per week
+- `/social-copy` handles text posts (LinkedIn, YT Community) — separate from `/yt-shorts`
 - `/yt-chapters` runs post-edit on the final .mp4, not before filming
-- `/content` handles publishing via Blotato directly (no separate post skill needed)
+- `/social-copy` handles publishing via Blotato directly (no separate post skill needed)
 
 ## Skills That Compose
 
-- `/yt-package` calls `/thumbnail` at the end of its flow
-- `/shorts` reads `/yt-search` output from `~/content/research/searches/`
-- `/content` can render Instagram carousels outlined by `/shorts`
+- `/yt-package` calls `/yt-thumbnail` at the end of its flow
+- `/yt-shorts` reads `/yt-search` output from `~/content/research/searches/`
+- `/social-copy` can render Instagram carousels outlined by `/yt-shorts`
 - `/yt-chapters` reuses `/transcribe`'s script for audio transcription
 - `/ralph` expects an existing PRD (from `/prd`) as input
 

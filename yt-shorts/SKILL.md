@@ -1,5 +1,5 @@
 ---
-name: shorts
+name: yt-shorts
 description: Generate a weekly short-form content package from yt-search research. Takes top-performing competitor videos, extracts the 5 best angles, and creates ready-to-film short scripts (YT Shorts, TikTok, Reels) plus 2 Instagram carousel outlines. Part of the weekly content pipeline — runs after /yt-search. Triggers on: create shorts, shorts for the week, short form content, weekly shorts, shorts package, make shorts from research, short-form scripts.
 argument-hint: [~/content/research/<report>.md or ~/content/research/<report>.json] [--topic <topic>]
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion
@@ -15,12 +15,12 @@ This skill is part of the **weekly content pipeline**:
 ```
 /yt-search → /transcribe → /yt-package → /yt-seo  ← long-form track
                 ↓
-            /shorts  ← short-form track (this skill)
+            /yt-shorts  ← short-form track (this skill)
                 ↓
-            /content → /post
+            /social-copy → /post
 ```
 
-Run `/shorts` after `/yt-search` to turn competitor research into 5 original short-form scripts + 2 Instagram carousel outlines for the week.
+Run `/yt-shorts` after `/yt-search` to turn competitor research into 5 original short-form scripts + 2 Instagram carousel outlines for the week.
 
 ## Data Location
 
@@ -220,7 +220,7 @@ Swipe to see all [X] tips →
 #claudecode #claudeai #ai #claudecodetips #aiautomation
 ```
 
-Note in the output: use `/content` to generate the actual Blotato carousel visuals from these outlines.
+Note in the output: use `/social-copy` to generate the actual Blotato carousel visuals from these outlines.
 
 ---
 
@@ -232,7 +232,7 @@ Create `~/content/youtube/shorts/YYYY-MM-DD/` and save:
 |------|----------|
 | `shorts.md` | All 5 short-form scripts with hooks, on-screen text, filming checklists |
 | `captions.md` | Platform captions for each short (YT Shorts, TikTok, Instagram Reels) |
-| `instagram-carousels.md` | 2 carousel outlines for `/content` to render |
+| `instagram-carousels.md` | 2 carousel outlines for `/social-copy` to render |
 | `filming-plan.md` | Quick-reference filming order for the day |
 
 #### `filming-plan.md` contents:
@@ -270,7 +270,7 @@ Show the user:
 3. File paths for everything saved
 4. The estimated total filming time from `filming-plan.md`
 
-Ask: **"Want to adjust any scripts, swap an idea, or generate the carousel visuals now with `/content`?"**
+Ask: **"Want to adjust any scripts, swap an idea, or generate the carousel visuals now with `/social-copy`?"**
 
 ---
 
@@ -285,4 +285,4 @@ Ask: **"Want to adjust any scripts, swap an idea, or generate the carousel visua
 - Save to `~/content/youtube/shorts/YYYY-MM-DD/` — always date-stamped
 - If a shorts folder already exists for today, ask before overwriting
 - Never auto-post — always show content and get confirmation first
-- The carousel outlines are for `/content` to render — don't try to render them here
+- The carousel outlines are for `/social-copy` to render — don't try to render them here

@@ -16,7 +16,7 @@ Generate LinkedIn carousel PDFs using the Gamma API. Takes slide content, applie
 
 Parse `$ARGUMENTS` for one of:
 - A **topic or concept** to build slides from scratch
-- A **file path** to an existing carousel outline (e.g. from `/content` or `/shorts`)
+- A **file path** to an existing carousel outline (e.g. from `/social-copy` or `/yt-shorts`)
 - A **video slug** to pull carousel content from `~/content/youtube/<slug>/social/`
 
 If given a topic, write the slide content yourself. If given a file, read it and adapt.
@@ -58,7 +58,7 @@ Build reusable skills
 A skill is a saved prompt template
 that runs with one command.
 
-/transcribe, /thumbnail, /yt-seo
+/transcribe, /yt-thumbnail, /yt-seo
 One command. Full workflow.
 ---
 Chain skills into pipelines

@@ -38,4 +38,4 @@ python3 ~/.claude/skills/kie-seedance-image/generate.py "<prompt>" \
 ## Notes
 - Passing `--image` auto-switches to the edit model (combine/restyle up to 14 images).
 - Local files are auto-uploaded; URLs pass through.
-- For YouTube thumbnails specifically, `/thumbnail` is still the tuned tool; this skill is the general-purpose Seedream image generator.
+- For YouTube thumbnails specifically, `/yt-thumbnail` is still the tuned tool; this skill is the general-purpose Seedream image generator.

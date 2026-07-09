@@ -10,7 +10,7 @@ Optimize YouTube SEO for the video topic or package at $ARGUMENTS.
 
 ## Workflow Context
 
-**Step 4 of the weekly content pipeline** (after `/yt-package`). Run once per long-form video package. After this, run `/content` to generate the LinkedIn + YT Community text posts for that video.
+**Step 4 of the weekly content pipeline** (after `/yt-package`). Run once per long-form video package. After this, run `/social-copy` to generate the LinkedIn + YT Community text posts for that video.
 
 ## Data Location
 
@@ -107,16 +107,18 @@ Mark the recommended title with the highest total score.
 #### Optimized Description
 
 - **First 2 lines** — These show in search results. Front-load keywords and value proposition. No fluff.
-- **Body** — Natural keyword density (2-3% target keyword occurrence). Include related keywords organically.
+- **Body** — Keep it SHORT and tight (see the length rule below). Natural keyword density, include related keywords organically. Do not pad.
 - **Chapters section** — `00:00 - Title` format (use placeholders if timestamps unknown, mark with [UPDATE])
 - **Links section** — Placeholder for relevant links
-- **Tags line** — Keywords at the bottom for additional SEO signal
+- **Do NOT put a tags line or a hashtag line at the bottom of the description.** Tags go in the YouTube tags field (a separate `tags.txt`), never as visible text in the description. No `#hashtag` line in the description either.
+
+**Description length:** keep descriptions short and tight. Roughly: (disclosure line if a paid partnership) + 1-2 tight paragraphs on what the video is + the chapters block + CTA/links. Drop any long "What's covered" bullet list when the chapters already cover the same ground. Do not write multi-paragraph intros.
 
 If an existing `description.md` exists, add a `## SEO-Optimized Version` section rather than replacing the original.
 
-#### Tags (15-20)
+#### Tags (15-20) — for the YouTube tags field, NOT the description
 
-Organize tags in three tiers:
+Write these to `~/content/youtube/<slug>/tags.txt` (comma-separated) so `/yt-upload` can pass them to YouTube's tags field. Never append them as text at the bottom of the description. Organize in three tiers:
 1. **Exact match** (3-5) — The exact phrases people search for
 2. **Broad match** (5-7) — Related topics and category terms
 3. **Long-tail** (5-8) — Specific, lower-competition phrases
@@ -172,6 +174,8 @@ Always include the research data (competitor titles with view counts) in the out
 - Front-load the most important keyword in the first 40 characters
 - Never use clickbait that the video can't deliver on
 - Description first 2 lines are crucial — they show in search results
+- Keep descriptions SHORT and tight — no long "What's covered" blocks, no multi-paragraph intros
+- NEVER put a tags line or a hashtag line at the bottom of the description — tags go in `tags.txt` (YouTube tags field) only
 - Tags should include exact match, broad match, and long-tail variants
 - Social titles should be platform-native, not just the YouTube title reformatted
 - Always show the research data so the user can see the reasoning

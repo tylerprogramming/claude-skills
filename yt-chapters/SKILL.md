@@ -93,7 +93,7 @@ After the user approves (or after revisions):
 - Replace the entire chapters section (the `[UPDATE]` placeholders) with the real timestamps
 
 **If `description.md` exists without a chapters section:**
-- Add a chapters section in the appropriate location (after the main body, before links/tags)
+- Add a chapters section in the appropriate location (after the main body, before the CTA/links). Do not add a tags or hashtag line to the description — tags belong in `tags.txt` (YouTube tags field) only.
 
 **If no `description.md` exists:**
 - Create `~/content/youtube/<slug>/description.md` with just the chapters section and a note to fill in the rest

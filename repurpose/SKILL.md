@@ -1,6 +1,6 @@
 ---
 name: repurpose
-description: Repurpose a VIDEO transcript or script into short-form VIDEO scripts for YouTube Shorts, TikTok, and Reels — plus matching captions and a community post. Input must be a video transcript, script path, or YouTube URL. Use this for video-first content only. For text posts, LinkedIn posts, carousels, or static visuals, use /content instead. Triggers on: repurpose this video, repurpose transcript, create shorts from, make social posts from, repurpose content, turn this into shorts.
+description: Repurpose a VIDEO transcript or script into short-form VIDEO scripts for YouTube Shorts, TikTok, and Reels — plus matching captions and a community post. Input must be a video transcript, script path, or YouTube URL. Use this for video-first content only. For text posts, LinkedIn posts, carousels, or static visuals, use /social-copy instead. Triggers on: repurpose this video, repurpose transcript, create shorts from, make social posts from, repurpose content, turn this into shorts.
 argument-hint: [transcript_path or script_path or youtube_url] [--url <youtube_video_url>]
 allowed-tools: Read, Write, Glob, Grep, Skill(transcribe), AskUserQuestion, Skill(post)
 user-invocable: true
@@ -150,7 +150,7 @@ Show the user a summary of everything generated:
 Ask: **"Want to revise anything, or post any of these now?"**
 
 - If they want revisions, update the specific file
-- If they want to post something, suggest using the `/content` skill to publish via Blotato
+- If they want to post something, suggest using the `/social-copy` skill to publish via Blotato
 
 ## Rules
 

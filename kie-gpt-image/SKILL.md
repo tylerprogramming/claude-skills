@@ -41,4 +41,4 @@ python3 ~/.claude/skills/kie-gpt-image/generate.py "<prompt>" \
 
 ## Notes
 - Output is PNG. Local `--image` files auto-upload via the shared `_kie` client.
-- For YouTube thumbnails specifically, `/thumbnail` is still the tuned tool; this is general-purpose.
+- For YouTube thumbnails specifically, `/yt-thumbnail` is still the tuned tool; this is general-purpose.

@@ -109,7 +109,7 @@ Inside each folder:
 Generate via Kie.ai Nano Banana Pro with Day 1 as reference:
 
 ```bash
-python3 ~/.claude/skills/thumbnail/generate_thumbnail.py "<prompt>" \
+python3 ~/.claude/skills/yt-thumbnail/generate_thumbnail.py "<prompt>" \
   --model nano-banana-pro \
   --aspect-ratio 2:3 \
   --resolution 2K \

@@ -1,6 +1,6 @@
 ---
 name: submagic
-description: Burn word-by-word on-screen captions onto an edited video using the Submagic API. Uploads the mp4 directly to Submagic (bypassing Google Drive), polls until done, and downloads the captioned video. Does NOT generate platform post copy (use /content or manual captions.md for that) and does NOT replace /transcribe. Triggers on: submagic, burn captions, add captions to video, caption this video, submagic caption.
+description: Burn word-by-word on-screen captions onto an edited video using the Submagic API. Uploads the mp4 directly to Submagic (bypassing Google Drive), polls until done, and downloads the captioned video. Does NOT generate platform post copy (use /social-copy or manual captions.md for that) and does NOT replace /transcribe. Triggers on: submagic, burn captions, add captions to video, caption this video, submagic caption.
 argument-hint: /path/to/edited-video.mp4
 allowed-tools: Bash(python3:*), Read, Write
 user-invocable: true

@@ -94,8 +94,8 @@ If not provided, default to `dark` + `statement`.
   "items": [
     "/yt-search — YouTube research",
     "/instagram-writer — 6 slides",
-    "/shorts — 5 short scripts",
-    "/content — LinkedIn, X, IG posts",
+    "/yt-shorts — 5 short scripts",
+    "/social-copy — LinkedIn, X, IG posts",
     "/yt-package — full video + script"
   ],
   "stat": "Saves me 3+ hours. Every single week.",
