@@ -1,0 +1,8 @@
+{
+  "creators": [
+    { "name": "Your Name", "handle": "@YourChannelHandle" }
+  ],
+  "goals": { "create_per_week": 2, "release_per_week": 2 },
+  "week_start": "monday",
+  "recent_count": 15
+}

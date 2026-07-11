@@ -1,0 +1,9 @@
+{
+  "_comment": "Hand-edited production board. stage = idea | scripted | filmed | editing | ready. 'filmed' date drives the 'created this week' checkup; 'ready' items feed the 'ready to publish' count. Dates are YYYY-MM-DD. Delete a row once it's published - it will show up automatically from YouTube.",
+  "videos": [
+    { "title": "Example: n8n vs Claude Code",   "stage": "ready",   "created": "2026-07-06", "filmed": "2026-07-08", "notes": "thumbnail done" },
+    { "title": "Example: Build an AI agent",     "stage": "editing", "created": "2026-07-07", "filmed": "2026-07-09", "notes": "" },
+    { "title": "Example: Skool automation walk", "stage": "scripted","created": "2026-07-09", "filmed": null,          "notes": "" },
+    { "title": "Example: MCP servers explained", "stage": "idea",    "created": "2026-07-10", "filmed": null,          "notes": "" }
+  ]
+}

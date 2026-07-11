@@ -34,6 +34,7 @@ Skills write to these home directory locations (create them if they don't exist)
 |-------|----------------|
 | lifestyle | Supabase project `lifestyle` (project id in your own config) via the Supabase MCP — no local files |
 | lifestyle-show | `~/lifestyle/dashboard.html` (self-contained, rebuilt from a Supabase snapshot) |
+| creator-hq | `~/creator-hq/dashboard.html` (self-contained; data pulled via yt-dlp, pipeline hand-edited in `~/creator-hq/pipeline.json`) |
 | journal | `~/content/journal/YYYY-MM-DD.txt` |
 | transcribe | `~/content/transcripts/transcript_<id>.txt` |
 | yt-package | `~/content/youtube/<video-slug>/` (analysis.md, titles.md, hooks.md, script.md, description.md, filming-guide.md, performance.md) |
