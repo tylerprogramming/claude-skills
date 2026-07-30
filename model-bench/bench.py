@@ -57,15 +57,19 @@ EXT = {"html": "html", "svg": "svg", "py": "py", "js": "js", "text": "md"}
 
 COMPARE_CSS = """
 body{font-family:-apple-system,system-ui,sans-serif;margin:0;background:#f4f4f5;color:#18181b}
-h1{font-size:16px;padding:12px 16px;margin:0;background:#fff;border-bottom:1px solid #e4e4e7}
-.row{display:flex;gap:10px;padding:10px;overflow-x:auto}
-.col{flex:1;min-width:360px;background:#fff;border:1px solid #e4e4e7;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
-.hd{padding:8px 12px;border-bottom:1px solid #e4e4e7}
-.meta{font-size:12px;color:#71717a}
-iframe{width:100%;height:640px;border:0}
-pre{margin:0;padding:12px;font-size:12px;overflow:auto;max-height:640px;white-space:pre-wrap}
-.ans{font-size:15px}
-.run{padding:8px 12px;background:#fef9c3;font-size:13px}
+.topbar{padding:16px 22px;background:#fff;border-bottom:1px solid #e4e4e7}
+.plabel{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#a1a1aa;text-transform:uppercase;margin-bottom:6px}
+.ptext{font-size:17px;line-height:1.5;color:#27272a;max-width:1100px}
+.row{display:flex;gap:14px;padding:14px;overflow-x:auto}
+.col{flex:1;min-width:360px;background:#fff;border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.hd{padding:14px 18px;border-bottom:1px solid #e4e4e7}
+.mname{font-size:22px;font-weight:800;color:#18181b;line-height:1.1}
+.meta{font-size:15px;color:#52525b;margin-top:6px}
+.meta b{color:#18181b;font-weight:700}
+iframe{width:100%;height:620px;border:0}
+pre{margin:0;padding:14px;font-size:12px;overflow:auto;max-height:620px;white-space:pre-wrap}
+.ans{font-size:16px;line-height:1.5}
+.run{padding:10px 16px;background:#fef9c3;font-size:14px}
 .fail{padding:24px;color:#b91c1c;text-align:center}
 """
 
@@ -229,7 +233,8 @@ def build_compare_html(prompt, results, outdir):
     cols = [_compare_col(r, outdir) for r in results]
     page = (f"<!doctype html><html><head><meta charset=utf-8><title>model-bench</title>"
             f"<style>{COMPARE_CSS}</style></head><body>"
-            f"<h1>Prompt: {htmllib.escape(prompt)}</h1>"
+            f"<div class='topbar'><div class='plabel'>Prompt</div>"
+            f"<div class='ptext'>{htmllib.escape(prompt)}</div></div>"
             f"<div class='row'>{''.join(cols)}</div></body></html>")
     _write(os.path.join(outdir, "compare.html"), page)
 
@@ -239,9 +244,10 @@ def _compare_col(r, outdir):
         meta = "failed"
         inner = f"<div class='fail'>FAILED<br><small>{htmllib.escape(r['error'][:200])}</small></div>"
     else:
-        meta = f"{fmt_cost(r['cost'])} &middot; {r['time']:.1f}s &middot; {r['in']}/{r['out']} tok"
+        meta = (f"<b>{fmt_cost(r['cost'])}</b> &middot; <b>{r['time']:.1f}s</b> &middot; "
+                f"{r['in']:,} in / {r['out']:,} out tokens")
         inner = _compare_body(r, outdir)
-    return (f"<div class='col'><div class='hd'><b>{htmllib.escape(r['name'])}</b>"
+    return (f"<div class='col'><div class='hd'><div class='mname'>{htmllib.escape(r['name'])}</div>"
             f"<div class='meta'>{meta}</div></div>{inner}</div>")
 
 
@@ -278,6 +284,7 @@ def main():
     ap.add_argument("--timeout", type=int, default=900, help="Per-model timeout in seconds")
     ap.add_argument("--batch", help="File of prompts separated by a line of ---")
     ap.add_argument("--image", help="Local image path for design-to-code (allows the Read tool)")
+    ap.add_argument("--rebuild", help="Rebuild compare.html + results.md from an existing run's results.json (no model calls)")
     ap.add_argument("--no-open", action="store_true", help="Do not auto-open compare.html")
     args = ap.parse_args()
 
@@ -285,6 +292,16 @@ def main():
     image = os.path.abspath(args.image) if args.image else None
     base = os.path.expanduser("~/content/research/benchmarks")
     date = datetime.date.today().isoformat()
+
+    if args.rebuild:
+        data = json.loads(_read(os.path.join(args.rebuild, "results.json")))
+        write_results_md(data["prompt"], data["results"], args.rebuild)
+        build_compare_html(data["prompt"], data["results"], args.rebuild)
+        compare = os.path.join(args.rebuild, "compare.html")
+        if not args.no_open and sys.platform == "darwin":
+            subprocess.run(["open", compare], check=False)
+        print(f"rebuilt {compare}")
+        return
 
     if args.batch:
         prompts = [p.strip() for p in _read(args.batch).split("\n---\n") if p.strip()]
