@@ -122,9 +122,14 @@ def detect_output(text):
 def call_model(model_id, prompt, timeout, image=None):
     """Call the claude CLI headless. Returns a result dict (see keys below)."""
     if image:
-        # Design-to-code: let the model view a local screenshot via the Read tool.
-        prompt = (f"A design screenshot is saved at this local path: {image}\n"
-                  f"Use the Read tool to view that image, then, based on what you see:\n\n{prompt}")
+        # Design-to-code: let the model view a local screenshot via the Read tool,
+        # but force inline code output (never write/serve files or ask for approval).
+        prompt = (f"Use the Read tool to view the design screenshot at this path: {image}\n"
+                  f"Then complete this task:\n\n{prompt}\n\n"
+                  f"OUTPUT RULES (critical): Respond with ONLY the complete, self-contained code in a "
+                  f"single fenced code block. Do NOT create, write, or save any files. Do NOT try to "
+                  f"serve, open, run, or 'show' anything. Do NOT ask for approval or next steps. "
+                  f"Your entire reply must be just the code block.")
         cmd = ["claude", "-p", prompt, "--model", model_id,
                "--output-format", "json", "--allowedTools", "Read"]
     else:
