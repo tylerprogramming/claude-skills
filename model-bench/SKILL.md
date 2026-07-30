@@ -16,7 +16,7 @@ It drives the **Claude Code CLI in headless mode** (`claude -p ... --output-form
    ```
    python3 ~/.claude/skills/model-bench/bench.py "<prompt>" --models <m1,m2,m3>
    ```
-   Options: `--slug <name>` to name the folder, `--batch <file>` to run many prompts (separated by a line of `---`), `--timeout <sec>` per model, `--no-open` to skip auto-opening the viewer.
+   Options: `--slug <name>` to name the folder, `--batch <file>` to run many prompts (separated by a line of `---`), `--timeout <sec>` per model, `--image <path>` for design-to-code (lets each model view a local screenshot via the Read tool), `--no-open` to skip auto-opening the viewer.
 
 3. The script, per model:
    - Calls `claude` headless with tools disabled (single-shot generation), capturing the output, **task tokens**, **cost** (tokens x that model's price), and **wall-clock time**.

@@ -115,10 +115,17 @@ def detect_output(text):
 
 # --- model call ------------------------------------------------------------
 
-def call_model(model_id, prompt, timeout):
+def call_model(model_id, prompt, timeout, image=None):
     """Call the claude CLI headless. Returns a result dict (see keys below)."""
-    cmd = ["claude", "-p", prompt, "--model", model_id,
-           "--output-format", "json", "--disallowedTools", *NO_TOOLS]
+    if image:
+        # Design-to-code: let the model view a local screenshot via the Read tool.
+        prompt = (f"A design screenshot is saved at this local path: {image}\n"
+                  f"Use the Read tool to view that image, then, based on what you see:\n\n{prompt}")
+        cmd = ["claude", "-p", prompt, "--model", model_id,
+               "--output-format", "json", "--allowedTools", "Read"]
+    else:
+        cmd = ["claude", "-p", prompt, "--model", model_id,
+               "--output-format", "json", "--disallowedTools", *NO_TOOLS]
     start = time.time()
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
@@ -164,7 +171,7 @@ def _model_usage(data, model_id):
 
 # --- run + reporting -------------------------------------------------------
 
-def run_one(prompt, models, outdir, timeout, do_open):
+def run_one(prompt, models, outdir, timeout, do_open, image=None):
     os.makedirs(outdir, exist_ok=True)
     _write(os.path.join(outdir, "prompt.txt"), prompt + "\n")
 
@@ -173,7 +180,7 @@ def run_one(prompt, models, outdir, timeout, do_open):
         model_id = resolve_model(name)
         r = dict(name=name, model_id=model_id, label=slugify(name, 20))
         print(f"  -> {name} ({model_id}) ...", flush=True)
-        r.update(call_model(model_id, prompt, timeout))
+        r.update(call_model(model_id, prompt, timeout, image))
         if r["ok"]:
             kind, body = detect_output(r["text"])
             r["kind"] = kind
@@ -270,10 +277,12 @@ def main():
     ap.add_argument("--outdir", help="Explicit output dir")
     ap.add_argument("--timeout", type=int, default=900, help="Per-model timeout in seconds")
     ap.add_argument("--batch", help="File of prompts separated by a line of ---")
+    ap.add_argument("--image", help="Local image path for design-to-code (allows the Read tool)")
     ap.add_argument("--no-open", action="store_true", help="Do not auto-open compare.html")
     args = ap.parse_args()
 
     models = [m for m in args.models.split(",") if m.strip()]
+    image = os.path.abspath(args.image) if args.image else None
     base = os.path.expanduser("~/content/research/benchmarks")
     date = datetime.date.today().isoformat()
 
@@ -283,14 +292,14 @@ def main():
         for i, prompt in enumerate(prompts, 1):
             outdir = os.path.join(base, f"{date}-batch-{i:02d}-{slugify(prompt, 24)}")
             print(f"[{i}/{len(prompts)}] {prompt[:60]}")
-            run_one(prompt, models, outdir, args.timeout, not args.no_open)
+            run_one(prompt, models, outdir, args.timeout, not args.no_open, image)
         return
 
     if not args.prompt:
         sys.exit("ERROR: provide a prompt (or use --batch <file>)")
     outdir = args.outdir or os.path.join(base, args.slug or f"{date}-{slugify(args.prompt)}")
     print(f"Prompt: {args.prompt}\nModels: {', '.join(models)}\nOut: {outdir}\n")
-    run_one(args.prompt, models, outdir, args.timeout, not args.no_open)
+    run_one(args.prompt, models, outdir, args.timeout, not args.no_open, image)
 
 
 if __name__ == "__main__":
