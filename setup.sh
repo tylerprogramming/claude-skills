@@ -11,12 +11,29 @@
 # So the scripts do not trust `python3`. Each one re-execs under the venv this
 # script builds. Run it once after cloning, and again if you ever delete .venv.
 #
-#   ./setup.sh          create the venv and install everything
-#   ./setup.sh --check  report what is missing without changing anything
+# You do not have to keep these skills in ~/.claude/skills. Clone this anywhere
+# and copy over the ones you want. The venv just has to sit at or above wherever
+# the skill ended up, so point this script at that folder:
+#
+#   ./setup.sh                      venv next to this script
+#   ./setup.sh ~/.claude/skills     venv in your own skills folder instead
+#   ./setup.sh --link ~/.claude/skills
+#                                   reuse the venv this script already built,
+#                                   no second few-hundred-MB download
+#   ./setup.sh --check [dir]        report what is missing, change nothing
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENV="$DIR/.venv"
+
+LINK=0
+[ "${1:-}" = "--link" ] && { LINK=1; shift; }
+MODE=""
+[ "${1:-}" = "--check" ] && { MODE="check"; shift; }
+
+TARGET="${1:-$DIR}"
+mkdir -p "$TARGET" 2>/dev/null
+TARGET="$(cd "$TARGET" && pwd)" || { echo "  no such folder: ${1:-}" >&2; exit 1; }
+VENV="$TARGET/.venv"
 
 # Every third-party import across the skills, as pip package names.
 PACKAGES=(
@@ -55,7 +72,17 @@ check() {
   fi
 }
 
-[ "${1:-}" = "--check" ] && { check; exit $?; }
+[ "$MODE" = "check" ] && { check; exit $?; }
+
+if [ "$LINK" = "1" ]; then
+  [ -x "$DIR/.venv/bin/python3" ] || die "no venv here yet. run ./setup.sh first, then --link"
+  [ "$VENV" = "$DIR/.venv" ] && die "that is where the venv already is"
+  [ -e "$VENV" ] && die "$VENV already exists. remove it first if you want to relink"
+  ln -s "$DIR/.venv" "$VENV"
+  say "linked $VENV -> $DIR/.venv"
+  check
+  exit $?
+fi
 
 command -v python3 >/dev/null 2>&1 || die "python3 not found"
 
@@ -63,7 +90,7 @@ command -v python3 >/dev/null 2>&1 || die "python3 not found"
 py_ok=$(python3 -c 'import sys; print(1 if sys.version_info >= (3,10) else 0)')
 [ "$py_ok" = "1" ] || die "python3 is $(python3 -c 'import sys;print(".".join(map(str,sys.version_info[:3])))'), need 3.10 or newer"
 
-say "creating .venv with $(python3 --version)"
+say "creating $VENV with $(python3 --version)"
 python3 -m venv "$VENV" || die "could not create the venv"
 
 say "installing ${#PACKAGES[@]} packages (a few hundred MB, once)"

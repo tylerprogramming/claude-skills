@@ -111,11 +111,22 @@ git clone https://github.com/tylerprogramming/claude-skills.git ~/projects/tyler
 cd ~/projects/tyler-skills && ./setup.sh
 ```
 
-Then open Claude Code in your own skills folder and ask it to bring over the
-ones you want, for example:
+Then just ask Claude Code to do the rest. `CLAUDE.md` in this repo tells it how
+to import a skill correctly, so you can point it at the clone and say:
 
-> Look at ~/projects/tyler-skills and copy the yt-search and transcribe skills
-> into my ~/.claude/skills, then tell me what setup each one needs.
+> Look at ~/projects/tyler-skills and import the yt-search and transcribe
+> skills into my ~/.claude/skills, then tell me what setup each one needs.
+
+It will copy the folders, put the venv somewhere those skills can actually find
+it, verify the imports, and tell you which ones still need credentials.
+
+If you would rather do it by hand:
+
+```bash
+cp -r ~/projects/tyler-skills/yt-search ~/.claude/skills/
+~/projects/tyler-skills/setup.sh --link ~/.claude/skills   # reuse the venv
+~/projects/tyler-skills/setup.sh --check ~/.claude/skills  # confirm it worked
+```
 
 The scripts find their venv by looking beside themselves first and walking up a
 few levels, then falling back to `~/.claude/skills/.venv`. So a copied skill

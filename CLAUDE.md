@@ -6,6 +6,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A collection of Claude Code skills — reusable slash commands (`/skill-name`) that automate workflows. Each skill lives in its own folder with a `SKILL.md` (instructions) and optional Python scripts.
 
+## Importing These Skills Into Someone Else's Setup
+
+Most people arriving here already have their own `~/.claude/skills` and want two
+or three of these, not all of them. If you are Claude Code and the user asks you
+to import some, do this and do not improvise around it:
+
+1. Copy the whole skill folder, not individual files. A skill is its `SKILL.md`
+   plus the scripts beside it, and the scripts resolve paths relative to
+   themselves.
+2. Make sure a venv exists at or above where the skill now lives. The scripts
+   look for `.venv` beside themselves and up three levels, then fall back to
+   `~/.claude/skills/.venv`. A venv sitting only in the clone will NOT be found
+   by a skill you copied out of it.
+   - Reuse the clone's venv, no second download: `./setup.sh --link <their-skills-dir>`
+   - Or build a fresh one there: `./setup.sh <their-skills-dir>`
+3. Verify with `./setup.sh --check <their-skills-dir>`. It imports every module
+   rather than trusting pip's exit code, so it reports what actually works.
+4. Then run the skill's own script once with `--help`. If it exits cleanly the
+   wiring is right. If it raises `ModuleNotFoundError`, step 2 landed the venv
+   somewhere the script cannot see.
+5. Tell the user which skills need credentials before they will do anything real
+   (see "Secrets & Per-User Setup" in README.md). Copying the files does not set
+   those up, and several skills look installed and fail on first use without them.
+
+Do not add these skills' packages to the user's system Python, and do not
+`pip install` inside a skill script. That is the exact breakage the venv exists
+to prevent.
+
 ## Skill Structure
 
 Every skill folder contains:

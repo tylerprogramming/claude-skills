@@ -35,18 +35,21 @@ Categories (most-used):
 from __future__ import annotations
 
 # --- skills venv bootstrap: run under .venv, not whatever python3 resolves to.
-# Looks for .venv beside this script and up a few levels, then falls back to
-# ~/.claude/skills/.venv, so it works whether these live in your skills folder
-# or in a clone anywhere else. Rationale: "Why there is a venv" in README.md
+# Looks for .venv beside this script and up a few levels, then ~/.claude/skills,
+# so a skill works wherever you copied it. Compares realpaths, and re-execs at
+# most once, because a symlinked path that never compares equal would otherwise
+# loop forever. Rationale: "Why there is a venv" in README.md
 import os as _os, sys as _sys
-_here = _os.path.dirname(_os.path.abspath(__file__))
-for _v in [_os.path.abspath(_os.path.join(_here, *([".."] * _i), ".venv")) for _i in range(4)] + [
-        _os.path.expanduser("~/.claude/skills/.venv")]:
-    if _os.path.exists(_os.path.join(_v, "bin", "python3")):
-        if _os.path.abspath(_sys.prefix) != _v:
-            _os.execv(_os.path.join(_v, "bin", "python3"),
-                      [_os.path.join(_v, "bin", "python3"), *_sys.argv])
-        break
+if not _os.environ.get("SKILLS_VENV"):
+    _base = _os.path.dirname(_os.path.abspath(__file__))
+    for _v in [_os.path.realpath(_os.path.join(_base, *([".."] * _i), ".venv")) for _i in range(4)
+               ] + [_os.path.realpath(_os.path.expanduser("~/.claude/skills/.venv"))]:
+        if _os.path.exists(_os.path.join(_v, "bin", "python3")):
+            if _os.path.realpath(_sys.prefix) != _v:
+                _os.environ["SKILLS_VENV"] = _v
+                _os.execv(_os.path.join(_v, "bin", "python3"),
+                          [_os.path.join(_v, "bin", "python3"), *_sys.argv])
+            break
 # --- end bootstrap ---------------------------------------------------------
 
 
