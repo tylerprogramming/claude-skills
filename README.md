@@ -101,7 +101,43 @@ git clone https://github.com/tylerprogramming/claude-skills.git
 
 # Copy to your Claude skills folder
 cp -r claude-skills/* ~/.claude/skills/
+
+# Build the shared python environment the scripts run in
+cd ~/.claude/skills && ./setup.sh
 ```
+
+`./setup.sh` creates `.venv` and installs every third-party package the skills
+import. It takes a couple of minutes and is only needed once. Check it any time
+with `./setup.sh --check`.
+
+### Why there is a venv
+
+Every python script here starts `#!/usr/bin/env python3`, and **`python3` is a
+moving target**. A Homebrew upgrade re-points it, the packages installed for the
+previous version stop being visible, and scripts fail with
+`ModuleNotFoundError` while looking perfectly installed.
+
+That is not hypothetical. It silently broke `/yt-upload`, `/yt-replier`,
+`/yt-analytics`, `/gmail`, and `/creator-hq` when `python3` moved from 3.9 to
+3.14: the Google API libraries were still on disk, just not reachable from the
+interpreter that ran.
+
+So the scripts do not trust `python3`. Each one that needs third-party packages
+carries a short bootstrap block that re-execs it under `.venv`. Two details in
+that block matter:
+
+- it is placed after the shebang, the module docstring, **and** any
+  `__future__` imports, because `from __future__` has to be the first statement
+  in a file
+- it compares `sys.prefix`, not the executable path. A venv's `bin/python3` is
+  a symlink to the base interpreter, so comparing resolved paths matches on
+  both sides and the re-exec never fires
+
+If `.venv` is missing the block does nothing and the script runs as before, so
+a fresh clone degrades to the old behaviour rather than erroring in a new way.
+
+One shared venv rather than one per skill: `googleapiclient` alone is 99MB and
+five skills need it.
 
 ### Lifestyle Backend
 
@@ -126,6 +162,9 @@ None of the secrets in this repo are committed. After cloning, you'll need to cr
 3. **`/tiktok-replier`** — uses a persistent Chromium profile at `tiktok-replier/data/profile/` to stay logged into TikTok. The first run will open a browser; log in once and the session is reused. The `data/` directory (profile, queues, logs, scraped HTML) is gitignored.
 
 4. **`/yt-analytics`** — needs its own OAuth token at `analytics/yt_token.json` (gitignored).
+
+`.venv/` is gitignored, which is why a fresh clone needs `./setup.sh` before
+any python-backed skill will run.
 
 The following are also intentionally gitignored: `*.zip` backups, `__pycache__/`, `.venv/`, and the symlinks pointing to local-only agent skills (`hyperframes*`, `gsap`, `find-skills`, `claude-design-hyperframes`).
 
