@@ -239,9 +239,9 @@ def main():
         transcript_text = response.text
 
     # Save
-    scripts_dir = os.path.expanduser("~/content/scripts")
-    os.makedirs(scripts_dir, exist_ok=True)
-    out_file = os.path.join(scripts_dir, f"transcript_{file_id}.txt")
+    transcripts_dir = os.path.expanduser("~/content/transcripts")
+    os.makedirs(transcripts_dir, exist_ok=True)
+    out_file = os.path.join(transcripts_dir, f"transcript_{file_id}.txt")
     with open(out_file, "w") as f:
         f.write(transcript_text)
 

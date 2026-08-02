@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background-color: #1a1a2e; padding: 32px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">The 3 Rules of a Great CLAUDE.md</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 40px 40px 8px;">
+              <p style="margin: 0 0 20px; font-size: 18px; color: #333333; line-height: 1.6;">
+                Hey {first_name},
+              </p>
+              <p style="margin: 0 0 20px; font-size: 16px; color: #555555; line-height: 1.6;">
+                The single highest leverage file in your repo is <strong style="color: #1a1a2e;">CLAUDE.md</strong>. It is the memory Claude Code reads at the start of every session, and it is the difference between re-explaining your project every day and never explaining it again.
+              </p>
+              <p style="margin: 0 0 28px; font-size: 16px; color: #555555; line-height: 1.6;">
+                Most people either skip it or write a bloated one that does nothing. Here are the three things that actually matter.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 40px 8px;">
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9fafb; border-left: 4px solid #6366f1; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 22px 24px;">
+                    <p style="margin: 0 0 8px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #6366f1; font-weight: 700;">01</p>
+                    <p style="margin: 0 0 12px; font-size: 19px; color: #1a1a2e; font-weight: 600;">Write it for a new hire on day one</p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      Not documentation. Onboarding.
+                    </p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      The commands you actually run (test, lint, build, deploy). The stack and where things live. The conventions that are not obvious from reading the code. The landmines, the thing that looks safe but breaks staging every time.
+                    </p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      If a competent developer could figure it out in thirty seconds by opening the repo, leave it out. If they would only learn it by breaking something, put it in.
+                    </p>
+                    <p style="margin: 0; font-size: 15px; color: #777777; line-height: 1.6;">
+                      Run <strong style="color: #1a1a2e;">/init</strong> to get a first draft, then cut it in half.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 16px 40px 8px;">
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9fafb; border-left: 4px solid #6366f1; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 22px 24px;">
+                    <p style="margin: 0 0 8px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #6366f1; font-weight: 700;">02</p>
+                    <p style="margin: 0 0 12px; font-size: 19px; color: #1a1a2e; font-weight: 600;">Short and specific beats long and thorough</p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      Every line of CLAUDE.md is loaded into context on every single turn. A 400 line file is not more helpful than a 60 line file, it is just more expensive and easier to ignore.
+                    </p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      Write rules that can actually be followed:
+                    </p>
+                    <p style="margin: 0 0 10px; font-size: 15px; color: #555555; line-height: 1.6;">
+                      <span style="color: #b91c1c; font-weight: 600;">Bad:</span> "write clean, maintainable code"<br>
+                      <span style="color: #15803d; font-weight: 600;">Good:</span> "never edit files in <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">src/generated</code>, they are rebuilt by <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">npm run codegen</code>"
+                    </p>
+                    <p style="margin: 0 0 12px; font-size: 15px; color: #555555; line-height: 1.6;">
+                      <span style="color: #b91c1c; font-weight: 600;">Bad:</span> "handle errors properly"<br>
+                      <span style="color: #15803d; font-weight: 600;">Good:</span> "all API handlers return the Result type from <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">lib/result.ts</code>, never throw"
+                    </p>
+                    <p style="margin: 0; font-size: 15px; color: #777777; line-height: 1.6;">
+                      If a line does not change what Claude does, delete it.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 16px 40px 24px;">
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9fafb; border-left: 4px solid #6366f1; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 22px 24px;">
+                    <p style="margin: 0 0 8px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #6366f1; font-weight: 700;">03</p>
+                    <p style="margin: 0 0 12px; font-size: 19px; color: #1a1a2e; font-weight: 600;">Layer it, and let it grow from your corrections</p>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      CLAUDE.md is not one file. It is a stack:
+                    </p>
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 14px;">
+                      <tr>
+                        <td style="padding: 0 0 8px 0; font-size: 15px; color: #555555; line-height: 1.6;">
+                          <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">~/.claude/CLAUDE.md</code>, your personal preferences across every project
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 8px 0; font-size: 15px; color: #555555; line-height: 1.6;">
+                          <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">CLAUDE.md</code> at the repo root, the shared project rules, checked into git so your team gets them too
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0; font-size: 15px; color: #555555; line-height: 1.6;">
+                          <code style="background-color: #eef0f4; padding: 1px 5px; border-radius: 3px; font-size: 14px;">CLAUDE.md</code> in a subdirectory, loaded only when Claude works in that part of the tree
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 0 0 12px; font-size: 16px; color: #555555; line-height: 1.6;">
+                      Then keep it alive. Every time you correct Claude on the same thing twice, that correction belongs in the file. Press <strong style="color: #1a1a2e;">#</strong> in Claude Code and the note gets appended for you.
+                    </p>
+                    <p style="margin: 0; font-size: 15px; color: #777777; line-height: 1.6;">
+                      Your CLAUDE.md should be the accumulated record of everything you got tired of repeating.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 40px 40px;">
+              <p style="margin: 0 0 24px; font-size: 16px; color: #555555; line-height: 1.6;">
+                Do these three and the file starts paying for itself immediately. Skip it and you will keep having the same conversation every morning.
+              </p>
+              <p style="margin: 0 0 24px; font-size: 16px; color: #555555; line-height: 1.6;">
+                Start today. Open your main repo, run <strong style="color: #1a1a2e;">/init</strong>, and spend ten minutes trimming it.
+              </p>
+              <p style="margin: 0; font-size: 16px; color: #555555; line-height: 1.6;">
+                Talk soon,<br><strong>Tyler</strong>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 14px; color: #888888;">
+                Sent from Claude Code.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

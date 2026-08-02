@@ -1,0 +1,46 @@
+Hey {first_name},
+
+The single highest leverage file in your repo is CLAUDE.md. It is the memory Claude Code reads at the start of every session, and it is the difference between re-explaining your project every day and never explaining it again.
+
+Most people either skip it or write a bloated one that does nothing. Here are the three things that actually matter.
+
+1. Write it for a new hire on day one
+
+Not documentation. Onboarding.
+
+The commands you actually run (test, lint, build, deploy). The stack and where things live. The conventions that are not obvious from reading the code. The landmines, the thing that looks safe but breaks staging every time.
+
+If a competent developer could figure it out in thirty seconds by opening the repo, leave it out. If they would only learn it by breaking something, put it in.
+
+Run /init to get a first draft, then cut it in half.
+
+2. Short and specific beats long and thorough
+
+Every line of CLAUDE.md is loaded into context on every single turn. A 400 line file is not more helpful than a 60 line file, it is just more expensive and easier to ignore.
+
+Write rules that can actually be followed:
+
+Bad: "write clean, maintainable code"
+Good: "never edit files in src/generated, they are rebuilt by npm run codegen"
+
+Bad: "handle errors properly"
+Good: "all API handlers return the Result type from lib/result.ts, never throw"
+
+If a line does not change what Claude does, delete it.
+
+3. Layer it, and let it grow from your corrections
+
+CLAUDE.md is not one file. It is a stack:
+
+- ~/.claude/CLAUDE.md, your personal preferences across every project
+- CLAUDE.md at the repo root, the shared project rules, checked into git so your team gets them too
+- CLAUDE.md in a subdirectory, loaded only when Claude works in that part of the tree
+
+Then keep it alive. Every time you correct Claude on the same thing twice, that correction belongs in the file. Press # in Claude Code and the note gets appended for you. Your CLAUDE.md should be the accumulated record of everything you got tired of repeating.
+
+Do these three and the file starts paying for itself immediately. Skip it and you will keep having the same conversation every morning.
+
+Start today. Open your main repo, run /init, and spend ten minutes trimming it.
+
+Talk soon,
+Tyler

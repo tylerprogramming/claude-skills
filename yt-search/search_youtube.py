@@ -8,8 +8,11 @@ scripts via /shorts) and the two formats are not comparable head to head.
 
 import argparse
 import json
+import os
+import shutil
 import subprocess
 import sys
+import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -19,58 +22,157 @@ from pathlib import Path
 # --short-max to 180 if you want the longer Shorts pulled into the Shorts bucket.
 DEFAULT_SHORT_MAX = 60
 
+# Compact per-video JSON so a 50-video detail pass doesn't return megabytes of
+# format data we never look at.
+DETAIL_TEMPLATE = (
+    "%(.{id,title,channel,view_count,like_count,comment_count,"
+    "upload_date,duration,duration_string,description})j"
+)
+
+
+def ytdlp_bin():
+    """Resolve the yt-dlp to use.
+
+    Old pip-installed builds pinned to system Python 3.9 can't extract YouTube
+    metadata any more, so prefer an explicit override, then Homebrew's build,
+    then whatever is on PATH.
+    """
+    override = os.environ.get("YT_DLP_BIN")
+    if override:
+        return override
+    for candidate in ("/opt/homebrew/bin/yt-dlp", "/usr/local/bin/yt-dlp"):
+        if Path(candidate).exists():
+            return candidate
+    return shutil.which("yt-dlp") or "yt-dlp"
+
+
+def _search_url(query, days):
+    """Build a YouTube search URL sorted by upload date and filtered to a window.
+
+    `ytsearchdate:` was removed from yt-dlp, so the date sort now has to ride on
+    the search URL itself. `sp` is a base64 protobuf: field 1 = sort (2 = upload
+    date), field 2 = filters (upload date bucket).
+    """
+    if days <= 1:
+        sp = "CAISAggC"    # today
+    elif days <= 7:
+        sp = "CAISAggD"    # this week
+    elif days <= 31:
+        sp = "CAISAggE"    # this month
+    else:
+        sp = "CAISAggF"    # this year
+    return f"https://www.youtube.com/results?search_query={urllib.parse.quote(query)}&sp={sp}"
+
+
+def _run(cmd):
+    return subprocess.run(cmd, capture_output=True, text=True)
+
+
+def _parse_json_lines(text):
+    out = []
+    for line in (text or "").strip().split("\n"):
+        if not line.strip():
+            continue
+        try:
+            out.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return out
+
 
 def search_youtube(keywords, search_count=50, days=30, top_n=15, short_max=DEFAULT_SHORT_MAX):
     query = " ".join(keywords)
     # Quote multi-word queries for phrase matching instead of loose keyword matching
     quoted_query = f'"{query}"' if len(keywords) > 1 else query
-    search_term = f"ytsearchdate{search_count}:{quoted_query}"
+    bin_path = ytdlp_bin()
 
     print(f"Searching YouTube for: {query}")
     print(f"Fetching {search_count} most recent results...")
 
-    result = subprocess.run(
-        ["yt-dlp", search_term, "-j", "--no-download"],
-        capture_output=True,
-        text=True,
-    )
+    # Pass 1: flat listing. One request, no per-video extraction, and it already
+    # carries title/channel/views/duration — enough to rank and filter.
+    result = _run([
+        bin_path,
+        _search_url(quoted_query, days),
+        "--flat-playlist",
+        "--playlist-end", str(search_count),
+        "--no-warnings",
+        "-J",
+    ])
 
     if result.returncode != 0 and not result.stdout:
         print(f"Error: yt-dlp failed\n{result.stderr}", file=sys.stderr)
         sys.exit(1)
 
-    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y%m%d")
-    videos = []
+    try:
+        entries = json.loads(result.stdout).get("entries") or []
+    except json.JSONDecodeError:
+        print(f"Error: could not parse yt-dlp output\n{result.stderr}", file=sys.stderr)
+        sys.exit(1)
 
-    for line in result.stdout.strip().split("\n"):
-        if not line.strip():
+    candidates = []
+    for d in entries:
+        if not d.get("id"):
             continue
-        try:
-            d = json.loads(line)
-            upload = d.get("upload_date", "00000000") or "00000000"
-            if upload >= cutoff:
-                videos.append({
-                    "title": d.get("title", "N/A"),
-                    "channel": d.get("channel", "N/A"),
-                    "views": d.get("view_count", 0) or 0,
-                    "likes": d.get("like_count", 0) or 0,
-                    "comments": d.get("comment_count", 0) or 0,
-                    "upload_date": upload,
-                    "duration": d.get("duration_string", "N/A"),
-                    "duration_seconds": d.get("duration") or 0,
-                    "url": f"https://youtube.com/watch?v={d.get('id')}",
-                    "description": (d.get("description", "") or "")[:300],
-                    "id": d.get("id"),
-                })
-        except json.JSONDecodeError:
-            continue
+        candidates.append({
+            "title": d.get("title") or "N/A",
+            "channel": d.get("channel") or d.get("uploader") or "N/A",
+            "views": d.get("view_count") or 0,
+            "likes": 0,
+            "comments": 0,
+            "upload_date": "00000000",
+            "duration": d.get("duration_string") or "N/A",
+            "duration_seconds": d.get("duration") or 0,
+            "url": f"https://youtube.com/watch?v={d['id']}",
+            "description": (d.get("description") or "")[:300],
+            "id": d["id"],
+        })
 
     # Filter to videos whose title contains at least one keyword (relevance check)
     kw_lower = [k.lower() for k in keywords]
-    relevant = [v for v in videos if any(k in v["title"].lower() for k in kw_lower)]
-    # Fall back to unfiltered if relevance filter removes everything
+    relevant = [v for v in candidates if any(k in v["title"].lower() for k in kw_lower)]
     if relevant:
-        videos = relevant
+        candidates = relevant
+
+    # Pass 2: full metadata (upload date, likes, comments) for the videos that can
+    # actually make the report. Detail-fetching all 50 would be slow for no gain,
+    # so take a margin above top_n per section to absorb date-filter drops.
+    margin = top_n + 5
+    by_views = sorted(candidates, key=lambda x: x["views"], reverse=True)
+    short_pool = [v for v in by_views if 0 < v["duration_seconds"] <= short_max][:margin]
+    long_pool = [v for v in by_views if not (0 < v["duration_seconds"] <= short_max)][:margin]
+    detail_pool = short_pool + long_pool
+
+    print(f"Fetching details for {len(detail_pool)} candidates...")
+    detail = {}
+    if detail_pool:
+        detail_result = _run([
+            bin_path, "--skip-download", "--no-warnings",
+            "--print", DETAIL_TEMPLATE,
+        ] + [v["url"] for v in detail_pool])
+        for d in _parse_json_lines(detail_result.stdout):
+            if d.get("id"):
+                detail[d["id"]] = d
+
+    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y%m%d")
+    videos = []
+    for v in detail_pool:
+        d = detail.get(v["id"])
+        if not d:
+            continue
+        upload = d.get("upload_date") or "00000000"
+        if upload < cutoff:
+            continue
+        v.update({
+            "views": d.get("view_count") or v["views"],
+            "likes": d.get("like_count") or 0,
+            "comments": d.get("comment_count") or 0,
+            "upload_date": upload,
+            "duration": d.get("duration_string") or v["duration"],
+            "duration_seconds": d.get("duration") or v["duration_seconds"],
+            "description": (d.get("description") or v["description"])[:300],
+        })
+        videos.append(v)
 
     # Split into Shorts vs long-form. A known, non-zero duration at or under the
     # threshold is a Short; everything else (including unknown durations and

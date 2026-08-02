@@ -27,6 +27,7 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **YT** | `/yt-package` | Full YouTube video package — analysis, research, titles, hooks, script, description, filming guide |
 | **YT Search** | `/yt-search` | Search YouTube by keywords via yt-dlp, sort by views, generate report |
 | **Shorts** | `/yt-shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
+| **IG Post** | `/ig-post` | Write Instagram captions from a topic in your own voice. Three angles per run (story, blunt claim, useful list), sized for a single image post, carousel, or Reel. Enforces a no-em-dash, no-AI-slang style with a `tells.py` checker that every draft has to pass before you see it. Writing only, no design or publishing |
 | **Custom GPT** | `/custom-gpt` | Build a complete Custom GPT package (system-prompt, KB files, README) from course transcripts or raw text |
 | **Analytics** | `/yt-analytics` | YouTube channel analytics - views, retention, traffic sources, per-video breakdown, title/thumbnail A/B tracking |
 | **YouTube** | `/yt-upload` | Upload videos to YouTube and manage existing videos via the YouTube Data API v3 (titles, descriptions, tags, thumbnails, scheduling, comments) |
@@ -86,7 +87,7 @@ Build a real AI agent the easy way - no framework, no code, about ten minutes. T
 
 Take one finished video and push it to every platform without opening a single app. Upload and schedule to YouTube, cut the short-form scripts, write the platform posts, generate the pins and carousel, and queue the newsletter - all reviewed before anything goes out.
 
-- **Skills:** `/yt-upload` · `/repurpose` · `/social-copy` · `/pinterest-writer` · `/instagram-writer` · `/email` · `/skool` (+ Blotato for scheduling)
+- **Skills:** `/yt-upload` · `/repurpose` · `/social-copy` · `/pinterest-writer` · `/instagram-writer` · `/ig-post` · `/email` · `/skool` (+ Blotato for scheduling)
 - **Setup:** `/yt-upload` needs a one-time `token.json` (10-min Google setup, walked through in the doc)
 - **Doc:** https://docs.google.com/document/d/1u9v2Ekpxwq00i2jci5WIoyNpLpG0Ap8aJcIJlEYwYk8/edit
 

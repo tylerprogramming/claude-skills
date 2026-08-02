@@ -8,7 +8,7 @@ user-invocable: true
 
 # Visual Instagram Carousel Maker
 
-Launch the visual carousel maker app at `~/carousel-maker/`. This is a React + Hono app for creating branded Instagram carousels with AI-generated background images, multiple slide types, and PDF/PNG export.
+Launch the visual carousel maker app at `~/carousel-studio/`. This is a React + Hono app for creating branded Instagram carousels with AI-generated background images, multiple slide types, and PDF/PNG export.
 
 ## How to Use
 
@@ -23,7 +23,7 @@ If a process is already listening on port 5175, the app is running — skip to S
 ### Step 2: Start the dev server
 
 ```bash
-cd ~/carousel-maker && bun run dev &
+cd ~/carousel-studio && bun run dev &
 ```
 
 Wait 3 seconds for the server to boot:
@@ -68,7 +68,7 @@ Tell the user:
 - **Image Library**: Previously generated backgrounds are saved and reusable
 - **Text Scale**: Per-slide font size control (XS → XL + fine slider)
 - **Export**: Download individual PNGs or a multi-page PDF
-- **Save/Load**: Carousels saved as JSON to `~/carousel-maker/carousels/`, reload from the Library drawer
+- **Save/Load**: Carousels saved as JSON to `~/carousel-studio/carousels/`, reload from the Library drawer
 
 ## Stopping the Server
 
@@ -80,17 +80,28 @@ pkill -f "bun run dev" 2>/dev/null; lsof -ti:5175 | xargs kill -9 2>/dev/null; l
 
 ## Notes
 
-- App lives at `~/carousel-maker/`
-- Output PNGs go to `~/carousel-maker/output/`
+- App lives at `~/carousel-studio/`
+- Output PNGs go to `~/carousel-studio/output/`
 - Background images saved as `bg_*.png` in that same folder
 - Requires `KIE_API_KEY` in `~/.claude/.env` for background image generation
-- Requires Supabase credentials for save/load (see `~/carousel-maker/README.md`)
+- Requires `ANTHROPIC_API_KEY` in `~/.claude/.env` for slide generation (Claude Opus 5).
+  Falls back to `OPENAI_API_KEY` with gpt-5-mini if no Anthropic key is set.
+- Carousels save as local JSON in `~/carousel-studio/carousels/` — no database involved
+- **Export location is configurable.** Carousel Studio is a standalone app and
+  defaults to writing into its own `exports/` folder. To have exports land in the
+  content repo instead, set this in `~/carousel-studio/settings.json`:
+
+  ```json
+  { "exportDir": "~/content/platform/carousels", "handle": "@tylerreed" }
+  ```
+
+  The rest of this skill assumes that setting is in place.
 
 ## Carousel Storage (Two Locations)
 
 When creating carousel content, always save to **both** locations:
 
-### 1. App Library — `~/carousel-maker/carousels/<id>.json`
+### 1. App Library — `~/carousel-studio/carousels/<id>.json`
 
 This is what the carousel maker app reads. JSON format with the carousel's slides, colors, and text:
 
