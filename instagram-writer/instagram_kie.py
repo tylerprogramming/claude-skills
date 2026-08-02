@@ -6,19 +6,14 @@ Generates rich visual slides with logos, icons, and visual elements.
 Usage: python3 instagram_kie.py <slides.json> <output_dir>
 """
 
-# --- skills venv bootstrap -------------------------------------------------
-# `python3` is a moving target: a Homebrew upgrade silently re-points it and
-# every third-party import here vanishes with no warning. Re-exec under the
-# shared skills venv so the interpreter is decided by this file, not by PATH.
-# Compares sys.prefix, not the executable path: a venv's bin/python3 is a
-# symlink to the base interpreter, so realpath() matches and would never fire.
-# If the venv is missing, fall through and run as before.
+# --- skills venv bootstrap: run under .venv, not whatever python3 resolves to.
+# Rationale and the two gotchas: see "Why there is a venv" in README.md
 import os as _os, sys as _sys
 _vdir = _os.path.expanduser("~/.claude/skills/.venv")
 _vpy = _os.path.join(_vdir, "bin", "python3")
 if _os.path.exists(_vpy) and _os.path.abspath(_sys.prefix) != _os.path.abspath(_vdir):
     _os.execv(_vpy, [_vpy, *_sys.argv])
-# --- end skills venv bootstrap ---------------------------------------------
+# --- end bootstrap ---------------------------------------------------------
 
 import sys
 import json

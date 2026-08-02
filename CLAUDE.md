@@ -83,7 +83,25 @@ Required keys (see `.env.example`):
 
 ## Python Script Conventions
 
-- Auto-install missing packages via `pip install` in a `try/except ImportError`
+**Do NOT `pip install` at runtime.** That was the old convention here and it is
+what broke five skills: packages landed in whichever `python3` happened to be
+current, then a Homebrew upgrade re-pointed `python3` and every import vanished
+while the files sat on disk looking installed.
+
+Instead, third-party packages live in one shared venv at
+`~/.claude/skills/.venv`, built by `./setup.sh`. A script that needs any of them
+carries a short bootstrap block that re-execs it under that venv, so the
+interpreter is decided by the file rather than by `PATH`. Copy the block from
+any existing script, for example `yt-upload/yt.py`.
+
+Two things about the block that are easy to get wrong:
+- it must sit after the shebang, the module docstring, **and** any `__future__`
+  imports, because `from __future__` has to be the first statement in a file
+- it compares `sys.prefix`, not the executable path. A venv's `bin/python3` is
+  a symlink to the base interpreter, so comparing resolved paths matches on
+  both sides and the re-exec never fires
+
+Other conventions:
 - Print status messages for long-running operations
 - Return data that Claude can parse (JSON or plain text)
 - Accept arguments via `sys.argv`, not stdin
@@ -126,5 +144,9 @@ Skills that work together as a pipeline (run in this order):
 
 1. Create `~/.claude/skills/<skill-name>/SKILL.md`
 2. Add Python scripts in the same folder if needed
-3. Update `README.md` table
-4. Add trigger phrases to the global `~/.claude/CLAUDE.md` skills table
+3. If a script imports anything third-party: add the package to `PACKAGES` in
+   `setup.sh` (with a comment naming the skill), add the module to `MODULES` so
+   `./setup.sh --check` verifies it, and paste the venv bootstrap block at the
+   top of the script
+4. Update `README.md` table
+5. Add trigger phrases to the global `~/.claude/CLAUDE.md` skills table
