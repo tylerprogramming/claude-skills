@@ -15,12 +15,18 @@ Schedule daily, e.g. crontab:
 """
 
 # --- skills venv bootstrap: run under .venv, not whatever python3 resolves to.
-# Rationale and the two gotchas: see "Why there is a venv" in README.md
+# Looks for .venv beside this script and up a few levels, then falls back to
+# ~/.claude/skills/.venv, so it works whether these live in your skills folder
+# or in a clone anywhere else. Rationale: "Why there is a venv" in README.md
 import os as _os, sys as _sys
-_vdir = _os.path.expanduser("~/.claude/skills/.venv")
-_vpy = _os.path.join(_vdir, "bin", "python3")
-if _os.path.exists(_vpy) and _os.path.abspath(_sys.prefix) != _os.path.abspath(_vdir):
-    _os.execv(_vpy, [_vpy, *_sys.argv])
+_here = _os.path.dirname(_os.path.abspath(__file__))
+for _v in [_os.path.abspath(_os.path.join(_here, *([".."] * _i), ".venv")) for _i in range(4)] + [
+        _os.path.expanduser("~/.claude/skills/.venv")]:
+    if _os.path.exists(_os.path.join(_v, "bin", "python3")):
+        if _os.path.abspath(_sys.prefix) != _v:
+            _os.execv(_os.path.join(_v, "bin", "python3"),
+                      [_os.path.join(_v, "bin", "python3"), *_sys.argv])
+        break
 # --- end bootstrap ---------------------------------------------------------
 
 

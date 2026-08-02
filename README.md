@@ -93,22 +93,46 @@ Take one finished video and push it to every platform without opening a single a
 
 ## Installation
 
-These are global skills. To use them, copy the skill folders to your Claude Code skills directory:
+Most people already have their own skills, so pick whichever of these fits.
+
+### Option A — take the whole library
 
 ```bash
-# Clone the repo
-git clone https://github.com/tylerprogramming/claude-skills.git
-
-# Copy to your Claude skills folder
-cp -r claude-skills/* ~/.claude/skills/
-
-# Build the shared python environment the scripts run in
+git clone https://github.com/tylerprogramming/claude-skills.git ~/.claude/skills
 cd ~/.claude/skills && ./setup.sh
 ```
 
-`./setup.sh` creates `.venv` and installs every third-party package the skills
-import. It takes a couple of minutes and is only needed once. Check it any time
-with `./setup.sh --check`.
+Only do this if `~/.claude/skills` is empty. It replaces the folder.
+
+### Option B — clone anywhere, take the skills you want (recommended)
+
+```bash
+git clone https://github.com/tylerprogramming/claude-skills.git ~/projects/tyler-skills
+cd ~/projects/tyler-skills && ./setup.sh
+```
+
+Then open Claude Code in your own skills folder and ask it to bring over the
+ones you want, for example:
+
+> Look at ~/projects/tyler-skills and copy the yt-search and transcribe skills
+> into my ~/.claude/skills, then tell me what setup each one needs.
+
+The scripts find their venv by looking beside themselves first and walking up a
+few levels, then falling back to `~/.claude/skills/.venv`. So a copied skill
+works whether the venv sits in the clone, in your own skills folder, or both.
+
+If you copy a skill and its imports fail, you either have no venv yet or it is
+missing that skill's packages. Run `./setup.sh` in whichever folder the skill
+now lives in, or add the packages to your existing one.
+
+### Checking it
+
+```bash
+./setup.sh --check     # is the venv there, and does every package import
+```
+
+`--check` imports each module rather than trusting that pip reported success,
+so it tells you what actually works rather than what was supposed to install.
 
 ### Why there is a venv
 
