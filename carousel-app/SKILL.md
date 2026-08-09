@@ -196,7 +196,7 @@ Upload all 6 slides in parallel with `ThreadPoolExecutor(max_workers=6)` for spe
 ### Post creation
 ```python
 post_data = {
-    "accountId": "5910",   # Tyler's X account
+    "accountId": "<your-x-account-id>",   # from blotato_list_accounts
     "platform": "twitter",
     "text": caption,       # X-native, no hashtags, under 230 chars
     "mediaUrls": [slide_urls[1]],

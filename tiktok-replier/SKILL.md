@@ -24,28 +24,28 @@ Two-stage pipeline for managing TikTok comments on @codewithtyler:
 ## The hourly cron + manual draft workflow (PRIMARY pattern)
 
 A cron runs `monitor.py` every hour at :05. It produces three artifacts in `data/`:
-- **`inbox.json`** — comments needing Tyler's manual reply (with full metadata: cid, author, text, video_url, etc). This is what Tyler asks Claude to help draft.
+- **`inbox.json`** — comments needing your manual reply (with full metadata: cid, author, text, video_url, etc). This is what you ask Claude to help draft.
 - **`drafts_queue.json`** — auto-drafted Skool-link replies for keyword CTAs (System / Plan / Skill / Email / Routine / Tools / VFX / schedule / video / workflow). Already ready to post.
 - **`drafts.md`** — human-readable running log.
 
-### When Tyler says "any new comments?" / "check my tiktok inbox"
+### When the user says "any new comments?" / "check my tiktok inbox"
 
 1. Read `data/inbox.json` (manual-needed) AND `data/drafts_queue.json` (auto-drafts pending).
-2. Show Tyler the breakdown — count of each plus the actual text of inbox items.
+2. Show the user the breakdown — count of each plus the actual text of inbox items.
 3. He picks one or all to draft replies for.
 
-### When Tyler asks "draft a reply for the @username one"
+### When the user asks "draft a reply for the @username one"
 
 1. Read the inbox entry for that comment.
-2. Compose a reply that fits Tyler's tone (casual, helpful, drives to skool.com/the-ai-agency when relevant). Use `/harut` for conversion-sensitive wording.
-3. Show Tyler the draft, get approval.
+2. Compose a reply that fits your tone (casual, helpful, drives to skool.com/the-ai-agency when relevant). Use `/harut` for conversion-sensitive wording.
+3. Show the user the draft, get approval.
 4. When approved, run:
    ```
    python3 ~/.claude/skills/tiktok-replier/queue_draft.py --cid <cid> --reply "<text>"
    ```
    This appends to `replies_queue.json` AND removes from `inbox.json`.
 
-### When Tyler says "post them"
+### When the user says "post them"
 
 ```
 python3 ~/.claude/skills/tiktok-replier/reply.py --post --headless
@@ -76,7 +76,7 @@ python3 ~/.claude/skills/tiktok-replier/apify_fetch.py --videos 30 --per 100
 
 ### 2. Build reply queue
 
-Show Tyler the unreplied list, confirm wording, and write `data/replies_queue.json`. Each entry needs:
+Show the user the unreplied list, confirm wording, and write `data/replies_queue.json`. Each entry needs:
 - `cid` — comment ID (used to skip already-posted)
 - `author` — TikTok username (used to find the row)
 - `comment_text` — original comment text (used to verify the right row)
@@ -115,15 +115,15 @@ For first run or debugging, drop `--headless` so the browser is visible. Default
 ## Safety rules
 
 - **Default to `--limit 1` on first run** of any new queue
-- **Always show drafts to Tyler** before bulk posting (matches his memory: "Always confirm before scheduling, even if approved earlier in session")
+- **Always show drafts to you** before bulk posting (matches your memory: "Always confirm before scheduling, even if approved earlier in session")
 - **30s spacing between posts** to stay under TikTok's spam threshold
 - **`posted.json` tracks done IDs** so re-runs after a crash skip what already worked
-- **No automatic re-fetch + re-post loops** — Tyler initiates each batch
+- **No automatic re-fetch + re-post loops** — you initiate each batch
 
 ## "Keep checking" - the recurring use case
 
-Two paths Tyler can pick:
+Two paths you can pick:
 1. **Apify scheduler** (recommended): set up in their web console, runs in their cloud, emails him the dataset link. No local laptop dependency.
 2. **Local cron** via `/schedule` skill: re-runs `apify_fetch.py` on a schedule, then prompts to review unreplied list.
 
-Both options drop the post step into manual review — Tyler approves before any reply gets published.
+Both options drop the post step into manual review — you approve before any reply gets published.

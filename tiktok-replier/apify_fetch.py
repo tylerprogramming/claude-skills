@@ -2,7 +2,7 @@
 Fetch TikTok comments via Apify (clockworks/tiktok-comments-scraper).
 
 Pulls comments from @codewithtyler videos, fetches replies too so we can tell
-which ones the creator has already responded to, and writes everything Tyler
+which ones the creator has already responded to, and writes everything the user
 still needs to reply to into data/unreplied.json.
 
 Usage:
@@ -114,7 +114,7 @@ def main():
     # Sort newest first
     cleaned.sort(key=lambda c: c.get("created_at") or "", reverse=True)
 
-    # The list Tyler still needs to reply to
+    # The list the user still needs to reply to
     unreplied = [
         c for c in cleaned
         if not c["creator_replied"]

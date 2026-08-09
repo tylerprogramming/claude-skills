@@ -24,7 +24,7 @@ Everything is driven by **keyword SEO**, not hashtags or social engagement. Thin
 
 ## The Winning Design System (Proven)
 
-Tyler's top-performing pin is `~/content/platform/pinterest/001-5-skills/pin.png` (Day 1). All new pins should match its design system:
+your top-performing pin is `~/content/platform/pinterest/001-5-skills/pin.png` (Day 1). All new pins should match its design system:
 
 - **Background:** warm cream / off-white (`#FAF7F2`) with a very subtle circuit-pattern texture (barely visible). NOT purple, NOT lavender.
 - **Icons:** square icon per card, Claude terracotta orange gradient (`#D97757 → #C96342`). This is the Anthropic/Claude brand color.
@@ -42,7 +42,7 @@ When generating a new pin, **pass Day 1 as a reference image** so Nano Banana ke
 
 ## Title Formulas That Work (Pinterest SEO)
 
-Pinterest is a search engine. Titles that ranked for Tyler:
+Pinterest is a search engine. Title patterns that rank:
 - `"5 [X] That [Outcome]"` — "5 AI Tools That Replaced Canva in My Content Workflow"
 - `"How to [X] in N Minutes"` — "How to Create Your First Claude Code Routine in 2 Minutes"
 - `"[Tool] vs [Tool]"` — "Seedance 2 vs Kling 3: Same Prompt, Shocking Difference"
@@ -77,7 +77,7 @@ For each piece of source content, generate **1 pin**. Each pin needs:
 - Write for humans first, SEO second
 
 #### Board Assignment (required)
-Tyler's boards:
+your boards:
 - Claude Code Tutorials
 - AI Automation Tips
 - Social Media Automation
@@ -89,7 +89,7 @@ Tyler's boards:
 - Productivity Hacks with AI
 - Coding with AI
 
-**Testing insight:** AI Content Creation is Tyler's best-performing board. New pins should go there first, then diversify to other boards only after you see performance data.
+**Testing insight:** AI Content Creation is your best-performing board. New pins should go there first, then diversify to other boards only after you see performance data.
 
 #### Alt Text (required)
 - Describe what's visually on the pin
@@ -155,10 +155,10 @@ Save to `~/content/platform/pinterest/NNN-slug/copy.md`:
 
 **ALWAYS ask for explicit confirmation before scheduling anything to Blotato.** Never auto-schedule. Show the user the full list of pins (titles, dates, times, board) and wait for a clear "yes" / "go" / "schedule it" before running any `blotato_create_post` calls. Even when the user said "schedule them" earlier in the session, re-confirm the specific batch + dates before firing. Uploading presigned URLs is also part of the scheduling flow and should not happen without confirmation.
 
-**Tyler's Blotato setup (saved in memory `reference_pinterest_board_ids.md`):**
-- Pinterest account ID: `5421`
-- Username: `tylerreedytlearning`
-- Board `AI Content Creation` → `1121537182144777258`
+**Your Blotato setup (save your own IDs in local memory, e.g. `reference_pinterest_board_ids.md`):**
+- Pinterest account ID: `<your-account-id>` (from `blotato_list_accounts`)
+- Username: `<your-username>`
+- Board `<board name>` → `<your-board-id>` (from `blotato_list_pinterest_boards`)
 
 **Flow (three API calls per pin):**
 
@@ -169,9 +169,9 @@ Save to `~/content/platform/pinterest/NNN-slug/copy.md`:
    ```
 3. Call `mcp__blotato__blotato_create_post` with:
    ```
-   accountId: "5421"
+   accountId: "<your-pinterest-account-id>"
    platform: "pinterest"
-   boardId: "1121537182144777258"  // AI Content Creation
+   boardId: "<your-board-id>"  // e.g. your "AI Content Creation" board
    title: <pin title>
    text: <pin description>
    altText: <alt text>
@@ -235,7 +235,7 @@ Before writing pin content, check Pinterest search trends:
 - Each short = 1 video pin
 - Generate 1 image variant per pin (`--count 1`), not multiple
 
-## Tyler's Content Sources
+## Your Content Sources
 
 - YouTube video packages: `~/content/youtube/<slug>/`
 - Shorts packages: `~/content/youtube/shorts/NNN - Title/`

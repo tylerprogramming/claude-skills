@@ -23,7 +23,7 @@ If given a topic, write the slide content yourself. If given a file, read it and
 
 ### Step 2: Write the Slides
 
-Create a markdown file with **6 slides** (no CTA slide - Tyler adds that separately). Each slide is separated by `\n---\n`.
+Create a markdown file with **6 slides** (no CTA slide - you add that separately). Each slide is separated by `\n---\n`.
 
 **Slide structure:**
 - **Slide 1 (Hook):** Bold headline that stops the scroll. Short, punchy, curiosity-driven.
@@ -140,7 +140,7 @@ Note: This skill generates **LinkedIn PDF carousels** via Gamma API. For **Insta
 
 ## Rules
 
-- Always 6 content slides (no CTA - Tyler adds that separately with Kie.ai)
+- Always 6 content slides (no CTA - you add that separately with Kie.ai)
 - Use `textMode: preserve` so Gamma styles the text but doesn't rewrite it
 - Use `cardSplit: inputTextBreaks` so `---` separators control slide breaks
 - Use `4x5` dimensions for LinkedIn carousel format

@@ -14,7 +14,7 @@ The renderer (`dashboard.py`) is a pure view layer: it reads a compact JSON snap
 
 ## Rebuild flow (3 steps)
 
-1. **Pull the snapshot.** Run `dashboard.sql` (in this folder) via the Supabase MCP against the **lifestyle** project. Use the project id from your own config (Tyler's lives in the private global CLAUDE.md / the `life-os-supabase-backend` memory - it is intentionally not in this repo). The query returns one `payload` JSON object.
+1. **Pull the snapshot.** Run `dashboard.sql` (in this folder) via the Supabase MCP against the **lifestyle** project. Use the project id from your own config (yours lives in your private config, intentionally not in this repo). The query returns one `payload` JSON object.
 2. **Write the data file.** Save that `payload` object to `~/lifestyle/data/dashboard-data.json` (create the dir if needed).
 3. **Render and open.**
    ```bash

@@ -10,15 +10,15 @@ Upload to YouTube and manage existing videos using the YouTube Data API v3. Use 
 
 ## Setup Check
 
-The skill reuses Tyler's existing Google OAuth client at `~/credentials.json` (same one Drive and Gmail use). The first run will need to authorize the YouTube scopes — that's a one-time browser flow.
+The skill reuses your existing Google OAuth client at `~/credentials.json` (same one Drive and Gmail use). The first run will need to authorize the YouTube scopes — that's a one-time browser flow.
 
 ```bash
 python3 ~/.claude/skills/yt-upload/yt.py auth
 ```
 
-A browser opens, Tyler approves both scopes (`youtube.upload` + `youtube.force-ssl`), token saves to `~/.claude/skills/yt-upload/token.json`.
+A browser opens, you approve both scopes (`youtube.upload` + `youtube.force-ssl`), token saves to `~/.claude/skills/yt-upload/token.json`.
 
-If you see "missing OAuth client" error: `~/credentials.json` was deleted. Tell Tyler to re-export from Google Cloud Console.
+If you see "missing OAuth client" error: `~/credentials.json` was deleted. Tell the user to re-export from Google Cloud Console.
 
 ## Subcommands
 
@@ -88,7 +88,7 @@ python3 ~/.claude/skills/yt-upload/yt.py comment --reply-to COMMENT_ID --text "t
 python3 ~/.claude/skills/yt-upload/yt.py list --max 10
 ```
 
-Returns JSON array with video_id, title, published_at, url for each. Useful when Tyler wants to find a video ID without opening the browser.
+Returns JSON array with video_id, title, published_at, url for each. Useful when you want to find a video ID without opening the browser.
 
 ### get — fetch full metadata for a single video
 
@@ -98,7 +98,7 @@ python3 ~/.claude/skills/yt-upload/yt.py get VIDEO_ID
 
 Returns title, description, tags, category, privacy_status, publish_at, duration, stats (views/likes/comments), URL.
 
-## Common Tyler workflows
+## Common workflows
 
 ### Schedule a longform video (replaces Blotato YouTube uploads)
 
@@ -109,7 +109,7 @@ Returns title, description, tags, category, privacy_status, publish_at, duration
    ```bash
    sips -s format jpeg -s formatOptions 80 input.png --out output.jpg
    ```
-5. Upload with `--publish-at` set to Tyler's chosen time in his timezone (Eastern).
+5. Upload with `--publish-at` set to your chosen time in his timezone (Eastern).
 6. Save the video_id to `~/content/youtube/<slug>/youtube_video_id.txt` so future updates can find it.
 
 ### Swap a thumbnail because CTR is weak
@@ -133,14 +133,14 @@ python3 ~/.claude/skills/yt-upload/yt.py comment VIDEO_ID --text "$(cat comment.
 
 ## Rules
 
-- **Always confirm before scheduling/uploading**, even if Tyler approved earlier in the session (matches `feedback_confirm_before_scheduling.md`).
+- **Always confirm before scheduling/uploading**, even if approved earlier in the session (matches `feedback_confirm_before_scheduling.md`).
 - **Description bodies must not contain em dashes** — replace with hyphens before sending (matches `feedback_no_em_dashes.md`).
 - **Strip the H1 and `---` frontmatter** from `description.md` before passing as `--description-file`.
 - **Thumbnail max 2 MB** — compress with sips before uploading.
-- **Tags max 500 chars total** — script auto-truncates but warn Tyler if any get dropped.
+- **Tags max 500 chars total** — script auto-truncates but warn the user if any get dropped.
 - **Default category is 28 (Science & Technology)** for tech tutorials. Use 27 (Education) for course-style content.
 - **Save the video_id** after upload so future edits can find it. Recommend `~/content/youtube/<slug>/youtube_video_id.txt`.
-- **Eastern Time** is Tyler's default timezone for `--publish-at` unless he says otherwise.
+- **Eastern Time** is your default timezone for `--publish-at` unless he says otherwise.
 
 ## Quotas
 
@@ -152,7 +152,7 @@ YouTube Data API v3 has a daily quota of 10,000 units (default project quota). C
 - `videos.list` / `playlistItems.list`: 1 unit
 - `search.list`: 100 units
 
-If quota errors hit, tell Tyler to wait 24 hours or request a quota bump in Google Cloud Console.
+If quota errors hit, tell the user to wait 24 hours or request a quota bump in Google Cloud Console.
 
 ## Troubleshooting
 
@@ -160,10 +160,10 @@ If quota errors hit, tell Tyler to wait 24 hours or request a quota bump in Goog
 Run `python3 ~/.claude/skills/yt-upload/yt.py auth --reauth` to redo the browser flow.
 
 **`forbidden: The user is not enabled for using the YouTube Partner Program`**
-Some scopes (like setting custom thumbnails) require the YouTube channel to have verified the phone number on the channel. Tyler did this when he set up the channel — should not hit this in practice.
+Some scopes (like setting custom thumbnails) require the YouTube channel to have verified the phone number on the channel. the channel owner set this up — should not hit this in practice.
 
 **`videoNotFound`**
 The video_id is wrong, or it was deleted, or the channel that owns it isn't the authorized channel. Run `yt.py list` to verify which channel is authorized.
 
 **`uploadLimitExceeded`**
-You hit the daily upload limit (15 uploads/day for unverified channels, 100/day for verified). Tyler is verified — should not hit.
+You hit the daily upload limit (15 uploads/day for unverified channels, 100/day for verified). your channel is verified — should not hit.

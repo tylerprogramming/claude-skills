@@ -54,7 +54,7 @@ cd ~ && npx create-video@latest my-video --template blank
 cd ~/my-video && npm install
 ```
 
-## Existing Compositions (Tyler's Style Reference)
+## Existing Compositions (Your Style Reference)
 
 | Comp ID | File | What It Shows |
 |---------|------|---------------|

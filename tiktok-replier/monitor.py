@@ -11,7 +11,7 @@ What it does:
   6. macOS desktop notification with the count of new items needing review
   7. Updates data/last_unreplied.json for next run
 
-Tyler reviews data/drafts.md, edits if needed, then approves via:
+The user reviews data/drafts.md, edits if needed, then approves via:
     python3 reply.py --post --queue drafts_queue.json
 
 Cron setup (every hour at :05 to avoid the top-of-hour scheduler crowd):
@@ -39,7 +39,7 @@ ENV_FILE = Path.home() / ".claude" / ".env"
 LAST_FILE = DATA_DIR / "last_unreplied.json"   # set of cids seen previously
 DRAFTS_MD = DATA_DIR / "drafts.md"             # human-readable running log
 DRAFTS_QUEUE = DATA_DIR / "drafts_queue.json"  # auto-drafted (keyword) ready to post
-INBOX_FILE = DATA_DIR / "inbox.json"           # comments needing Tyler's manual review (full metadata)
+INBOX_FILE = DATA_DIR / "inbox.json"           # comments needing manual review (full metadata)
 POSTED_FILE = DATA_DIR / "posted.json"         # already-posted (from reply.py)
 
 USERNAME = "codewithtyler"
@@ -100,7 +100,7 @@ def call_apify(token):
 
 
 def derive_unreplied(raw):
-    """Filter raw comments to those Tyler still needs to reply to."""
+    """Filter raw comments to those still needing a reply."""
     top_level = [c for c in raw if c.get("repliesToId") is None]
     replies = [c for c in raw if c.get("repliesToId") is not None]
 
@@ -234,7 +234,7 @@ def main():
     # Draft replies for new ones
     drafted = []
     auto_queue = []  # ones with confident keyword draft (ready to post)
-    inbox = []       # ones needing Tyler's manual review (Claude will help draft)
+    inbox = []       # ones needing manual review (Claude will help draft)
 
     # Carry over existing inbox so older items aren't dropped
     if INBOX_FILE.exists():
@@ -258,7 +258,7 @@ def main():
                 "source": source,
             })
         else:
-            # Needs Tyler's manual reply; add to inbox unless already there
+            # Needs manual reply; add to inbox unless already there
             if c["cid"] not in inbox_cids:
                 inbox.append({
                     "cid": c["cid"],

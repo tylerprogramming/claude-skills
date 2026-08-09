@@ -148,7 +148,7 @@ Ask if they want:
 
 When scheduling flash videos via Blotato for TikTok or Instagram Reels, always remind the user:
 
-> **Add music in Blotato before confirming the schedule.** Flash videos have no audio - TikTok and Instagram heavily favor videos with music. Set `autoAddMusic: true` in the Blotato post params, or remind Tyler to manually select a trending audio track in the Blotato draft before it goes live.
+> **Add music in Blotato before confirming the schedule.** Flash videos have no audio - TikTok and Instagram heavily favor videos with music. Set `autoAddMusic: true` in the Blotato post params, or remind the user to manually select a trending audio track in the Blotato draft before it goes live.
 
 ---
 
@@ -190,7 +190,7 @@ public_url    = data["publicUrl"]     # use in mediaUrls
 ### Post structure
 ```python
 {
-    "accountId": "5910",
+    "accountId": "<your-x-account-id>",
     "platform": "twitter",
     "text": "<X-native caption — no hashtags, under 230 chars, punchy>",
     "mediaUrls": [public_url],

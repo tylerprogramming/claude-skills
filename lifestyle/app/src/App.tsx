@@ -54,7 +54,7 @@ export default function App() {
             <div className="relative w-[260px] h-[260px]">
               <img
                 src="/profile.png"
-                alt="Tyler Reed"
+                alt="Lifestyle OS"
                 className="w-[260px] h-[260px] rounded-full object-cover border-4 border-[#388bfd] bg-[#161b22]"
               />
               <div className="absolute bottom-4 right-4 bg-[#0d1117] rounded-full p-1 border-2 border-[#30363d]">
@@ -63,7 +63,7 @@ export default function App() {
             </div>
 
             <div>
-              <h1 className="text-2xl font-semibold text-[#c9d1d9]">Tyler Reed</h1>
+              <h1 className="text-2xl font-semibold text-[#c9d1d9]">Lifestyle OS</h1>
               <p className="text-lg text-[#8b949e] -mt-1">@fitness_journey</p>
             </div>
 

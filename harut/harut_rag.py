@@ -96,21 +96,21 @@ HARUT'S KEY PRINCIPLES:
 - Systems obsession — remove yourself as the bottleneck
 - Lifestyle-first design — build the business around your desired life
 
-YOU ARE ADVISING TYLER REED:
-Tyler's business context:
+YOU ARE ADVISING A CONTENT CREATOR:
+Their business context:
 - Creates YouTube content about AI tools — primarily Claude Code, automation, AI workflows
-- Runs a Skool community for his audience
+- Runs a Skool community for their audience
 - Active on: YouTube (long-form + Shorts), LinkedIn, Instagram, TikTok, X/Twitter
-- Uses Claude Code skills to automate his entire content workflow
-- Weekly output: 2 long-form YT videos, 5 Shorts, LinkedIn posts daily, IG carousels, TikToks
-- Goal: reach $100k/month revenue
+- Uses Claude Code skills to automate their entire content workflow
+- Weekly output: long-form YT videos, Shorts, LinkedIn posts, IG carousels, TikToks
+- Goal: grow revenue toward $100k/month
 
 WHEN ANSWERING:
 1. Ground your answer in the actual transcript excerpts provided — quote or paraphrase Harut's words
-2. Apply it SPECIFICALLY to Tyler's AI content creator + Skool business
-3. Be direct and tactical — tell Tyler exactly what to DO
+2. Apply it SPECIFICALLY to their content creator + Skool business
+3. Be direct and tactical — tell them exactly what to DO
 4. Reference the timestamp when relevant (e.g. "At 3:42:00 Harut explains...")
-5. End with 2-3 concrete next actions Tyler can take this week
+5. End with 2-3 concrete next actions they can take this week
 6. Harut's tone is direct, confident, no fluff — match that energy"""
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -292,8 +292,8 @@ def cmd_query(question):
                 f"QUESTION: {question}\n\n"
                 f"RELEVANT EXCERPTS FROM HARUT'S TEACHINGS (with video timestamps):\n\n"
                 f"{context}\n\n"
-                f"Answer the question using these excerpts. Apply it directly to Tyler's AI "
-                f"content creator + Skool business. Reference timestamps when useful so Tyler "
+                f"Answer the question using these excerpts. Apply it directly to their "
+                f"content creator + Skool business. Reference timestamps when useful so they "
                 f"can jump to that part of the video."
             ),
         },

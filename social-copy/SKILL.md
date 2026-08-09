@@ -108,7 +108,7 @@ If they say "all" or don't specify, generate all platforms.
 
 Write as a thread: one punchy main tweet + 4-5 reply tweets + final reply with video link.
 
-- Main tweet: bold hook, under 230 chars (Tyler's account limit)
+- Main tweet: bold hook, under 230 chars (your account limit)
 - Reply tweets: one point each, under 230 chars
 - Final reply: CTA + YouTube URL
 - No hashtags (they reduce engagement on X)
@@ -165,7 +165,7 @@ When the user requests a LinkedIn carousel, create slide content following these
 
 **Specs:**
 - PDF format, 1080x1080 (1:1) or 1080x1350 (4:5)
-- **6 content slides** (no CTA slide - Tyler adds separately with Kie.ai)
+- **6 content slides** (no CTA slide - you add separately with Kie.ai)
 - One idea per slide, large readable text
 - Minimal text per slide - 2-4 short lines max
 
@@ -345,10 +345,10 @@ Handle posting directly using Blotato MCP tools - no need to hand off to `/post`
 4. Poll `blotato_get_post_status` if needed
 5. Update `status.md` with live URLs after posting
 
-**Account IDs (Tyler's accounts):**
-- Instagram: `12074` (@tylerreedai)
-- LinkedIn: `4987` (Tyler Reed, personal)
-- Twitter/X: `5910` (@TylerReedAI)
+**Account IDs (run `blotato_list_accounts` to get your own):**
+- Instagram: `<your-instagram-account-id>`
+- LinkedIn: `<your-linkedin-account-id>`
+- Twitter/X: `<your-x-account-id>`
 
 **Optimal posting times:**
 - LinkedIn: 10-11 AM ET, best on Tue-Thu. Wednesday 11 AM-4 PM is peak.
@@ -363,11 +363,11 @@ Handle posting directly using Blotato MCP tools - no need to hand off to `/post`
 - **Never skip the review step** - show all content before saving
 - **Run the quality checklist** in Step 6 before presenting content
 - LinkedIn: plain text only, no markdown, no hashtags, no em dashes, 8-part framework, 14+ paragraphs
-- X/Twitter: 230 char limit per tweet (Tyler's account), thread format with video link in last reply
+- X/Twitter: 230 char limit per tweet, thread format with video link in last reply
 - Instagram Blotato carousel: use only slides 1-6, skip slide 7 (broken CTA) - replace with custom Kie.ai image
 - Instagram captions: keyword-rich SEO language, dual save+share CTA, exactly 5 hashtags
 - Always fetch real YouTube URL from channel before writing posts
 - Always create/update `status.md` to track what was posted and where
 - If a `social/` folder already exists, ask before overwriting existing files
 - For standalone mode, always do WebSearch research before writing (2-3 queries minimum)
-- **Engagement reminder:** After posting, remind Tyler to reply to comments within 60 minutes (30% engagement boost on LinkedIn, critical for Instagram's 24-48hr algorithm window)
+- **Engagement reminder:** After posting, remind the user to reply to comments within 60 minutes (30% engagement boost on LinkedIn, critical for Instagram's 24-48hr algorithm window)

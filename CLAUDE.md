@@ -136,7 +136,7 @@ Other conventions:
 
 ## Lifestyle Skill Architecture
 
-The `lifestyle` skill (consolidating the former `fitness`, `opm`, `nutrition`, `opm-graph`, and `opm-review` skills) logs Tyler's whole-life OS to the **`lifestyle` Supabase project** (project id kept in private config, not this repo) via the Supabase MCP. There is no local app or file fallback — the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase. The companion `lifestyle-show` skill renders that data into a self-contained `dashboard.html` (pure view layer, no DB access).
+The `lifestyle` skill (consolidating the former `fitness`, `opm`, `nutrition`, `opm-graph`, and `opm-review` skills) logs your whole-life OS to the **`lifestyle` Supabase project** (project id kept in private config, not this repo) via the Supabase MCP. There is no local app or file fallback — the old `~/fitness-app` SQLite app and `~/fitness/data.js` were retired June 2026 and fully migrated into Supabase. The companion `lifestyle-show` skill renders that data into a self-contained `dashboard.html` (pure view layer, no DB access).
 
 - **Storage**: Supabase Postgres (fitness/diet + life-OS keystone + business/YouTube + planning tables).
 - **Gotchas**: id sequences are out of sync → insert with explicit `(select coalesce(max(id),0)+1 from <table>)`; no `date` unique constraint → check-then-insert; `activity_log` macros are cumulative daily totals.

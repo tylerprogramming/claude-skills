@@ -5,9 +5,9 @@ Uses the official YouTube Data API v3 (via the same OAuth token as yt.py).
 Free under quota. Each cron run uses ~30-60 quota units (daily limit: 10,000).
 
 What it does:
-  1. Fetches Tyler's recent uploads (default 30)
+  1. Fetches your recent uploads (default 30)
   2. For each, fetches commentThreads + replies
-  3. Identifies unreplied top-level comments (Tyler hasn't replied)
+  3. Identifies unreplied top-level comments (you haven't replied)
   4. Diffs against data/last_seen_yt.json
   5. Splits new ones into:
        - data/inbox_yt.json     (manual reply needed - Claude will draft)

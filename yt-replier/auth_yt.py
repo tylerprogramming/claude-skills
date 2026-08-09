@@ -1,7 +1,7 @@
 """
 Self-contained YouTube OAuth for the yt-replier skill.
 
-Reuses Tyler's existing Google OAuth client at ~/credentials.json (the same
+Reuses your existing Google OAuth client at ~/credentials.json (the same
 desktop client the Drive/Gmail/youtube skills use), but stores its own token
 inside this skill folder so yt-replier has no dependency on any other skill.
 

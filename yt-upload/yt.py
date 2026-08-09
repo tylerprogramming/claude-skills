@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-YouTube Data API v3 CLI for Tyler's content workflow.
+YouTube Data API v3 CLI for your content workflow.
 
 Subcommands:
   auth                          One-time OAuth setup. Opens browser, saves token.
@@ -28,7 +28,7 @@ Scheduling:
 Categories (most-used):
   22 = People & Blogs
   27 = Education
-  28 = Science & Technology  (default for Tyler's tech tutorials)
+  28 = Science & Technology  (default for your tech tutorials)
 """
 
 

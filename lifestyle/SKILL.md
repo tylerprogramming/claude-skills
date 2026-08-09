@@ -1,12 +1,12 @@
 ---
 name: lifestyle
-description: Log and track Tyler's whole-life OS - runs, lifts, meals, water, caffeine, weight, reading, business, YouTube, and the daily check-in - to the lifestyle Supabase project. Supports text, nutrition-label photos, and running-app screenshots. Triggers on: lifestyle, log workout, worked out, went running, ran, lifted weights, ate well, I had, I ate, drank water, had a coffee, caffeine, weighed in, read a chapter, daily check-in, log my day, fitness, log run, log meal.
+description: Log and track your whole-life OS - runs, lifts, meals, water, caffeine, weight, reading, business, YouTube, and the daily check-in - to the lifestyle Supabase project. Supports text, nutrition-label photos, and running-app screenshots. Triggers on: lifestyle, log workout, worked out, went running, ran, lifted weights, ate well, I had, I ate, drank water, had a coffee, caffeine, weighed in, read a chapter, daily check-in, log my day, fitness, log run, log meal.
 argument-hint: [run/lift/meal/water/caffeine/weight/reading/checkin/image path]
 allowed-tools: Bash, Read, Write, Glob, Edit, WebSearch
 user-invocable: true
 ---
 
-Log Tyler's whole life to the **lifestyle Supabase project**. This is the day-to-day logger for the Lifestyle OS (mission: $500K ARR by end of 2026; pillars: Content, Fitness, Reading, Business; motto: consistency over intensity).
+Log your whole life to the **lifestyle Supabase project**. This is the day-to-day logger for the Lifestyle OS (mission: $500K ARR by end of 2026; pillars: Content, Fitness, Reading, Business; motto: consistency over intensity).
 
 ## Backend (this is the source of truth)
 
@@ -18,12 +18,12 @@ The full human-readable reference lives in `~/lifestyle/`: `README.md` (mission/
 - **Out-of-sync id sequences:** a plain insert can throw a duplicate-key error. Always insert with an explicit id: `(select coalesce(max(id),0)+1 from <table>)`.
 - **No `date` unique constraint:** never use `on conflict (date)`. Check if the day's row exists first (`select ... where date=...`), then insert or update.
 - **`activity_log` macros are cumulative:** calories/protein/fat/carbs are running daily totals. When another meal is reported, GET the existing row and ADD to it - do not overwrite with just the new meal.
-- **Always fill meal actuals:** when Tyler says what he ate, fill `actual_name / actual_calories / actual_protein` in `meal_plan` if a planned row exists for that date+meal_code; otherwise add the macros to `activity_log`.
+- **Always fill meal actuals:** when the user says what they ate, fill `actual_name / actual_calories / actual_protein` in `meal_plan` if a planned row exists for that date+meal_code; otherwise add the macros to `activity_log`.
 - **Dates:** format `YYYY-MM-DD`. "today" = current date; handle "yesterday" / "last night" / explicit dates by targeting the right day.
 
 ## What to say → where it goes
 
-| Tyler reports... | Table | Key columns |
+| User reports... | Table | Key columns |
 |---|---|---|
 | a run / cardio (or shares a run screenshot) | `cardio_log` | date, type, subtype, distance_mi, duration_min, pace_sec_mi, calories_burned, elevation_ft, avg_hr, cadence, notes, pr |
 | a lift ("squats 3x8 @185") | `strength_entries` (+ `strength_sets`) | entry: exercise_id, date, notes, duration_min · sets: entry_id, set_order, weight, reps |

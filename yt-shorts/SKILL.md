@@ -69,7 +69,7 @@ If transcripts are available for any of these videos, read them and note:
 Based on the research, identify **5 distinct short-form ideas**. Each should:
 
 - Be grounded in a **proven angle** from the top-performing competitor content
-- Be **original** — Tyler's take on the topic, not a clip of someone else's video
+- Be **original** — your take on the topic, not a clip of someone else's video
 - Be **self-contained** — makes sense in 60-90 seconds with no prior context
 - Cover **different angles** — don't make 5 versions of the same idea
 
@@ -113,7 +113,7 @@ For each approved idea, write a full short-form package:
 - [Key phrase 3 — closing punchline or CTA]
 
 ### CueCard (copy/paste into teleprompter)
-[Just the words Tyler says on camera. No metadata, no [SHOW:] tags, no captions.
+[Just the words you say on camera. No metadata, no [SHOW:] tags, no captions.
 Split into sections with ## headers so he can jump between them with arrow keys.
 Include a ## Outro section for the closing line/CTA.]
 
@@ -277,7 +277,7 @@ Ask: **"Want to adjust any scripts, swap an idea, or generate the carousel visua
 ## Rules
 
 - Ideas come from **research, not guessing** — every short should be traceable to a top-performing competitor video or pattern
-- Scripts must be **original** — Tyler's perspective on the topic, not rephrasing someone else's video
+- Scripts must be **original** — your perspective on the topic, not rephrasing someone else's video
 - **Hook first, always** — no intros, no "hey guys", no warm-up
 - Scripts: **80-150 words max** — if it can't be said in 90 seconds, it's not a short
 - **Vary the 5 formats** — at least 2 talking head, 1 screen recording, 1 mixed

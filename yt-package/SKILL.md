@@ -154,7 +154,7 @@ After generating all written files, generate thumbnail options using the `/yt-th
 
 2. Based on the thumbnail analysis, video title, script, and overall concept, craft 2-3 different thumbnail prompts. Each should be a distinct visual concept but grounded in the reference analysis:
    - One that closely follows the reference thumbnail's proven style/layout
-   - One that takes the reference style but adds the user's face (use `--reference-images ~/content/youtube/tyler-reference-images/tylerai.png`)
+   - One that takes the reference style but adds the user's face (use `--reference-images ~/content/youtube/reference-images/your-face.png`)
    - One that differentiates — a fresh take that still incorporates elements that work from the analysis
 
 2. For each prompt, run the thumbnail generator:
