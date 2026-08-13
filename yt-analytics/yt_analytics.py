@@ -68,14 +68,41 @@ def authenticate():
         creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
 
     if not creds or not creds.valid:
+        refreshed = False
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+                refreshed = True
+            except Exception as e:
+                # A refresh token expires after ~6 months, and is revoked when the
+                # Google account password changes or access is withdrawn. That is
+                # normal and recoverable - it means sign in again, not crash with
+                # a stack trace, which is what this used to do.
+                print(f"  stored token is no longer valid ({e.__class__.__name__}); "
+                      f"opening a browser to sign in again", file=sys.stderr)
+                try:
+                    TOKEN_FILE.unlink()
+                except OSError:
+                    pass
+                creds = None
+
+        if not refreshed:
             if not CREDS_FILE.exists():
                 print(f"ERROR: credentials.json not found at {CREDS_FILE}", file=sys.stderr)
                 sys.exit(1)
+            # No stdin check here. run_local_server opens a browser and waits on a
+            # loopback redirect; it never reads stdin, so gating it on isatty()
+            # blocked the exact flow it was meant to explain.
+            print("  a browser window will open for Google sign-in...", file=sys.stderr)
             flow = InstalledAppFlow.from_client_secrets_file(str(CREDS_FILE), SCOPES)
-            creds = flow.run_local_server(port=0)
+            try:
+                creds = flow.run_local_server(port=0, open_browser=True)
+            except Exception as e:
+                print(f"ERROR: could not complete the sign-in ({e}).\n"
+                      "       If no browser opened, run this in Terminal:\n"
+                      f"       python3 {Path(__file__).resolve()} --days 28",
+                      file=sys.stderr)
+                sys.exit(2)
 
         TOKEN_FILE.write_text(creds.to_json())
 
