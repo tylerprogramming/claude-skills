@@ -1,6 +1,6 @@
 ---
 name: instagram-writer
-description: Create high-engagement Instagram carousels using the proven @aiwithanushka design - warm cream background, terra cotta accent color, bold two-tone typography, 6-slide Cover-Pain-Solution-How-Results-CTA structure optimized for saves and comments. Triggers on: instagram carousel, instagram writer, write carousel, ig carousel, create instagram carousel, make a carousel, carousel for instagram.
+description: Create high-engagement Instagram carousels. Rich layout with mono rails, display headlines, sticky notes, icon rows, tables, terminal proof cards and gradient panels, or the original plain layout. Palette comes from social-studio themes (electric by default). Optimized for saves and comment-gated CTAs. Triggers on: instagram carousel, instagram writer, write carousel, ig carousel, create instagram carousel, make a carousel, carousel for instagram.
 argument-hint: [topic] or [topic + cta word]
 allowed-tools: Read, Write, Bash(python3:*), Bash(pip3:*)
 user-invocable: true
@@ -189,26 +189,54 @@ Create the JSON following this exact structure. Headlines must be SHORT lines (3
 
 ## Step 4: Write the caption
 
-Generate an Instagram caption that drives saves and follows the keyword-first SEO approach:
+**Short.** Forty words is the ceiling, and fewer is usually better.
 
 ```
-<Hook line matching slide 1 - create urgency to save>
+<One line that matches slide 1 and promises the payoff>
 
-Save this. You'll use it.
-
-<2-3 sentences expanding on the value>
-
-Comment <CTA_WORD> and I'll DM you the full guide.
+Comment <CTA_WORD> and I'll send it.
 
 #claudecode #claudeai #ai #claudecodetips #aiautomation
 ```
 
-Caption rules:
-- Hook = first line, visible before "more" - make it a promise or bold claim
-- "Save this" CTA early - saves are the #1 Instagram signal
-- Comment CTA = drives comments (2nd biggest signal)
-- Exactly 5 hashtags, always the same set
-- No em dashes
+### Why short
+
+The carousel is the content. The caption's only job is to get the comment,
+because a comment-gated payoff is what produces the comment count. Everything
+you would have explained in paragraph three is already on slide four, and
+nobody reads past "... more" to find it.
+
+Measured on the two carousels in the swipe file, both of which out-saved
+anything of ours:
+
+| | Caption | Comments | Saves |
+|---|---|---|---|
+| @ibraviz.ai | "Comment JARVIS for the setup!" - 6 words | 4,026 | 10.4K |
+| @albert.olgaard | "Comment 'Famous' for the skills" - 5 words | - | 219 |
+
+Ours have been running 180 to 197 words. Reach explains a lot of that gap and
+caption length is not the only variable, so treat this as a strong prior rather
+than a proven cause - but the direction is one-way, and a short caption costs
+nothing to test.
+
+### Rules
+
+- **First line is the hook**, visible before "... more". Promise the payoff.
+- **One comment CTA**, naming the keyword. That is the whole point of it.
+- **Under 40 words** before the hashtags. If it needs a second paragraph, that
+  paragraph belongs on a slide.
+- **Five hashtags**, the set above.
+- No em dashes.
+
+### Hashtags
+
+The set above is what our own posts already use. The only tag set visible on a
+reference screenshot is @ibraviz.ai's: `#claude #claudecode #ai #jarvis #reel`
+- worth noting they tag the topic (`#jarvis`) rather than only the tool.
+
+No `#aiagents`, `#business` or similar appeared on any captured screenshot, so
+none is recommended here on evidence. Add one deliberately if you want to test
+it; do not assume it was observed.
 
 Save the caption to `~/content/platform/instagram/<slug>/caption.md`
 
