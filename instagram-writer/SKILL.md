@@ -196,7 +196,7 @@ Create the JSON following this exact structure. Headlines must be SHORT lines (3
 
 Comment <CTA_WORD> and I'll send it.
 
-#claudecode #claudeai #ai #claudecodetips #aiautomation
+#claudecode #aiagents #ai #<topic> #carousel
 ```
 
 ### Why short
@@ -230,13 +230,33 @@ nothing to test.
 
 ### Hashtags
 
-The set above is what our own posts already use. The only tag set visible on a
-reference screenshot is @ibraviz.ai's: `#claude #claudecode #ai #jarvis #reel`
-- worth noting they tag the topic (`#jarvis`) rather than only the tool.
+Five, in slots. Three fixed, two that change per post:
 
-No `#aiagents`, `#business` or similar appeared on any captured screenshot, so
-none is recommended here on evidence. Add one deliberately if you want to test
-it; do not assume it was observed.
+```
+#claudecode #aiagents #ai #<topic> #carousel
+```
+
+| Slot | Value | Why |
+|---|---|---|
+| Tool | `#claudecode` | fixed |
+| Category | `#aiagents` | fixed |
+| Broad | `#ai` | fixed |
+| **Topic** | `#mcp`, `#arcade`, `#jarvis`, `#obsidian` | **changes every post** |
+| Format | `#carousel` | fixed |
+
+The topic slot is the part copied from @ibraviz.ai, the only reference whose
+tags were visible: `#claude #claudecode #ai #jarvis #reel`. Four of their five
+describe the tool or the category; the fifth names **what the post is about**.
+That is the one doing work a tool tag cannot - it reaches people searching the
+subject rather than the software.
+
+They tagged a carousel `#reel`, which we are not copying. Tag the format you
+actually posted.
+
+Honest note on `#aiagents`: it did not appear on any captured screenshot. It is
+in the set because it is the category we want to be found in, not because it
+was observed. Treat it as a deliberate bet, and if a post is not about agents,
+swap it for something truer rather than leaving it in out of habit.
 
 Save the caption to `~/content/platform/instagram/<slug>/caption.md`
 
