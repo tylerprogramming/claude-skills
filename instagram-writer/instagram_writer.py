@@ -1069,10 +1069,12 @@ def slide_body(data, idx):
         quad_card(img, draw, PAD, H - PAD - 64 - qh - 30, W - PAD * 2, quad, h=qh)
         draw = ImageDraw.Draw(img)
 
+    content_bottom = y
     if s.get("table"):
         t = s["table"]
-        table_card(img, draw, PAD, y + 8, W - PAD * 2,
-                   t.get("header", ["Part", "What it does"]), t.get("rows", []))
+        content_bottom = table_card(img, draw, PAD, y + 8, W - PAD * 2,
+                                    t.get("header", ["Part", "What it does"]),
+                                    t.get("rows", []))
         draw = ImageDraw.Draw(img)
 
     if s.get("proof"):
@@ -1083,7 +1085,10 @@ def slide_body(data, idx):
 
     # closing row: a script aside on the left, a pill nudge on the right
     if s.get("closer") or s.get("pill"):
-        cy_ = H - PAD - 64 - 84
+        # Sit just under whatever it is commenting on, not pinned above the
+        # footer. Pinned, it floated 200px below the table it belongs to and
+        # read as unrelated furniture.
+        cy_ = min(content_bottom + 46, H - PAD - 64 - 84)
         if s.get("closer"):
             f_c = load_script(33)
             draw.text((PAD, cy_), s["closer"], font=f_c, fill=ACCENT)
