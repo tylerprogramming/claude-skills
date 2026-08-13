@@ -321,7 +321,7 @@ def draw_tracked(draw, x, y, text, font, fill, track=0):
 
 
 def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
-                             kicker="", rule=True, align="center"):
+                             kicker="", rule=True, align="center", max_w=None):
     """Centred, all-caps, tightly tracked, with a rule under the accent line."""
     if kicker:
         f_k = load_mono(24, bold=True)
@@ -330,8 +330,12 @@ def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
         draw.text((kx, y), kt, font=f_k, fill=GRAY)
         y += th(draw, "Ag", f_k) + 26
 
+    # Shrink against the space actually available. On a body slide the note
+    # occupies the right half, and sizing against the full canvas ran the
+    # headline straight under it.
+    limit = max_w or (W - PAD * 2)
     f = load_display(size)
-    while size > 48 and max(tracked_width(draw, l.upper(), f, track) for l in lines) > W - PAD * 2:
+    while size > 44 and max(tracked_width(draw, l.upper(), f, track) for l in lines) > limit:
         size -= 4
         f = load_display(size)
 
@@ -853,6 +857,133 @@ def pill_button(draw, x, y, text, pad_x=34, pad_y=18, size=25):
     return x + w, y + h
 
 
+def _ramp(w, h, c0, c1, radius=18):
+    """A diagonal two-stop gradient, rounded. Copper fills every surface with
+    one; in electric it is the accent running to a lighter tint of itself."""
+    g = Image.new("RGB", (w, h))
+    px = g.load()
+    for yy in range(h):
+        for xx in range(0, w, 4):
+            t = (xx / max(1, w) * 0.62) + (yy / max(1, h) * 0.38)
+            col = tuple(int(a + (b - a) * t) for a, b in zip(c0, c1))
+            for k in range(min(4, w - xx)):
+                px[xx + k, yy] = col
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, fill=255)
+    out = Image.new("RGBA", (w, h))
+    out.paste(g, (0, 0))
+    out.putalpha(mask)
+    return out
+
+
+def _tint(strength=0.12):
+    return tuple(int(c * (1 - strength) + a * strength) for c, a in zip(BG, ACCENT))
+
+
+def gradient_panel(img, draw, x, y, w, h, radius=18):
+    """A filled block carrying the accent ramp. White text goes on top."""
+    soft_shadow(img, (x, y, x + w, y + h), radius=radius, blur=12, offset=(0, 7), opacity=44)
+    light = tuple(int(c + (255 - c) * 0.30) for c in ACCENT)
+    img.paste(_ramp(int(w), int(h), ACCENT, light, radius), (int(x), int(y)),
+              _ramp(int(w), int(h), ACCENT, light, radius))
+    return ImageDraw.Draw(img)
+
+
+def label_chip(draw, x, y, text, size=25, pad_x=18, pad_y=10):
+    """A dark chip used as a section label.
+
+    Copper's most reusable element: it gives a slide three labelled sections
+    without spending three headings on them."""
+    f = load_font(size, bold=True)
+    t = text.upper()
+    w = tw(draw, t, f) + pad_x * 2
+    h = size + pad_y * 2
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=9, fill=ACCENT)
+    draw.text((x + pad_x, y + pad_y - 3), t, font=f, fill=BG)
+    return x + w, y + h
+
+
+def tint_card(img, draw, x, y, w, h, radius=14):
+    """A pale accent-tinted card. The soft counterpart to gradient_panel."""
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=radius, fill=_tint(0.10))
+    return draw
+
+
+def numbered_card(img, draw, x, y, w, h, num, lines, size=27):
+    """A tint card with a big ghosted numeral behind short text.
+
+    For four peers with no order dependency, where a table would wrongly imply
+    hierarchy."""
+    tint_card(img, draw, x, y, w, h)
+    f_n = load_display(int(h * 0.66))
+    ghost = tuple(int(c * 0.82 + a * 0.18) for c, a in zip(_tint(0.10), ACCENT))
+    num_t = f"{num:02d}"
+    draw.text((x + 14, y + int(h * 0.10)), num_t, font=f_n, fill=ghost)
+    # Text clears the numeral instead of printing on top of it. Measured, not a
+    # guessed fraction of the card - the first version used h*0.62 and the two
+    # collided at every card width.
+    f = load_font(size, bold=True)
+    text_x = x + 14 + tw(draw, num_t, f_n) + 16
+    ty = y + (h - len(lines) * (size + 8)) // 2
+    for ln in lines:
+        draw.text((text_x, ty), ln, font=f, fill=BLACK)
+        ty += size + 8
+    return y + h
+
+
+def step_watermark(draw, y, text, size=118):
+    """A huge pale step label sitting behind the headline, cropped by the top.
+
+    Makes a sequence obvious at a glance without spending a line on it."""
+    f = load_display(size)
+    ghost = tuple(int(c * 0.87 + a * 0.13) for c, a in zip(BG, BLACK))
+    draw.text((PAD - 6, y), text, font=f, fill=ghost)
+
+
+def status_tile(img, draw, x, y, kind, tile=64):
+    """An icon tile in a semantic colour rather than the brand one.
+
+    Red for the old way, green for the new, accent for the loop. More legible
+    at a glance than copper's neutral tiles, and the one element of that style
+    worth taking wholesale."""
+    col = {"bad": (231, 76, 76), "good": (46, 184, 114)}.get(kind, ACCENT)
+    soft_shadow(img, (x, y, x + tile, y + tile), radius=14, blur=7, offset=(0, 4), opacity=34)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + tile, y + tile], radius=14, fill=col)
+    c, h = x + tile // 2, y + tile // 2
+    if kind == "bad":
+        for dx, dy in ((-1, -1), (-1, 1)):
+            draw.line([(c + dx * 13, h + dy * 13), (c - dx * 13, h - dy * 13)],
+                      fill=(255, 255, 255), width=6)
+    elif kind == "good":
+        draw.line([(c - 14, h + 1), (c - 4, h + 11)], fill=(255, 255, 255), width=6)
+        draw.line([(c - 4, h + 11), (c + 15, h - 12)], fill=(255, 255, 255), width=6)
+    else:
+        draw.ellipse([c - 15, h - 15, c + 15, h + 15], outline=(255, 255, 255), width=4)
+        draw.line([(c, h), (c, h - 9)], fill=(255, 255, 255), width=4)
+        draw.line([(c, h), (c + 7, h)], fill=(255, 255, 255), width=4)
+    return draw
+
+
+def circled(draw, x, y, text, size=30):
+    """A hand-drawn ellipse looping a phrase, the way you would circle a line
+    on a printout. Louder than an underline, which is the point."""
+    f = load_font(size, bold=True)
+    w = tw(draw, text, f)
+    draw.text((x, y), text, font=f, fill=BLACK)
+    import math
+    cx_, cy_ = x + w / 2, y + size / 2 + 2
+    rx, ry = w / 2 + 34, size / 2 + 22
+    for lap, wobble in ((0, 1.0), (1, 1.06)):
+        pts = []
+        for i in range(0, 361, 6):
+            a = math.radians(i + lap * 12)
+            pts.append((cx_ + math.cos(a) * rx * wobble * (1 + 0.012 * math.sin(a * 3)),
+                        cy_ + math.sin(a) * ry * wobble * (1 + 0.02 * math.cos(a * 2))))
+        draw.line(pts, fill=ACCENT, width=3, joint="curve")
+    return x + w
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -1011,11 +1142,15 @@ def slide_body(data, idx):
     mono_rail(draw, idx + 1, total, data.get("topic_short", ""), data.get("kicker", ""))
 
     y = 168
+    if s.get("watermark"):
+        step_watermark(draw, y - 96, s["watermark"])
     note = s.get("note")
     head_lines = s["headline_lines"]
+    # A note takes the right side of the slide, so the headline gets what is left
     y_head = render_headline_centered(
         draw, head_lines, s.get("accent_lines", []), y,
-        size=s.get("headline_size", 78), rule=False, align="left")
+        size=s.get("headline_size", 78), rule=False, align="left",
+        max_w=(560 - PAD) if note else None)
 
     if note:
         nx = PAD + 560
@@ -1042,7 +1177,7 @@ def slide_body(data, idx):
     reserved = 0
     if quad:            reserved = max(reserved, qh + 70)
     if s.get("proof"):  reserved = max(reserved, 268 + 40)
-    if s.get("closer") or s.get("pill"): reserved = max(reserved, 110)
+    if s.get("closer") or s.get("pill") or s.get("circled"): reserved = max(reserved, 110)
     bottom_limit = H - PAD - 64 - reserved if reserved else (H - PAD - 90)
     if rows:
         # Keep the tight pitch and centre the block in whatever space is left,
@@ -1055,13 +1190,16 @@ def slide_body(data, idx):
         for row in rows:
             tile = 64
             ty = y + (pitch - tile) // 2 - 6
-            soft_shadow(img, (PAD, ty, PAD + tile, ty + tile), radius=14,
-                        blur=7, offset=(0, 4), opacity=34)
-            draw = ImageDraw.Draw(img)
-            draw.rounded_rectangle([PAD, ty, PAD + tile, ty + tile], radius=14,
-                                   fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34))
-            draw_glyph(draw, row.get("glyph", "check"), PAD + tile // 2, ty + tile // 2,
-                       size=34)
+            if row.get("status"):
+                draw = status_tile(img, draw, PAD, ty, row["status"], tile)
+            else:
+                soft_shadow(img, (PAD, ty, PAD + tile, ty + tile), radius=14,
+                            blur=7, offset=(0, 4), opacity=34)
+                draw = ImageDraw.Draw(img)
+                draw.rounded_rectangle([PAD, ty, PAD + tile, ty + tile], radius=14,
+                                       fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34))
+                draw_glyph(draw, row.get("glyph", "check"), PAD + tile // 2, ty + tile // 2,
+                           size=34)
             rich_line(draw, PAD + tile + 26, ty + 16, row.get("segments", []), size=28)
             y += pitch
 
@@ -1070,6 +1208,39 @@ def slide_body(data, idx):
         draw = ImageDraw.Draw(img)
 
     content_bottom = y
+    if s.get("chips"):
+        for blk in s["chips"]:
+            ch_x, ch_bottom = label_chip(draw, PAD, y, blk.get("label", ""))
+            cy2 = ch_bottom + 6
+            f_b = load_font(28, bold=True)
+            for ln in blk.get("items", []):
+                draw.ellipse([PAD + 8, cy2 + 12, PAD + 18, cy2 + 22], fill=ACCENT)
+                draw.text((PAD + 32, cy2), ln, font=f_b, fill=BLACK)
+                cy2 += 40
+            y = cy2 + 22
+
+    if s.get("cards"):
+        cw = (W - PAD * 2 - 22) // 2
+        chh = 132
+        for i, c in enumerate(s["cards"][:4]):
+            cx0 = PAD + (cw + 22) * (i % 2)
+            cy0 = y + (chh + 20) * (i // 2)
+            numbered_card(img, draw, cx0, cy0, cw, chh, i + 1, c.get("lines", []))
+        y += (chh + 20) * ((len(s["cards"][:4]) + 1) // 2)
+
+    if s.get("panel"):
+        pn = s["panel"]
+        ph = 60 + 62 * len(pn.get("rows", []))
+        draw = gradient_panel(img, draw, PAD, y + 6, W - PAD * 2, ph)
+        f_k = load_font(29, bold=True)
+        f_v = load_font(27)
+        py = y + 6 + 30
+        for r in pn.get("rows", []):
+            draw.text((PAD + 30, py), r.get("k", ""), font=f_k, fill=BG)
+            draw.text((PAD + 330, py), r.get("v", ""), font=f_v, fill=BG)
+            py += 62
+        y = y + 6 + ph + 24
+
     if s.get("table"):
         t = s["table"]
         content_bottom = table_card(img, draw, PAD, y + 8, W - PAD * 2,
@@ -1089,7 +1260,9 @@ def slide_body(data, idx):
         # footer. Pinned, it floated 200px below the table it belongs to and
         # read as unrelated furniture.
         cy_ = min(content_bottom + 46, H - PAD - 64 - 84)
-        if s.get("closer"):
+        if s.get("circled"):
+            circled(draw, PAD + 30, cy_, s["circled"])
+        elif s.get("closer"):
             f_c = load_script(33)
             draw.text((PAD, cy_), s["closer"], font=f_c, fill=ACCENT)
         if s.get("pill"):
@@ -1240,7 +1413,8 @@ def main():
         slide_type = slide.get("type", "cover")
         # A slide carrying `lines` gets the rich body layout whatever its type,
         # so an existing carousel keeps its renderer until it opts in.
-        RICH = ("lines", "table", "quad", "proof", "note", "closer", "pill")
+        RICH = ("lines", "table", "quad", "proof", "note", "closer", "pill",
+                "chips", "cards", "panel", "watermark", "circled")
         renderer = (slide_body if any(slide.get(k) for k in RICH)
                     else RENDERERS.get(slide_type, slide_cover))
         img        = renderer(data, i)
