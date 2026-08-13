@@ -1022,6 +1022,43 @@ def flow_strip(img, draw, x, y, w, steps, h=176):
     return y + h
 
 
+def consent_card(img, draw, x, y, w, app, scopes, h=290):
+    """A generic OAuth consent dialog.
+
+    The shape every provider uses - who is asking, what for, allow or deny -
+    without pretending to be any particular one's screen. Drawing Google's or
+    Arcade's actual dialog would mean inventing a UI I have not seen."""
+    soft_shadow(img, (x, y, x + w, y + h), radius=16, blur=12, offset=(0, 7), opacity=42)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=16,
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (28, 28, 32),
+                           outline=LGRAY, width=1)
+    draw.rounded_rectangle([x, y, x + w, y + 52], radius=16, fill=_tint(0.10))
+    draw.rectangle([x, y + 36, x + w, y + 52], fill=_tint(0.10))
+    draw.text((x + 22, y + 15), _space("AUTHORIZE"), font=load_mono(20, bold=True), fill=ACCENT)
+
+    f_a = load_font(30, bold=True)
+    f_s = load_font(24)
+    draw.text((x + 22, y + 74), f"{app} wants access to", font=f_a, fill=BLACK)
+    sy = y + 118
+    for sc in scopes[:3]:
+        draw.ellipse([x + 26, sy + 9, x + 36, sy + 19], fill=ACCENT)
+        draw.text((x + 50, sy), sc, font=f_s, fill=GRAY)
+        sy += 34
+
+    bh, bw = 50, (w - 66) // 2
+    by = y + h - bh - 20
+    draw.rounded_rectangle([x + 22, by, x + 22 + bw, by + bh], radius=10,
+                           outline=LGRAY, width=2)
+    f_b = load_font(25, bold=True)
+    draw.text((x + 22 + (bw - tw(draw, "Deny", f_b)) // 2, by + 12), "Deny",
+              font=f_b, fill=GRAY)
+    draw.rounded_rectangle([x + w - 22 - bw, by, x + w - 22, by + bh], radius=10, fill=ACCENT)
+    draw.text((x + w - 22 - bw + (bw - tw(draw, "Allow", f_b)) // 2, by + 12), "Allow",
+              font=f_b, fill=BG)
+    return y + h
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -1143,6 +1180,17 @@ def slide_cover(data, idx):
         img.paste(hero, (hx, hy), hero)
         draw = ImageDraw.Draw(img)
 
+    # The brand mark goes in the right column beside the rows - the space a hero
+    # image would use. Parked at the bottom edge first, where the terminal card
+    # is drawn later and covered it completely.
+    brand = data.get("brand_path")
+    if brand and not s.get("hero_path") and Path(brand).exists():
+        bm = Image.open(brand).convert("RGBA")
+        bm.thumbnail((300, 104), Image.LANCZOS)
+        bx = PAD + col_w + 10 + (W - PAD - (PAD + col_w + 10) - bm.width) // 2
+        img.paste(bm, (bx, y + max(0, (row_y - y - bm.height) // 2)), bm)
+        draw = ImageDraw.Draw(img)
+
     if s.get("terminal"):
         t = s["terminal"]
         top = hero_bottom + 18
@@ -1217,6 +1265,7 @@ def slide_body(data, idx):
     reserved = 0
     if quad:            reserved = max(reserved, qh + 70)
     if s.get("proof"):  reserved = max(reserved, 268 + 40)
+    if s.get("consent"): reserved = max(reserved, 290 + 40)
     if s.get("closer") or s.get("pill") or s.get("circled"): reserved = max(reserved, 110)
     bottom_limit = H - PAD - 64 - reserved if reserved else (H - PAD - 90)
     if rows:
@@ -1286,6 +1335,15 @@ def slide_body(data, idx):
         content_bottom = table_card(img, draw, PAD, y + 8, W - PAD * 2,
                                     t.get("header", ["Part", "What it does"]),
                                     t.get("rows", []))
+        draw = ImageDraw.Draw(img)
+
+    if s.get("consent"):
+        cn = s["consent"]
+        cw = 470
+        ch2 = 290
+        ctop = min(y + 10, H - PAD - 64 - ch2 - 110)
+        content_bottom = consent_card(img, draw, W - PAD - cw, ctop, cw,
+                                      cn.get("app", "The gateway"), cn.get("scopes", []), ch2)
         draw = ImageDraw.Draw(img)
 
     if s.get("flow"):
@@ -1460,7 +1518,8 @@ def main():
         # A slide carrying `lines` gets the rich body layout whatever its type,
         # so an existing carousel keeps its renderer until it opts in.
         RICH = ("lines", "table", "quad", "proof", "note", "closer", "pill",
-                "chips", "cards", "panel", "watermark", "circled", "flow")
+                "chips", "cards", "panel", "watermark", "circled", "flow",
+                "consent")
         renderer = (slide_body if any(slide.get(k) for k in RICH)
                     else RENDERERS.get(slide_type, slide_cover))
         img        = renderer(data, i)
