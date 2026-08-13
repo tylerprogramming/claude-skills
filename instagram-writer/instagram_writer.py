@@ -75,6 +75,14 @@ BLACK   = _rgb(_THEME["textColor"])
 ACCENT  = _rgb(_THEME["accentColor"])
 # Greys are derived from the ground rather than fixed, so a dark theme does not
 # get light-warm-grey dots it cannot show.
+def _lighten(rgb, amt=0.42):
+    return tuple(int(c + (255 - c) * amt) for c in rgb)
+
+
+# The accent is chosen against the light ground. The same value on a near-black
+# terminal is muddy and low contrast - it reads as a darker grey-blue rather
+# than as the brand colour. Dark surfaces get a lifted version.
+ACCENT_DARK = _lighten(ACCENT, 0.42)
 _dark   = sum(BG) / 3 < 128
 GRAY    = tuple(int(c * 0.62 + (255 if _dark else 0) * 0.38) for c in BG) if _dark else (155, 155, 155)
 LGRAY   = tuple(max(0, min(255, c - (18 if not _dark else -28))) for c in BG)
@@ -154,17 +162,22 @@ def draw_dots(draw, cx_pos, cy_pos, cols=5, rows=5, r=4, gap=13):
             draw.ellipse([x - r, y - r, x + r, y + r], fill=LGRAY)
 
 
-def draw_grid(draw, step=54):
-    """Faint graph-paper ground.
+def draw_grid(draw, step=52, dot=2, major=4):
+    """Dotted ground.
 
-    The single cheapest way to read as 'engineered' rather than 'poster'. It
-    costs two loops and does the work a background image would otherwise have
-    to do, without competing with the type for attention."""
-    line = tuple(max(0, min(255, c - (6 if sum(BG) / 3 > 128 else -10))) for c in BG)
-    for x in range(0, W, step):
-        draw.line([(x, 0), (x, H)], fill=line, width=1)
-    for y in range(0, H, step):
-        draw.line([(0, y), (W, y)], fill=line, width=1)
+    Lines, even at two weights, either vanish or start competing with the type
+    for structure. A dot grid gives the same measured feel while staying out of
+    the way, and it can carry more contrast without getting noisy - every fourth
+    dot is larger and darker, which keeps a rhythm without drawing lines.
+    """
+    light = sum(BG) / 3 > 128
+    minor = tuple(max(0, min(255, c - (18 if light else -22))) for c in BG)
+    major_c = tuple(max(0, min(255, c - (34 if light else -40))) for c in BG)
+    for iy, y in enumerate(range(step, H, step)):
+        for ix, x in enumerate(range(step, W, step)):
+            big = (ix % major == 0 and iy % major == 0)
+            r = dot + 1 if big else dot
+            draw.ellipse([x - r, y - r, x + r, y + r], fill=major_c if big else minor)
 
 
 def draw_arrow(draw, x, y, size=26, color=None, width=3):
@@ -370,13 +383,15 @@ def draw_glyph(draw, name, cx_, cy_, size=34, color=None):
     w = max(3, size // 7)
     h = size / 2
 
-    if name == "claude":                      # the Anthropic sunburst
+    if name == "claude":                      # the Anthropic asterisk
         import math
-        c = (204, 120, 92)
+        c = (217, 119, 87)
+        rw = max(2, size // 11)               # eight fat rays merged into a blob
         for i in range(8):
             a = math.pi * i / 8
-            dx, dy = math.cos(a) * h, math.sin(a) * h
-            draw.line([(cx_ - dx, cy_ - dy), (cx_ + dx, cy_ + dy)], fill=c, width=w)
+            dx, dy = math.cos(a), math.sin(a)
+            draw.line([(cx_ - dx * h * 0.95, cy_ - dy * h * 0.95),
+                       (cx_ + dx * h * 0.95, cy_ + dy * h * 0.95)], fill=c, width=rw)
     elif name == "obsidian":                  # the purple gem
         c = (124, 77, 225)
         draw.polygon([(cx_, cy_ - h), (cx_ + h * 0.8, cy_ - h * 0.1),
@@ -401,19 +416,23 @@ def draw_glyph(draw, name, cx_, cy_, size=34, color=None):
         draw.rounded_rectangle([cx_ - h, cy_ - h * 0.8, cx_ - h * 0.05, cy_ - h * 0.35],
                                radius=w, fill=c)
     elif name == "doc":
-        draw.rounded_rectangle([cx_ - h * 0.72, cy_ - h, cx_ + h * 0.72, cy_ + h],
-                               radius=w * 1.4, fill=c)
+        fold = h * 0.42
+        draw.polygon([(cx_ - h * 0.68, cy_ - h), (cx_ + h * 0.68 - fold, cy_ - h),
+                      (cx_ + h * 0.68, cy_ - h + fold), (cx_ + h * 0.68, cy_ + h),
+                      (cx_ - h * 0.68, cy_ + h)], fill=c)
         bg = (255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34)
-        for fy, ln in ((-0.42, 0.46), (-0.06, 0.46), (0.30, 0.26)):
-            draw.rounded_rectangle([cx_ - h * 0.44, cy_ + h * fy,
-                                    cx_ - h * 0.44 + h * ln * 2, cy_ + h * fy + w],
+        draw.polygon([(cx_ + h * 0.68 - fold, cy_ - h), (cx_ + h * 0.68, cy_ - h + fold),
+                      (cx_ + h * 0.68 - fold, cy_ - h + fold)], fill=bg)
+        for fy, ln in ((-0.18, 0.44), (0.16, 0.44), (0.50, 0.26)):
+            draw.rounded_rectangle([cx_ - h * 0.40, cy_ + h * fy,
+                                    cx_ - h * 0.40 + h * ln * 2, cy_ + h * fy + w * 0.9],
                                    radius=w // 2, fill=bg)
-    elif name == "tag":                       # frontmatter / hash
-        for dx in (-0.34, 0.20):
-            draw.line([(cx_ + h * dx + h * 0.18, cy_ - h * 0.78),
-                       (cx_ + h * dx - h * 0.18, cy_ + h * 0.78)], fill=c, width=w)
-        for dy in (-0.30, 0.24):
-            draw.line([(cx_ - h * 0.82, cy_ + h * dy), (cx_ + h * 0.82, cy_ + h * dy)],
+    elif name == "tag":
+        for dx in (-0.30, 0.24):
+            draw.line([(cx_ + h * dx + h * 0.16, cy_ - h * 0.80),
+                       (cx_ + h * dx - h * 0.16, cy_ + h * 0.80)], fill=c, width=w)
+        for dy in (-0.28, 0.26):
+            draw.line([(cx_ - h * 0.80, cy_ + h * dy), (cx_ + h * 0.80, cy_ + h * dy)],
                       fill=c, width=w)
     elif name == "text":                      # plain english
         for i, ln in enumerate((1.0, 0.76, 0.94, 0.52)):
@@ -464,26 +483,34 @@ def icon_row(img, draw, x, y, label, sub, glyph=None, tile=84):
 
 
 def terminal_card(img, draw, x, y, w, lines, title="", h=None, accent_last=True):
-    """A dark terminal window with traffic lights.
+    """A dark terminal window with traffic lights, on a shadow.
 
-    This is the proof block. The reference's credibility comes from showing a
-    thing running rather than describing it, and it is the element a competitor
-    cannot fake without actually having built something."""
+    Lines may be plain strings, or (text, role) pairs where role is one of
+    key/val/dim/accent. Colouring every line the same accent - which is what
+    the first version did - reads as a wall of blue rather than as code."""
     lh = 38
     h = h or (72 + lh * len(lines) + 20)
+    soft_shadow(img, (x, y, x + w, y + h), radius=18, blur=12, offset=(0, 7), opacity=48)
+    draw = ImageDraw.Draw(img)
     draw.rounded_rectangle([x, y, x + w, y + h], radius=18, fill=(18, 20, 26))
     for i, c in enumerate([(255, 95, 86), (255, 189, 46), (39, 201, 63)]):
         draw.ellipse([x + 22 + i * 26, y + 20, x + 34 + i * 26, y + 32], fill=c)
     if title:
-        f_t = load_mono(20, bold=True)
-        draw.text((x + 116, y + 18), _space(title.upper()), font=f_t, fill=(150, 158, 170))
+        draw.text((x + 116, y + 18), _space(title.upper()),
+                  font=load_mono(20, bold=True), fill=(150, 158, 170))
 
+    ROLE = {"key": ACCENT_DARK, "val": (222, 228, 238), "dim": (108, 116, 130),
+            "accent": ACCENT_DARK, "txt": (196, 202, 212)}
     f = load_mono(25, bold=True)
     ty = y + 62
     for i, line in enumerate(lines):
-        last = accent_last and i == len(lines) - 1
-        draw.text((x + 26, ty), line, font=f,
-                  fill=ACCENT if last else (196, 202, 212))
+        if isinstance(line, (list, tuple)):
+            text, role = line[0], line[1]
+            col = ROLE.get(role, ROLE["txt"])
+        else:
+            text = line
+            col = ACCENT_DARK if (accent_last and i == len(lines) - 1) else ROLE["txt"]
+        draw.text((x + 26, ty), text, font=f, fill=col)
         ty += lh
     return y + h
 
@@ -782,8 +809,11 @@ def slide_cover(data, idx):
         hero = hero.resize((max(1, int(hero.width * scale)), max(1, int(hero.height * scale))),
                            Image.LANCZOS)
         hero = add_rounded_corners(hero, radius=18)
-        img.paste(hero, (PAD + col_w + 10 + (box_w - hero.width) // 2,
-                         y + (box_h - hero.height) // 2), hero)
+        hx = PAD + col_w + 10 + (box_w - hero.width) // 2
+        hy = y + (box_h - hero.height) // 2
+        soft_shadow(img, (hx, hy, hx + hero.width, hy + hero.height),
+                    radius=18, blur=12, offset=(0, 7), opacity=48)
+        img.paste(hero, (hx, hy), hero)
         draw = ImageDraw.Draw(img)
 
     if s.get("terminal"):
