@@ -321,12 +321,13 @@ def draw_tracked(draw, x, y, text, font, fill, track=0):
 
 
 def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
-                             kicker="", rule=True):
+                             kicker="", rule=True, align="center"):
     """Centred, all-caps, tightly tracked, with a rule under the accent line."""
     if kicker:
         f_k = load_mono(24, bold=True)
         kt = _space(kicker.upper())
-        draw.text(((W - tw(draw, kt, f_k)) // 2, y), kt, font=f_k, fill=GRAY)
+        kx = (W - tw(draw, kt, f_k)) // 2 if align == "center" else PAD
+        draw.text((kx, y), kt, font=f_k, fill=GRAY)
         y += th(draw, "Ag", f_k) + 26
 
     f = load_display(size)
@@ -339,7 +340,7 @@ def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
         t = line.upper()
         lw = tracked_width(draw, t, f, track)
         is_accent = line in accent_lines
-        x = (W - lw) // 2
+        x = (W - lw) // 2 if align == "center" else PAD
         draw_tracked(draw, x, y, t, f, ACCENT if is_accent else BLACK, track)
         # Real drawn extent, not th(). th() returns the glyph box height, which
         # for a display size sits well above the actual bottom of the letters -
@@ -695,6 +696,82 @@ def composite_image(base_img, overlay_path, y_top, y_bottom):
     return base_img.convert("RGB")
 
 
+def sticky_note(img, draw, x, y, w, lines, accent_last=True, tape=True):
+    """A tinted note with a strip of tape, handwritten.
+
+    Carries the one sentence that has to survive being skimmed. The reference
+    puts one on nearly every slide and it is doing real work: the headline says
+    the topic, the note says the point."""
+    f = load_script(31)
+    lh = 42
+    h = 34 + lh * len(lines) + 22
+    tint = tuple(int(c * 0.88 + a * 0.12) for c, a in zip(BG, ACCENT))
+    soft_shadow(img, (x, y, x + w, y + h), radius=8, blur=10, offset=(0, 5), opacity=38)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=8, fill=tint)
+    if tape:
+        tw_, tp = 92, 20
+        draw.rectangle([x + w // 2 - tw_ // 2, y - tp // 2,
+                        x + w // 2 + tw_ // 2, y + tp // 2],
+                       fill=tuple(max(0, c - 16) for c in BG))
+    ty = y + 26
+    for i, line in enumerate(lines):
+        last = accent_last and i == len(lines) - 1
+        draw.text((x + 26, ty), line, font=f, fill=ACCENT if last else BLACK)
+        ty += lh
+    return y + h
+
+
+def rich_line(draw, x, y, segments, size=29, max_w=None):
+    """One body line with inline emphasis.
+
+    Segments are (text, style) with style in plain | bold | underline | mark.
+    The cover's label-plus-subtitle rows cannot express 'X is the engine, Y is
+    the memory' with the right words emphasised, and that sentence shape is what
+    the reference's body slides are made of.
+    """
+    f_r = load_font(size)
+    f_b = load_font(size, bold=True)
+    for text, style in segments:
+        f = f_b if style in ("bold", "mark") else f_r
+        wseg = tw(draw, text, f)
+        if style == "mark":
+            draw.rounded_rectangle([x - 8, y - 6, x + wseg + 8, y + size + 12],
+                                   radius=5, fill=ACCENT)
+            draw.text((x, y), text, font=f, fill=BG)
+        else:
+            draw.text((x, y), text, font=f, fill=BLACK if style != "plain" else BLACK)
+            if style == "underline":
+                draw.line([(x, y + size + 9), (x + wseg, y + size + 9)],
+                          fill=ACCENT, width=2)
+        x += wseg
+    return x
+
+
+def quad_card(img, draw, x, y, w, items, h=190):
+    """A white card of equal columns, each an icon over a label.
+
+    The reference closes its body slides with one of these. It restates the
+    system as four words, which is what someone actually remembers off a
+    carousel."""
+    soft_shadow(img, (x, y, x + w, y + h), radius=18, blur=12, offset=(0, 6), opacity=40)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=18,
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (28, 28, 32))
+    n = max(1, len(items))
+    cw = w / n
+    f = load_font(27, bold=True)
+    for i, it in enumerate(items):
+        cx_ = x + cw * i + cw / 2
+        if i:
+            draw.line([(x + cw * i, y + 28), (x + cw * i, y + h - 28)], fill=LGRAY, width=1)
+        draw_glyph(draw, it.get("glyph", "check"), cx_, y + h * 0.40, size=52,
+                   color=BLACK)
+        lab = it.get("label", "")
+        draw.text((cx_ - tw(draw, lab, f) / 2, y + h * 0.66), lab, font=f, fill=BLACK)
+    return y + h
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -839,6 +916,66 @@ def slide_cover(data, idx):
     return img
 
 
+def slide_body(data, idx):
+    """The reference's body slide: left headline, sticky note, rich rows, quad card.
+
+    Registered for any slide carrying `lines`. Falls through to the old
+    renderers otherwise, so nothing already written changes.
+    """
+    s = data["slides"][idx]
+    total = len(data["slides"])
+    img, draw = make_base(idx + 1, total, data["brand_text"], data["handle"],
+                          data.get("bg_path"), rich=True)
+
+    mono_rail(draw, idx + 1, total, data.get("topic_short", ""), data.get("kicker", ""))
+
+    y = 168
+    note = s.get("note")
+    head_lines = s["headline_lines"]
+    y_head = render_headline_centered(
+        draw, head_lines, s.get("accent_lines", []), y,
+        size=s.get("headline_size", 78), rule=False, align="left")
+
+    if note:
+        nx = PAD + 560
+        sticky_note(img, draw, nx, y + 6, W - PAD - nx, note)
+        draw = ImageDraw.Draw(img)
+
+    y = max(y_head, y + 190) + 26
+
+    rows = s.get("lines", [])
+    quad = s.get("quad")
+    qh = 190
+
+    # Spread the rows across the space actually available instead of stacking
+    # them at a fixed pitch. At 84px they finished halfway up the slide and left
+    # a 300px hole above the quad card - the same top-anchored habit that made
+    # the plain layout look unfinished.
+    bottom_limit = (H - PAD - 64 - qh - 40) if quad else (H - PAD - 90)
+    if rows:
+        pitch = max(84, min(132, (bottom_limit - y) // len(rows)))
+        for row in rows:
+            tile = 64
+            ty = y + (pitch - tile) // 2 - 6
+            soft_shadow(img, (PAD, ty, PAD + tile, ty + tile), radius=14,
+                        blur=7, offset=(0, 4), opacity=34)
+            draw = ImageDraw.Draw(img)
+            draw.rounded_rectangle([PAD, ty, PAD + tile, ty + tile], radius=14,
+                                   fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34))
+            draw_glyph(draw, row.get("glyph", "check"), PAD + tile // 2, ty + tile // 2,
+                       size=34)
+            rich_line(draw, PAD + tile + 26, ty + 16, row.get("segments", []), size=28)
+            y += pitch
+
+    if quad:
+        quad_card(img, draw, PAD, H - PAD - 64 - qh, W - PAD * 2, quad, h=qh)
+        draw = ImageDraw.Draw(img)
+
+    footer_rail(draw, data["handle"], data.get("steps", []),
+                s.get("live_step", 0), idx + 1, total)
+    return img
+
+
 def slide_pain(data, idx):
     """Pain, How, Results slides - headline + bullets."""
     s = data["slides"][idx]
@@ -975,7 +1112,9 @@ def main():
 
     for i, slide in enumerate(data["slides"]):
         slide_type = slide.get("type", "cover")
-        renderer   = RENDERERS.get(slide_type, slide_cover)
+        # A slide carrying `lines` gets the rich body layout whatever its type,
+        # so an existing carousel keeps its renderer until it opts in.
+        renderer = slide_body if slide.get("lines") else RENDERERS.get(slide_type, slide_cover)
         img        = renderer(data, i)
 
         out_path = output_dir / f"slide_{i + 1:02d}.png"
