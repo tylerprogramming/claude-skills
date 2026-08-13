@@ -1065,6 +1065,36 @@ def consent_card(img, draw, x, y, w, app, scopes, h=290, brand=None):
     return y + h
 
 
+class brand_palette:
+    """Swap the accent for one slide, then put it back.
+
+    A slide about somebody else's product can wear their colours without the
+    whole deck changing theme. Rebinding the module globals is blunt, but every
+    primitive already reads ACCENT from here, so the alternative is threading a
+    palette argument through twenty drawing functions.
+
+    Check contrast before using one. Their purple measures 10:1 on our ground
+    and their magenta 4.9:1, so both clear 4.5 - a brand colour that does not
+    is a brand colour you use on a card, not on type.
+    """
+
+    def __init__(self, colors):
+        self.colors = colors
+
+    def __enter__(self):
+        global ACCENT, ACCENT_DARK
+        self.prev = (ACCENT, ACCENT_DARK)
+        if self.colors:
+            ACCENT = _rgb(self.colors[0])
+            ACCENT_DARK = _lighten(ACCENT, 0.42)
+        return self
+
+    def __exit__(self, *exc):
+        global ACCENT, ACCENT_DARK
+        ACCENT, ACCENT_DARK = self.prev
+        return False
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -1192,7 +1222,7 @@ def slide_cover(data, idx):
     brand = data.get("brand_path")
     if brand and not s.get("hero_path") and Path(brand).exists():
         bm = Image.open(brand).convert("RGBA")
-        bm.thumbnail((300, 104), Image.LANCZOS)
+        bm.thumbnail((430, 380), Image.LANCZOS)
         bx = PAD + col_w + 10 + (W - PAD - (PAD + col_w + 10) - bm.width) // 2
         img.paste(bm, (bx, y + max(0, (row_y - y - bm.height) // 2)), bm)
         draw = ImageDraw.Draw(img)
@@ -1529,7 +1559,8 @@ def main():
                 "consent")
         renderer = (slide_body if any(slide.get(k) for k in RICH)
                     else RENDERERS.get(slide_type, slide_cover))
-        img        = renderer(data, i)
+        with brand_palette(slide.get("brand_colors")):
+            img = renderer(data, i)
 
         out_path = output_dir / f"slide_{i + 1:02d}.png"
         img.save(str(out_path), "PNG")
