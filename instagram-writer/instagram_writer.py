@@ -931,13 +931,17 @@ def numbered_card(img, draw, x, y, w, h, num, lines, size=27):
     return y + h
 
 
-def step_watermark(draw, y, text, size=118):
-    """A huge pale step label sitting behind the headline, cropped by the top.
+def step_watermark(draw, y, text, size=104):
+    """A large pale step label above the headline.
 
-    Makes a sequence obvious at a glance without spending a line on it."""
+    Returns its real drawn bottom. The reference overlaps this with the
+    headline; here they are separated, which needs the measured extent rather
+    than an assumed line height - shifting both down by the same constant kept
+    them exactly as overlapped as before."""
     f = load_display(size)
     ghost = tuple(int(c * 0.87 + a * 0.13) for c, a in zip(BG, BLACK))
     draw.text((PAD - 6, y), text, font=f, fill=ghost)
+    return draw.textbbox((PAD - 6, y), text, font=f)[3]
 
 
 def status_tile(img, draw, x, y, kind, tile=64):
@@ -1177,11 +1181,9 @@ def slide_body(data, idx):
 
     y = 168
     if s.get("watermark"):
-        # Sit clear of the rail, and push the headline below it. The first
-        # version put the watermark at the rail and the headline immediately
-        # under, so all three stacked into the top fifth of the slide.
-        step_watermark(draw, y + 4, s["watermark"])
-        y += 86
+        # Clear of the rail, and the headline starts below the watermark's real
+        # bottom. Shifting both by a constant left them just as overlapped.
+        y = step_watermark(draw, y - 4, s["watermark"]) + 18
     note = s.get("note")
     head_lines = s["headline_lines"]
     # A note takes the right side of the slide, so the headline gets what is left
