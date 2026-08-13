@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """
-Instagram carousel generator - @aiwithanushka inspired design.
-Warm cream background, terra cotta accent, bold two-tone typography.
+Instagram carousel generator.
+Bold two-tone typography on a themed ground.
 6-slide structure: Cover → Pain → Solution → How → Results → CTA
+
+Colours come from ~/social-studio/themes/<id>.json - default "electric"
+(near-white / near-black / electric blue). Pick another with THEME=cream, and
+see themes/references/README.md there for what each style is meant to look
+like beyond its three hex values.
 
 Usage: python3 instagram_writer.py <slides.json> <output_dir>
 Optional: slides can include "image_path" field for composited image slides.
@@ -39,11 +44,40 @@ except ImportError:
     from PIL import Image, ImageDraw, ImageFont
 
 # ── Design system ─────────────────────────────────────────────────────────────
-BG      = (245, 240, 232)   # Warm cream  #F5F0E8
-BLACK   = (28, 28, 28)      # Near-black  #1C1C1C
-ACCENT  = (196, 113, 58)    # Terra cotta #C4713A
-GRAY    = (155, 155, 155)   # Subdued gray
-LGRAY   = (210, 207, 202)   # Light warm gray for dots
+# Colours come from a social-studio theme when that repo is present, so there is
+# one place to change a palette instead of two that quietly drift. They already
+# had: this file said #F5F0E8/#C4713A while cream.json said #F5F0EB/#E07355 -
+# the same intent, a few points apart, with no way to tell which was current.
+#
+# Falls back to the electric values below when social-studio is not installed,
+# so the skill still runs standalone. Override per run with THEME=<id>.
+def _load_theme(name=None):
+    name = name or os.environ.get("THEME", "electric")
+    fallback = {"bgColor": "#FCFCFC", "textColor": "#0A0A0A", "accentColor": "#2454F0"}
+    path = Path.home() / "social-studio" / "themes" / f"{name}.json"
+    try:
+        t = json.loads(path.read_text())
+        if not all(k in t for k in ("bgColor", "textColor", "accentColor")):
+            return fallback
+        return t
+    except Exception:
+        return fallback
+
+
+def _rgb(h):
+    h = h.lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+_THEME  = _load_theme()
+BG      = _rgb(_THEME["bgColor"])
+BLACK   = _rgb(_THEME["textColor"])
+ACCENT  = _rgb(_THEME["accentColor"])
+# Greys are derived from the ground rather than fixed, so a dark theme does not
+# get light-warm-grey dots it cannot show.
+_dark   = sum(BG) / 3 < 128
+GRAY    = tuple(int(c * 0.62 + (255 if _dark else 0) * 0.38) for c in BG) if _dark else (155, 155, 155)
+LGRAY   = tuple(max(0, min(255, c - (18 if not _dark else -28))) for c in BG)
 
 W, H    = 1080, 1350        # 4:5 Instagram aspect ratio
 PAD     = 72                # Outer margin
