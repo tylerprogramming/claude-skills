@@ -56,6 +56,21 @@ If the user provides a topic in their command, infer CTA word from the topic (e.
 
 ---
 
+## Two layouts
+
+This skill renders two ways, chosen by the data rather than by `type`:
+
+- **Rich** - the full treatment: mono rails, display headline, sticky notes,
+  icon rows with inline emphasis, tables, terminal proof cards, quad cards.
+  Triggered by any of `lines`, `table`, `quad`, `proof`, `note`, `closer`,
+  `pill`, `rows`, `hero_path`. **Format: [SLIDES.md](SLIDES.md).**
+- **Plain** - the original headline-and-bullets slide, below. Still the default
+  for anything not carrying those keys, so old carousels are untouched.
+
+Colours come from `~/social-studio/themes/<id>.json` (`THEME=electric` by
+default). The styles these layouts copy, and why, are in
+`~/content/BRAIN/instagram/carousel-styles.md`.
+
 ## Step 2: Generate slide content JSON
 
 Create the JSON following this exact structure. Headlines must be SHORT lines (3-5 words max each) so the text is BIG and bold.
