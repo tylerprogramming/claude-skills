@@ -778,6 +778,81 @@ def quad_card(img, draw, x, y, w, items, h=190):
     return y + h
 
 
+def checklist_note(img, draw, x, y, w, title, items):
+    """A sticky note whose body is ticked boxes.
+
+    The reference uses this on the 'why it works' slide: the headline argues,
+    the note lists what you stop dealing with. Four short negatives read faster
+    than a paragraph of benefit."""
+    f_t = load_mono(21, bold=True)
+    f_i = load_script(29)
+    lh = 40
+    h = 30 + 34 + lh * len(items) + 20
+    tint = tuple(int(c * 0.88 + a * 0.12) for c, a in zip(BG, ACCENT))
+    soft_shadow(img, (x, y, x + w, y + h), radius=8, blur=10, offset=(0, 5), opacity=38)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=8, fill=tint)
+    draw.rectangle([x + w // 2 - 46, y - 10, x + w // 2 + 46, y + 10],
+                   fill=tuple(max(0, c - 16) for c in BG))
+
+    draw.text((x + 24, y + 24), _space(title.upper()), font=f_t, fill=ACCENT)
+    draw.line([(x + 24, y + 52), (x + 24 + tw(draw, _space(title.upper()), f_t), y + 52)],
+              fill=ACCENT, width=2)
+    ty = y + 66
+    for it in items:
+        box = 24
+        draw.rounded_rectangle([x + 24, ty + 4, x + 24 + box, ty + 4 + box],
+                               radius=5, outline=ACCENT, width=2)
+        draw.line([(x + 30, ty + 16), (x + 34, ty + 22)], fill=ACCENT, width=3)
+        draw.line([(x + 34, ty + 22), (x + 43, ty + 9)], fill=ACCENT, width=3)
+        draw.text((x + 24 + box + 16, ty), it, font=f_i, fill=BLACK)
+        ty += lh
+    return y + h
+
+
+def table_card(img, draw, x, y, w, header, rows, h=None):
+    """Two-column table with a header rule and per-row icons.
+
+    The reference's 'four parts' slide is a table, not a list, and the reason is
+    that the second column is doing different work from the first - one names
+    the piece, the other says what it is for."""
+    rh = 108
+    h = h or (74 + rh * len(rows))
+    soft_shadow(img, (x, y, x + w, y + h), radius=16, blur=11, offset=(0, 6), opacity=36)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=16,
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (28, 28, 32),
+                           outline=ACCENT, width=2)
+    split = x + int(w * 0.40)
+    f_h = load_mono(22, bold=True)
+    draw.text((x + 28, y + 26), _space(header[0].upper()), font=f_h, fill=GRAY)
+    draw.text((split + 28, y + 26), _space(header[1].upper()), font=f_h, fill=GRAY)
+    draw.line([(x + 2, y + 74), (x + w - 2, y + 74)], fill=LGRAY, width=2)
+
+    f_n = load_font(30, bold=True)
+    ry = y + 74
+    for i, r in enumerate(rows):
+        if i:
+            draw.line([(x + 2, ry), (x + w - 2, ry)], fill=LGRAY, width=1)
+        cy_ = ry + rh // 2
+        draw_glyph(draw, r.get("glyph", "check"), x + 56, cy_, size=40)
+        draw.text((x + 96, cy_ - 18), r.get("name", ""), font=f_n, fill=BLACK)
+        rich_line(draw, split + 28, cy_ - 16, r.get("segments", []), size=25)
+        ry += rh
+    return y + h
+
+
+def pill_button(draw, x, y, text, pad_x=34, pad_y=18, size=25):
+    """An outlined pill. The reference ends a slide with one as a nudge."""
+    f = load_font(size, bold=True)
+    tw_ = tw(draw, text.upper(), f)
+    w = tw_ + pad_x * 2
+    h = size + pad_y * 2
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=h // 2, outline=BLACK, width=2)
+    draw.text((x + pad_x, y + pad_y - 2), text.upper(), font=f, fill=BLACK)
+    return x + w, y + h
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -944,7 +1019,11 @@ def slide_body(data, idx):
 
     if note:
         nx = PAD + 560
-        sticky_note(img, draw, nx, y + 6, W - PAD - nx, note)
+        if isinstance(note, dict):
+            checklist_note(img, draw, nx, y + 6, W - PAD - nx,
+                           note.get("title", ""), note.get("items", []))
+        else:
+            sticky_note(img, draw, nx, y + 6, W - PAD - nx, note)
         draw = ImageDraw.Draw(img)
 
     y = max(y_head, y + 190) + 26
@@ -957,9 +1036,22 @@ def slide_body(data, idx):
     # them at a fixed pitch. At 84px they finished halfway up the slide and left
     # a 300px hole above the quad card - the same top-anchored habit that made
     # the plain layout look unfinished.
-    bottom_limit = (H - PAD - 64 - qh - 70) if quad else (H - PAD - 90)
+    # Reserve whatever actually sits below the rows. Reserving only for the quad
+    # card left a 250px hole above the proof terminal on the "why it works"
+    # slide - the block below changed and the limit did not.
+    reserved = 0
+    if quad:            reserved = max(reserved, qh + 70)
+    if s.get("proof"):  reserved = max(reserved, 268 + 40)
+    if s.get("closer") or s.get("pill"): reserved = max(reserved, 110)
+    bottom_limit = H - PAD - 64 - reserved if reserved else (H - PAD - 90)
     if rows:
+        # Keep the tight pitch and centre the block in whatever space is left,
+        # rather than stretching the gaps to fill it. Three rows at a comfortable
+        # rhythm plus balanced margins reads better than three rows shoved apart.
         pitch = max(78, min(102, (bottom_limit - y) // len(rows)))
+        slack = (bottom_limit - y) - pitch * len(rows)
+        if slack > 0:
+            y += slack // 2
         for row in rows:
             tile = 64
             ty = y + (pitch - tile) // 2 - 6
@@ -976,6 +1068,29 @@ def slide_body(data, idx):
     if quad:
         quad_card(img, draw, PAD, H - PAD - 64 - qh - 30, W - PAD * 2, quad, h=qh)
         draw = ImageDraw.Draw(img)
+
+    if s.get("table"):
+        t = s["table"]
+        table_card(img, draw, PAD, y + 8, W - PAD * 2,
+                   t.get("header", ["Part", "What it does"]), t.get("rows", []))
+        draw = ImageDraw.Draw(img)
+
+    if s.get("proof"):
+        pr = s["proof"]
+        terminal_card(img, draw, PAD, H - PAD - 64 - 268, W - PAD * 2,
+                      pr.get("lines", []), pr.get("title", ""))
+        draw = ImageDraw.Draw(img)
+
+    # closing row: a script aside on the left, a pill nudge on the right
+    if s.get("closer") or s.get("pill"):
+        cy_ = H - PAD - 64 - 84
+        if s.get("closer"):
+            f_c = load_script(33)
+            draw.text((PAD, cy_), s["closer"], font=f_c, fill=ACCENT)
+        if s.get("pill"):
+            f_p = load_font(25, bold=True)
+            pw = tw(draw, s["pill"].upper(), f_p) + 68
+            pill_button(draw, W - PAD - pw, cy_ - 12, s["pill"])
 
     footer_rail(draw, data["handle"], data.get("steps", []),
                 s.get("live_step", 0), idx + 1, total)
@@ -1120,7 +1235,9 @@ def main():
         slide_type = slide.get("type", "cover")
         # A slide carrying `lines` gets the rich body layout whatever its type,
         # so an existing carousel keeps its renderer until it opts in.
-        renderer = slide_body if slide.get("lines") else RENDERERS.get(slide_type, slide_cover)
+        RICH = ("lines", "table", "quad", "proof", "note", "closer", "pill")
+        renderer = (slide_body if any(slide.get(k) for k in RICH)
+                    else RENDERERS.get(slide_type, slide_cover))
         img        = renderer(data, i)
 
         out_path = output_dir / f"slide_{i + 1:02d}.png"
