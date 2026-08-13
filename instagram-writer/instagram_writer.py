@@ -107,6 +107,26 @@ def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     return ImageFont.load_default()
 
 
+def load_script(size):
+    """Handwritten face for asides. Bradley Hand reads closest to the reference;
+    Snell is too formal and Chalkduster too noisy at this size."""
+    for path in ("/System/Library/Fonts/Supplemental/Bradley Hand Bold.ttf",
+                 "/System/Library/Fonts/Supplemental/Brush Script.ttf"):
+        if Path(path).exists():
+            try: return ImageFont.truetype(path, size)
+            except Exception: pass
+    return load_font(size)
+
+
+def load_mono(size, bold=False):
+    for path in (("/System/Library/Fonts/Menlo.ttc",) if not bold else
+                 ("/System/Library/Fonts/Menlo.ttc",)):
+        if Path(path).exists():
+            try: return ImageFont.truetype(path, size, index=1 if bold else 0)
+            except Exception: pass
+    return load_font(size, bold)
+
+
 # ── Drawing helpers ───────────────────────────────────────────────────────────
 def tw(draw, text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
@@ -132,6 +152,284 @@ def draw_dots(draw, cx_pos, cy_pos, cols=5, rows=5, r=4, gap=13):
             x = x0 + col * (2 * r + gap) + r
             y = y0 + row * (2 * r + gap) + r
             draw.ellipse([x - r, y - r, x + r, y + r], fill=LGRAY)
+
+
+def draw_grid(draw, step=54):
+    """Faint graph-paper ground.
+
+    The single cheapest way to read as 'engineered' rather than 'poster'. It
+    costs two loops and does the work a background image would otherwise have
+    to do, without competing with the type for attention."""
+    line = tuple(max(0, min(255, c - (6 if sum(BG) / 3 > 128 else -10))) for c in BG)
+    for x in range(0, W, step):
+        draw.line([(x, 0), (x, H)], fill=line, width=1)
+    for y in range(0, H, step):
+        draw.line([(0, y), (W, y)], fill=line, width=1)
+
+
+def draw_arrow(draw, x, y, size=26, color=None, width=3):
+    """A right arrow, drawn.
+
+    Bradley Hand has no arrow glyph and renders U+2192 as tofu, which is how a
+    handwritten aside ends up with a box in it. Two lines and a head always
+    work, in any face, at any size."""
+    color = color or ACCENT
+    draw.line([(x, y), (x + size, y)], fill=color, width=width)
+    draw.line([(x + size - 9, y - 7), (x + size, y)], fill=color, width=width)
+    draw.line([(x + size - 9, y + 7), (x + size, y)], fill=color, width=width)
+
+
+def mono_rail(draw, num, total, topic, kicker=""):
+    """Top rail: counter pill, topic, kicker, swipe marker.
+
+    Everything is measured against the space actually left. The first version
+    letterspaced the topic and kicker at a fixed size and ran them straight
+    through the swipe marker and off the canvas - legible in isolation, broken
+    on the slide."""
+    f_pill = load_mono(26, bold=True)
+    y = PAD - 6
+
+    label = f"{num:02d} / {total:02d}"
+    pw, ph = tw(draw, label, f_pill) + 34, 46
+    draw.rounded_rectangle([PAD, y, PAD + pw, y + ph], radius=10, outline=ACCENT, width=2)
+    draw.text((PAD + 17, y + 9), f"{num:02d}", font=f_pill, fill=ACCENT)
+    draw.text((PAD + 17 + tw(draw, f"{num:02d}", f_pill), y + 9), label[2:],
+              font=f_pill, fill=GRAY)
+
+    # reserve the swipe marker on the right, then fit what is left
+    f_sw = load_script(30)
+    sw_w = tw(draw, "swipe", f_sw) + 40
+    sw_x = W - PAD - sw_w
+    draw.text((sw_x, y + 8), "swipe", font=f_sw, fill=ACCENT)
+    draw_arrow(draw, sw_x + tw(draw, "swipe", f_sw) + 8, y + 24, size=24)
+
+    x = PAD + pw + 26
+    avail = sw_x - x - 26
+    for size in (24, 22, 20, 18):
+        f = load_mono(size, bold=True)
+        t = _space(topic.upper())
+        k = _space(kicker.upper()) if kicker else ""
+        wid = tw(draw, t, f) + (tw(draw, "  \u00b7  " + k, f) if k else 0)
+        if wid <= avail or size == 18:
+            if wid > avail and k:      # still too wide: drop the kicker
+                k = ""
+                wid = tw(draw, t, f)
+            draw.text((x, y + 13), t, font=f, fill=BLACK)
+            if k:
+                draw.text((x + tw(draw, t, f), y + 13), "  \u00b7  ", font=f, fill=LGRAY)
+                draw.text((x + tw(draw, t + "  \u00b7  ", f), y + 13), k, font=f, fill=GRAY)
+            break
+    draw.line([(PAD, y + ph + 26), (W - PAD, y + ph + 26)], fill=LGRAY, width=1)
+
+
+def footer_rail(draw, handle, steps, live_index, num, total):
+    """Bottom rail: handle, step sequence, slide number.
+
+    Same fitting rule as the top. Three left-aligned, centred and right-aligned
+    runs of letterspaced mono will happily overprint each other; the steps are
+    the optional one, so they go first when space runs out."""
+    f = load_mono(20, bold=True)
+    y = H - PAD - 6
+    draw.line([(PAD, y - 24), (W - PAD, y - 24)], fill=LGRAY, width=1)
+
+    h = _space(handle.upper())
+    n = f"{num:02d} / {total:02d}"
+    draw.text((PAD, y), h, font=f, fill=GRAY)
+    draw.text((W - PAD - tw(draw, n, f), y), n, font=f, fill=GRAY)
+
+    if not steps:
+        return
+    left = PAD + tw(draw, h, f) + 30
+    right = W - PAD - tw(draw, n, f) - 30
+    parts, sep = [_space(s.upper()) for s in steps], "  \u00b7  "
+    total_w = sum(tw(draw, p, f) for p in parts) + tw(draw, sep, f) * (len(parts) - 1)
+    if total_w > right - left:
+        return                      # no room: better absent than overprinted
+    x = left + (right - left - total_w) // 2
+    for i, part in enumerate(parts):
+        draw.text((x, y), part, font=f, fill=ACCENT if i == live_index else GRAY)
+        x += tw(draw, part, f)
+        if i < len(parts) - 1:
+            draw.text((x, y), sep, font=f, fill=LGRAY)
+            x += tw(draw, sep, f)
+
+
+def _space(t, gap=" "):
+    """Letterspacing, which PIL has no setting for. Mono type without it reads
+    as code; with it, it reads as an instrument panel."""
+    return gap.join(t)
+
+
+def draw_glyph(draw, name, cx_, cy_, size=34, color=None):
+    """Simple line icons, drawn.
+
+    A letter standing in for an icon reads as a placeholder, and the system
+    fonts have no coherent icon set to borrow from. These are a few strokes
+    each and stay sharp at any size, which a downloaded PNG would not."""
+    c = color or ACCENT
+    w = max(2, size // 12)
+    h = size // 2
+    if name == "folder":
+        draw.line([(cx_-h, cy_+h*0.7), (cx_-h, cy_-h*0.6)], fill=c, width=w)
+        draw.line([(cx_-h, cy_-h*0.6), (cx_-h*0.15, cy_-h*0.6)], fill=c, width=w)
+        draw.line([(cx_-h*0.15, cy_-h*0.6), (cx_+h*0.05, cy_-h*0.25)], fill=c, width=w)
+        draw.line([(cx_+h*0.05, cy_-h*0.25), (cx_+h, cy_-h*0.25)], fill=c, width=w)
+        draw.line([(cx_+h, cy_-h*0.25), (cx_+h, cy_+h*0.7)], fill=c, width=w)
+        draw.line([(cx_-h, cy_+h*0.7), (cx_+h, cy_+h*0.7)], fill=c, width=w)
+    elif name == "doc":
+        draw.rounded_rectangle([cx_-h*0.7, cy_-h, cx_+h*0.7, cy_+h], radius=w*2,
+                               outline=c, width=w)
+        for i, fy in enumerate((-0.35, 0.0, 0.35)):
+            draw.line([(cx_-h*0.38, cy_+h*fy), (cx_+h*(0.38 if i != 2 else 0.05), cy_+h*fy)],
+                      fill=c, width=w)
+    elif name == "tag":
+        draw.line([(cx_-h*0.55, cy_-h*0.7), (cx_-h*0.8, cy_+h*0.7)], fill=c, width=w)
+        draw.line([(cx_+h*0.2, cy_-h*0.7), (cx_-h*0.05, cy_+h*0.7)], fill=c, width=w)
+        draw.line([(cx_-h*0.95, cy_-h*0.2), (cx_+h*0.5, cy_-h*0.2)], fill=c, width=w)
+        draw.line([(cx_-h, cy_+h*0.25), (cx_+h*0.45, cy_+h*0.25)], fill=c, width=w)
+    elif name == "quote":
+        for dx in (-h*0.45, h*0.25):
+            draw.arc([cx_+dx-h*0.32, cy_-h*0.5, cx_+dx+h*0.32, cy_+h*0.15],
+                     start=110, end=360, fill=c, width=w)
+            draw.line([(cx_+dx-h*0.06, cy_+h*0.1), (cx_+dx-h*0.2, cy_+h*0.6)],
+                      fill=c, width=w)
+    elif name == "mic":
+        draw.rounded_rectangle([cx_-h*0.3, cy_-h*0.9, cx_+h*0.3, cy_+h*0.15],
+                               radius=h*0.3, outline=c, width=w)
+        draw.arc([cx_-h*0.62, cy_-h*0.35, cx_+h*0.62, cy_+h*0.6], start=0, end=180,
+                 fill=c, width=w)
+        draw.line([(cx_, cy_+h*0.6), (cx_, cy_+h*0.95)], fill=c, width=w)
+    elif name == "grid":
+        r = h*0.34
+        for gx in (-1, 1):
+            for gy in (-1, 1):
+                draw.rounded_rectangle([cx_+gx*r-r*0.72, cy_+gy*r-r*0.72,
+                                        cx_+gx*r+r*0.72, cy_+gy*r+r*0.72],
+                                       radius=w, outline=c, width=w)
+    elif name == "clock":
+        draw.ellipse([cx_-h*0.85, cy_-h*0.85, cx_+h*0.85, cy_+h*0.85], outline=c, width=w)
+        draw.line([(cx_, cy_), (cx_, cy_-h*0.5)], fill=c, width=w)
+        draw.line([(cx_, cy_), (cx_+h*0.4, cy_)], fill=c, width=w)
+    elif name == "check":
+        draw.line([(cx_-h*0.6, cy_), (cx_-h*0.15, cy_+h*0.45)], fill=c, width=w+1)
+        draw.line([(cx_-h*0.15, cy_+h*0.45), (cx_+h*0.65, cy_-h*0.5)], fill=c, width=w+1)
+    else:
+        f = load_font(size, bold=True)
+        draw.text((cx_ - tw(draw, name, f) // 2, cy_ - size // 2), name, font=f, fill=c)
+
+
+def load_display(size):
+    """The heaviest face available, for the cover headline.
+
+    Arial Bold is what the body uses and it is too light and too wide to read
+    like the reference, whose headline is a black-weight grotesque set tight.
+    Arial Black is the closest thing every Mac has."""
+    for path in ("/System/Library/Fonts/Supplemental/Arial Black.ttf",
+                 "/System/Library/Fonts/Supplemental/Arial Bold.ttf"):
+        if Path(path).exists():
+            try: return ImageFont.truetype(path, size)
+            except Exception: pass
+    return load_font(size, bold=True)
+
+
+def tracked_width(draw, text, font, track=0):
+    return sum(tw(draw, ch, font) for ch in text) + track * max(0, len(text) - 1)
+
+
+def draw_tracked(draw, x, y, text, font, fill, track=0):
+    """Draw with letterspacing PIL does not otherwise offer.
+
+    Negative tracking is the difference between 'bold text' and a headline.
+    Positive tracking is what makes the mono rails read as an instrument."""
+    for ch in text:
+        draw.text((x, y), ch, font=font, fill=fill)
+        x += tw(draw, ch, font) + track
+    return x
+
+
+def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
+                             kicker="", rule=True):
+    """Centred, all-caps, tightly tracked, with a rule under the accent line.
+
+    This is the cover treatment from the reference. The previous version was
+    left-aligned sentence case at body weight, which is a different design that
+    happened to use the same colours.
+    """
+    if kicker:
+        f_k = load_mono(24, bold=True)
+        kt = _space(kicker.upper())
+        draw.text(((W - tw(draw, kt, f_k)) // 2, y), kt, font=f_k, fill=GRAY)
+        y += th(draw, "Ag", f_k) + 26
+
+    f = load_display(size)
+    # shrink until the widest line fits the column
+    while size > 48 and max(tracked_width(draw, l.upper(), f, track) for l in lines) > W - PAD * 2:
+        size -= 4
+        f = load_display(size)
+
+    last_accent = None
+    for line in lines:
+        t = line.upper()
+        lw = tracked_width(draw, t, f, track)
+        is_accent = line in accent_lines
+        x = (W - lw) // 2
+        draw_tracked(draw, x, y, t, f, ACCENT if is_accent else BLACK, track)
+        # Real drawn extent, not th(). th() returns the glyph box height, which
+        # for a display size sits well above the actual bottom of the letters -
+        # using it put the accent rule straight through the middle of the word.
+        bottom = draw.textbbox((x, y), t, font=f)[3]
+        if is_accent:
+            last_accent = (bottom, x, x + lw)
+        y = bottom + int(size * 0.10)
+
+    if rule and last_accent:
+        bottom, x0, x1 = last_accent
+        draw.line([(x0, bottom + 16), (x1, bottom + 16)], fill=ACCENT, width=5)
+        y = max(y, bottom + 16) + 14
+    return y
+
+
+def icon_row(img, draw, x, y, label, sub, glyph=None, tile=84):
+    """A rounded tile with a glyph, a bold label, and a grey sub-line.
+
+    The reference uses four of these to carry the components of the system.
+    They are what turns a headline into a spec."""
+    draw.rounded_rectangle([x, y, x + tile, y + tile], radius=20,
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34),
+                           outline=LGRAY, width=1)
+    if glyph:
+        draw_glyph(draw, glyph, x + tile // 2, y + tile // 2, size=int(tile * 0.40))
+
+    f_lab = load_font(32, bold=True)
+    f_sub = load_font(27)
+    draw.text((x + tile + 26, y + 12), label.upper(), font=f_lab, fill=BLACK)
+    draw.text((x + tile + 26, y + 50), sub, font=f_sub, fill=GRAY)
+    return y + tile + 22
+
+
+def terminal_card(img, draw, x, y, w, lines, title="", h=None, accent_last=True):
+    """A dark terminal window with traffic lights.
+
+    This is the proof block. The reference's credibility comes from showing a
+    thing running rather than describing it, and it is the element a competitor
+    cannot fake without actually having built something."""
+    lh = 38
+    h = h or (72 + lh * len(lines) + 20)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=18, fill=(18, 20, 26))
+    for i, c in enumerate([(255, 95, 86), (255, 189, 46), (39, 201, 63)]):
+        draw.ellipse([x + 22 + i * 26, y + 20, x + 34 + i * 26, y + 32], fill=c)
+    if title:
+        f_t = load_mono(20, bold=True)
+        draw.text((x + 116, y + 18), _space(title.upper()), font=f_t, fill=(150, 158, 170))
+
+    f = load_mono(25, bold=True)
+    ty = y + 62
+    for i, line in enumerate(lines):
+        last = accent_last and i == len(lines) - 1
+        draw.text((x + 26, ty), line, font=f,
+                  fill=ACCENT if last else (196, 202, 212))
+        ty += lh
+    return y + h
 
 
 def draw_counter(draw, num, total, font):
@@ -315,7 +613,7 @@ def composite_image(base_img, overlay_path, y_top, y_bottom):
 
 
 # ── Base slide factory ────────────────────────────────────────────────────────
-def make_base(num, total, brand_text, handle, bg_path=None):
+def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
         bg_img = Image.open(bg_path).convert("RGB")
         bg_w, bg_h = bg_img.size
@@ -333,6 +631,12 @@ def make_base(num, total, brand_text, handle, bg_path=None):
         img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
 
+    # The rich layout draws its own rails; the old counter and brand row would
+    # collide with them.
+    if rich:
+        draw_grid(draw)
+        return img, draw
+
     f_counter = load_font(28)
     f_brand   = load_font(32, bold=True)
     f_handle  = load_font(28)
@@ -347,39 +651,105 @@ def make_base(num, total, brand_text, handle, bg_path=None):
 # ── Slide renderers ───────────────────────────────────────────────────────────
 
 def slide_cover(data, idx):
+    """Cover slide.
+
+    Two layouts from one function. If the slide supplies `rows`, `terminal` or
+    `hero_path` it builds the full six-band layout - rail, headline, aside,
+    icon rows beside a hero, proof card, footer rail - which is what fills a 4:5
+    frame. With none of those it falls back to the original headline-and-rule
+    slide, so every carousel already written still renders unchanged.
+    """
     s = data["slides"][idx]
     total = len(data["slides"])
-    img, draw = make_base(idx + 1, total, data["brand_text"], data["handle"], data.get("bg_path"))
+    rich = any(s.get(k) for k in ("rows", "terminal", "hero_path"))
+    img, draw = make_base(idx + 1, total, data["brand_text"], data["handle"],
+                          data.get("bg_path"), rich=rich)
 
-    f_head = load_font(120, bold=True)
-    f_sub  = load_font(46)
+    if not rich:
+        f_head = load_font(120, bold=True)
+        f_sub  = load_font(46)
+        y = 185
+        y = render_headline(draw, s["headline_lines"], s.get("accent_words", []), y, f_head)
+        if s.get("subtitle"):
+            y += 38
+            draw_rule(draw, y, LGRAY)
+            y += 20
+            sub_font = f_sub
+            max_w = W - PAD * 2
+            if tw(draw, s["subtitle"], f_sub) > max_w:
+                scale = max_w / tw(draw, s["subtitle"], f_sub)
+                sub_font = load_font(max(int(46 * scale), 24))
+            draw.text((PAD, y), s["subtitle"], font=sub_font, fill=GRAY)
+            y += th(draw, "Ag", sub_font) + 20
+        logo_key = s.get("logo", "")
+        if logo_key and logo_key in LOGO_DRAWERS:
+            img = LOGO_DRAWERS[logo_key](img, W // 2, (y + 30 + H - 120) // 2, width=300)
+        elif s.get("image_path") and Path(s["image_path"]).exists():
+            img = composite_image(img, s["image_path"], y_top=y + 30, y_bottom=H - 110)
+        return img
 
-    y = 185
-    y = render_headline(draw, s["headline_lines"], s.get("accent_words", []), y, f_head)
+    # ---- rich layout
+    mono_rail(draw, idx + 1, total, data.get("topic_short", ""), data.get("kicker", ""))
 
-    if s.get("subtitle"):
-        y += 38
-        draw_rule(draw, y, LGRAY)
+    y = 168
+    y = render_headline_centered(
+        draw, s["headline_lines"], s.get("accent_lines", s.get("accent_words", [])),
+        y, size=s.get("headline_size", 104), kicker=s.get("kicker", ""))
+
+    if s.get("aside"):
         y += 20
-        sub_font = f_sub
-        max_w = W - PAD * 2
-        if tw(draw, s["subtitle"], f_sub) > max_w:
-            scale = max_w / tw(draw, s["subtitle"], f_sub)
-            sub_font = load_font(max(int(46 * scale), 24))
-        draw.text((PAD, y), s["subtitle"], font=sub_font, fill=GRAY)
-        y += th(draw, "Ag", sub_font) + 20
+        f_a = load_script(40)
+        text = s["aside"]
+        arrow = text.rstrip().endswith(("\u2192", "->"))
+        text = text.rstrip().rstrip("\u2192").rstrip("->").rstrip()
+        aw = tw(draw, text, f_a) + (40 if arrow else 0)
+        ax = (W - aw) // 2
+        draw.text((ax, y), text, font=f_a, fill=ACCENT)
+        if arrow:
+            draw_arrow(draw, ax + tw(draw, text, f_a) + 14, y + 26, size=26)
+        y += th(draw, "Ag", f_a) + 34
 
-    # Draw logo if specified (e.g. "logo": "youtube")
-    logo_key = s.get("logo", "")
-    if logo_key and logo_key in LOGO_DRAWERS:
-        # Center logo in remaining space above brand row
-        logo_top = y + 30
-        logo_bottom = H - 120
-        logo_cy = (logo_top + logo_bottom) // 2
-        img = LOGO_DRAWERS[logo_key](img, W // 2, logo_cy, width=300)
-    elif s.get("image_path") and Path(s["image_path"]).exists():
-        img = composite_image(img, s["image_path"], y_top=y + 30, y_bottom=H - 110)
+    # icon rows on the left, hero on the right
+    rows = s.get("rows", [])
+    col_w = 470
+    row_y = y
+    for r in rows[:4]:
+        row_y = icon_row(img, draw, PAD, row_y, r.get("label", ""), r.get("sub", ""),
+                         r.get("glyph"))
 
+    hero_bottom = row_y
+    if s.get("hero_path") and Path(s["hero_path"]).exists():
+        hero = Image.open(s["hero_path"]).convert("RGBA")
+        box_w = W - PAD - (PAD + col_w) - 10
+        box_h = max(row_y - y - 20, 240)
+        scale = min(box_w / hero.width, box_h / hero.height)
+        hero = hero.resize((max(1, int(hero.width * scale)), max(1, int(hero.height * scale))),
+                           Image.LANCZOS)
+        hero = add_rounded_corners(hero, radius=18)
+        img.paste(hero, (PAD + col_w + 10 + (box_w - hero.width) // 2,
+                         y + (box_h - hero.height) // 2), hero)
+        draw = ImageDraw.Draw(img)
+
+    if s.get("terminal"):
+        t = s["terminal"]
+        top = hero_bottom + 18
+        # the footer rail owns the last ~64px; a card sized purely by line count
+        # ran straight through it and printed the handle over the last command
+        room = (H - PAD - 64) - top
+        lines = t.get("lines", [])
+        # Drop from the MIDDLE. The last line is the payoff - it is the one
+        # rendered in the accent colour and the reason the card is there at all.
+        # Truncating from the end fit the box and threw away the point.
+        while len(lines) > 2 and (72 + 38 * len(lines) + 20) > room:
+            lines = lines[:len(lines) // 2 - 1] + lines[len(lines) // 2:]
+        while len(lines) > 1 and (72 + 38 * len(lines) + 20) > room:
+            lines = lines[:1] + lines[-1:]
+            break
+        if lines:
+            terminal_card(img, draw, PAD, top, W - PAD * 2, lines, t.get("title", ""))
+
+    footer_rail(draw, data["handle"], data.get("steps", []),
+                s.get("live_step", 0), idx + 1, total)
     return img
 
 
