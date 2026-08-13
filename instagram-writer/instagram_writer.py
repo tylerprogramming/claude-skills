@@ -1177,7 +1177,11 @@ def slide_body(data, idx):
 
     y = 168
     if s.get("watermark"):
-        step_watermark(draw, y - 96, s["watermark"])
+        # Sit clear of the rail, and push the headline below it. The first
+        # version put the watermark at the rail and the headline immediately
+        # under, so all three stacked into the top fifth of the slide.
+        step_watermark(draw, y + 4, s["watermark"])
+        y += 86
     note = s.get("note")
     head_lines = s["headline_lines"]
     # A note takes the right side of the slide, so the headline gets what is left
