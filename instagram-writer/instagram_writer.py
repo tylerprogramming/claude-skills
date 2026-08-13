@@ -984,6 +984,40 @@ def circled(draw, x, y, text, size=30):
     return x + w
 
 
+def flow_strip(img, draw, x, y, w, steps, h=176):
+    """Numbered steps left to right, joined by arrows.
+
+    A diagram, deliberately not a mock of somebody else's product UI. Drawing a
+    fake screenshot of a tool you do not have is inventing what it looks like,
+    which is worse than an honest abstraction - and unlike a screenshot this
+    stays true when their interface changes.
+    """
+    soft_shadow(img, (x, y, x + w, y + h), radius=18, blur=12, offset=(0, 6), opacity=38)
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=18,
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (28, 28, 32))
+    n = max(1, len(steps))
+    cw = w / n
+    f_n = load_mono(24, bold=True)
+    f_l = load_font(26, bold=True)
+    f_s = load_font(23)
+    for i, st in enumerate(steps):
+        cx_ = x + cw * i + cw / 2
+        cy_ = y + 56
+        draw.ellipse([cx_ - 25, cy_ - 25, cx_ + 25, cy_ + 25], fill=ACCENT)
+        nt = str(i + 1)
+        draw.text((cx_ - tw(draw, nt, f_n) / 2, cy_ - 13), nt, font=f_n, fill=BG)
+        lab = st.get("label", "")
+        draw.text((cx_ - tw(draw, lab, f_l) / 2, cy_ + 40), lab, font=f_l, fill=BLACK)
+        sub = st.get("sub", "")
+        if sub:
+            draw.text((cx_ - tw(draw, sub, f_s) / 2, cy_ + 72), sub, font=f_s, fill=GRAY)
+        if i < n - 1:
+            ax = x + cw * (i + 1)
+            draw_arrow(draw, ax - 20, cy_, size=40, color=LGRAY, width=3)
+    return y + h
+
+
 # ── Base slide factory ────────────────────────────────────────────────────────
 def make_base(num, total, brand_text, handle, bg_path=None, rich=False):
     if bg_path and Path(bg_path).exists():
@@ -1211,13 +1245,13 @@ def slide_body(data, idx):
     if s.get("chips"):
         for blk in s["chips"]:
             ch_x, ch_bottom = label_chip(draw, PAD, y, blk.get("label", ""))
-            cy2 = ch_bottom + 6
-            f_b = load_font(28, bold=True)
+            cy2 = ch_bottom + 18
+            f_b = load_font(29, bold=True)
             for ln in blk.get("items", []):
-                draw.ellipse([PAD + 8, cy2 + 12, PAD + 18, cy2 + 22], fill=ACCENT)
-                draw.text((PAD + 32, cy2), ln, font=f_b, fill=BLACK)
-                cy2 += 40
-            y = cy2 + 22
+                draw.ellipse([PAD + 10, cy2 + 13, PAD + 21, cy2 + 24], fill=ACCENT)
+                draw.text((PAD + 38, cy2), ln, font=f_b, fill=BLACK)
+                cy2 += 48
+            y = cy2 + 34
 
     if s.get("cards"):
         cw = (W - PAD * 2 - 22) // 2
@@ -1246,6 +1280,12 @@ def slide_body(data, idx):
         content_bottom = table_card(img, draw, PAD, y + 8, W - PAD * 2,
                                     t.get("header", ["Part", "What it does"]),
                                     t.get("rows", []))
+        draw = ImageDraw.Draw(img)
+
+    if s.get("flow"):
+        fh = 176
+        ftop = min(y + 10, H - PAD - 64 - fh - 96)
+        content_bottom = flow_strip(img, draw, PAD, ftop, W - PAD * 2, s["flow"], h=fh)
         draw = ImageDraw.Draw(img)
 
     if s.get("proof"):
@@ -1414,7 +1454,7 @@ def main():
         # A slide carrying `lines` gets the rich body layout whatever its type,
         # so an existing carousel keeps its renderer until it opts in.
         RICH = ("lines", "table", "quad", "proof", "note", "closer", "pill",
-                "chips", "cards", "panel", "watermark", "circled")
+                "chips", "cards", "panel", "watermark", "circled", "flow")
         renderer = (slide_body if any(slide.get(k) for k in RICH)
                     else RENDERERS.get(slide_type, slide_cover))
         img        = renderer(data, i)
