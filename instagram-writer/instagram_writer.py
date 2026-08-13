@@ -732,13 +732,19 @@ def rich_line(draw, x, y, segments, size=29, max_w=None):
     """
     f_r = load_font(size)
     f_b = load_font(size, bold=True)
+    MARK_PAD = 15
     for text, style in segments:
         f = f_b if style in ("bold", "mark") else f_r
         wseg = tw(draw, text, f)
         if style == "mark":
-            draw.rounded_rectangle([x - 8, y - 6, x + wseg + 8, y + size + 12],
-                                   radius=5, fill=ACCENT)
-            draw.text((x, y), text, font=f, fill=BG)
+            # The box used to hug the glyphs, so the words either side looked
+            # welded to it. Pad both edges and advance past the padding, not
+            # just past the text.
+            draw.rounded_rectangle([x, y - 7, x + wseg + MARK_PAD * 2, y + size + 13],
+                                   radius=6, fill=ACCENT)
+            draw.text((x + MARK_PAD, y), text, font=f, fill=BG)
+            x += wseg + MARK_PAD * 2
+            continue
         else:
             draw.text((x, y), text, font=f, fill=BLACK if style != "plain" else BLACK)
             if style == "underline":
@@ -951,9 +957,9 @@ def slide_body(data, idx):
     # them at a fixed pitch. At 84px they finished halfway up the slide and left
     # a 300px hole above the quad card - the same top-anchored habit that made
     # the plain layout look unfinished.
-    bottom_limit = (H - PAD - 64 - qh - 40) if quad else (H - PAD - 90)
+    bottom_limit = (H - PAD - 64 - qh - 70) if quad else (H - PAD - 90)
     if rows:
-        pitch = max(84, min(132, (bottom_limit - y) // len(rows)))
+        pitch = max(78, min(102, (bottom_limit - y) // len(rows)))
         for row in rows:
             tile = 64
             ty = y + (pitch - tile) // 2 - 6
@@ -968,7 +974,7 @@ def slide_body(data, idx):
             y += pitch
 
     if quad:
-        quad_card(img, draw, PAD, H - PAD - 64 - qh, W - PAD * 2, quad, h=qh)
+        quad_card(img, draw, PAD, H - PAD - 64 - qh - 30, W - PAD * 2, quad, h=qh)
         draw = ImageDraw.Draw(img)
 
     footer_rail(draw, data["handle"], data.get("steps", []),
