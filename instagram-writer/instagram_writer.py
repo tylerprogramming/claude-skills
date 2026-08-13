@@ -37,7 +37,7 @@ import os
 from pathlib import Path
 
 try:
-    from PIL import Image, ImageDraw, ImageFont
+    from PIL import Image, ImageDraw, ImageFont, ImageFilter
 except ImportError:
     import subprocess
     subprocess.run([sys.executable, "-m", "pip", "install", "Pillow", "--quiet"], check=True)
@@ -260,75 +260,36 @@ def _space(t, gap=" "):
     return gap.join(t)
 
 
-def draw_glyph(draw, name, cx_, cy_, size=34, color=None):
-    """Simple line icons, drawn.
+def load_display(size, face=None):
+    """The headline face.
 
-    A letter standing in for an icon reads as a placeholder, and the system
-    fonts have no coherent icon set to borrow from. These are a few strokes
-    each and stay sharp at any size, which a downloaded PNG would not."""
-    c = color or ACCENT
-    w = max(2, size // 12)
-    h = size // 2
-    if name == "folder":
-        draw.line([(cx_-h, cy_+h*0.7), (cx_-h, cy_-h*0.6)], fill=c, width=w)
-        draw.line([(cx_-h, cy_-h*0.6), (cx_-h*0.15, cy_-h*0.6)], fill=c, width=w)
-        draw.line([(cx_-h*0.15, cy_-h*0.6), (cx_+h*0.05, cy_-h*0.25)], fill=c, width=w)
-        draw.line([(cx_+h*0.05, cy_-h*0.25), (cx_+h, cy_-h*0.25)], fill=c, width=w)
-        draw.line([(cx_+h, cy_-h*0.25), (cx_+h, cy_+h*0.7)], fill=c, width=w)
-        draw.line([(cx_-h, cy_+h*0.7), (cx_+h, cy_+h*0.7)], fill=c, width=w)
-    elif name == "doc":
-        draw.rounded_rectangle([cx_-h*0.7, cy_-h, cx_+h*0.7, cy_+h], radius=w*2,
-                               outline=c, width=w)
-        for i, fy in enumerate((-0.35, 0.0, 0.35)):
-            draw.line([(cx_-h*0.38, cy_+h*fy), (cx_+h*(0.38 if i != 2 else 0.05), cy_+h*fy)],
-                      fill=c, width=w)
-    elif name == "tag":
-        draw.line([(cx_-h*0.55, cy_-h*0.7), (cx_-h*0.8, cy_+h*0.7)], fill=c, width=w)
-        draw.line([(cx_+h*0.2, cy_-h*0.7), (cx_-h*0.05, cy_+h*0.7)], fill=c, width=w)
-        draw.line([(cx_-h*0.95, cy_-h*0.2), (cx_+h*0.5, cy_-h*0.2)], fill=c, width=w)
-        draw.line([(cx_-h, cy_+h*0.25), (cx_+h*0.45, cy_+h*0.25)], fill=c, width=w)
-    elif name == "quote":
-        for dx in (-h*0.45, h*0.25):
-            draw.arc([cx_+dx-h*0.32, cy_-h*0.5, cx_+dx+h*0.32, cy_+h*0.15],
-                     start=110, end=360, fill=c, width=w)
-            draw.line([(cx_+dx-h*0.06, cy_+h*0.1), (cx_+dx-h*0.2, cy_+h*0.6)],
-                      fill=c, width=w)
-    elif name == "mic":
-        draw.rounded_rectangle([cx_-h*0.3, cy_-h*0.9, cx_+h*0.3, cy_+h*0.15],
-                               radius=h*0.3, outline=c, width=w)
-        draw.arc([cx_-h*0.62, cy_-h*0.35, cx_+h*0.62, cy_+h*0.6], start=0, end=180,
-                 fill=c, width=w)
-        draw.line([(cx_, cy_+h*0.6), (cx_, cy_+h*0.95)], fill=c, width=w)
-    elif name == "grid":
-        r = h*0.34
-        for gx in (-1, 1):
-            for gy in (-1, 1):
-                draw.rounded_rectangle([cx_+gx*r-r*0.72, cy_+gy*r-r*0.72,
-                                        cx_+gx*r+r*0.72, cy_+gy*r+r*0.72],
-                                       radius=w, outline=c, width=w)
-    elif name == "clock":
-        draw.ellipse([cx_-h*0.85, cy_-h*0.85, cx_+h*0.85, cy_+h*0.85], outline=c, width=w)
-        draw.line([(cx_, cy_), (cx_, cy_-h*0.5)], fill=c, width=w)
-        draw.line([(cx_, cy_), (cx_+h*0.4, cy_)], fill=c, width=w)
-    elif name == "check":
-        draw.line([(cx_-h*0.6, cy_), (cx_-h*0.15, cy_+h*0.45)], fill=c, width=w+1)
-        draw.line([(cx_-h*0.15, cy_+h*0.45), (cx_+h*0.65, cy_-h*0.5)], fill=c, width=w+1)
-    else:
-        f = load_font(size, bold=True)
-        draw.text((cx_ - tw(draw, name, f) // 2, cy_ - size // 2), name, font=f, fill=c)
-
-
-def load_display(size):
-    """The heaviest face available, for the cover headline.
-
-    Arial Bold is what the body uses and it is too light and too wide to read
-    like the reference, whose headline is a black-weight grotesque set tight.
-    Arial Black is the closest thing every Mac has."""
-    for path in ("/System/Library/Fonts/Supplemental/Arial Black.ttf",
-                 "/System/Library/Fonts/Supplemental/Arial Bold.ttf"):
-        if Path(path).exists():
-            try: return ImageFont.truetype(path, size)
-            except Exception: pass
+    SF Pro at Black is the closest thing on a stock Mac to the modern grotesque
+    the reference uses - tight, geometric, and it reads as product rather than
+    poster. Arial Black, which this used first, is noticeably wider and older
+    looking at display size. Helvetica Neue Condensed Black is the tighter
+    alternative; set DISPLAY_FACE to pick.
+    """
+    face = face or os.environ.get("DISPLAY_FACE", "sfpro")
+    order = {
+        "sfpro":     [("/System/Library/Fonts/SFNS.ttf", 0, "Black")],
+        "condensed": [("/System/Library/Fonts/HelveticaNeue.ttc", 9, None)],
+        "helvetica": [("/System/Library/Fonts/HelveticaNeue.ttc", 1, None)],
+        "avenir":    [("/System/Library/Fonts/Avenir Next.ttc", 8, None)],
+        "arial":     [("/System/Library/Fonts/Supplemental/Arial Black.ttf", 0, None)],
+    }.get(face, [])
+    order += [("/System/Library/Fonts/SFNS.ttf", 0, "Black"),
+              ("/System/Library/Fonts/HelveticaNeue.ttc", 9, None),
+              ("/System/Library/Fonts/Supplemental/Arial Black.ttf", 0, None)]
+    for path, idx, variation in order:
+        if not Path(path).exists():
+            continue
+        try:
+            f = ImageFont.truetype(path, size, index=idx)
+            if variation:
+                f.set_variation_by_name(variation)
+            return f
+        except Exception:
+            continue
     return load_font(size, bold=True)
 
 
@@ -339,8 +300,7 @@ def tracked_width(draw, text, font, track=0):
 def draw_tracked(draw, x, y, text, font, fill, track=0):
     """Draw with letterspacing PIL does not otherwise offer.
 
-    Negative tracking is the difference between 'bold text' and a headline.
-    Positive tracking is what makes the mono rails read as an instrument."""
+    Negative tracking is the difference between 'bold text' and a headline."""
     for ch in text:
         draw.text((x, y), ch, font=font, fill=fill)
         x += tw(draw, ch, font) + track
@@ -349,12 +309,7 @@ def draw_tracked(draw, x, y, text, font, fill, track=0):
 
 def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
                              kicker="", rule=True):
-    """Centred, all-caps, tightly tracked, with a rule under the accent line.
-
-    This is the cover treatment from the reference. The previous version was
-    left-aligned sentence case at body weight, which is a different design that
-    happened to use the same colours.
-    """
+    """Centred, all-caps, tightly tracked, with a rule under the accent line."""
     if kicker:
         f_k = load_mono(24, bold=True)
         kt = _space(kicker.upper())
@@ -362,7 +317,6 @@ def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
         y += th(draw, "Ag", f_k) + 26
 
     f = load_display(size)
-    # shrink until the widest line fits the column
     while size > 48 and max(tracked_width(draw, l.upper(), f, track) for l in lines) > W - PAD * 2:
         size -= 4
         f = load_display(size)
@@ -389,16 +343,118 @@ def render_headline_centered(draw, lines, accent_lines, y, size=104, track=-3,
     return y
 
 
+def soft_shadow(img, box, radius=20, blur=9, offset=(0, 5), opacity=42):
+    """A blurred rounded rect behind a tile.
+
+    The reference's tiles sit on a soft shadow, which is most of why they read
+    as objects on a surface rather than outlines printed on it. Flat outlined
+    tiles looked like wireframe next to it."""
+    x0, y0, x1, y1 = box
+    pad = blur * 3
+    layer = Image.new("RGBA", (int(x1 - x0) + pad * 2, int(y1 - y0) + pad * 2), (0, 0, 0, 0))
+    ImageDraw.Draw(layer).rounded_rectangle(
+        [pad, pad, pad + (x1 - x0), pad + (y1 - y0)], radius=radius, fill=(15, 23, 42, opacity))
+    layer = layer.filter(ImageFilter.GaussianBlur(blur))
+    img.paste(layer, (int(x0 - pad + offset[0]), int(y0 - pad + offset[1])), layer)
+
+
+def draw_glyph(draw, name, cx_, cy_, size=34, color=None):
+    """Icon marks, drawn heavy.
+
+    The first set were hairline strokes at 40% of the tile and read as faint
+    scratches; the reference's marks are solid, fill most of the tile, and use
+    the real brand colour where a brand exists. Weight is what makes an icon
+    legible at thumbnail size, not detail.
+    """
+    c = color or ACCENT
+    w = max(3, size // 7)
+    h = size / 2
+
+    if name == "claude":                      # the Anthropic sunburst
+        import math
+        c = (204, 120, 92)
+        for i in range(8):
+            a = math.pi * i / 8
+            dx, dy = math.cos(a) * h, math.sin(a) * h
+            draw.line([(cx_ - dx, cy_ - dy), (cx_ + dx, cy_ + dy)], fill=c, width=w)
+    elif name == "obsidian":                  # the purple gem
+        c = (124, 77, 225)
+        draw.polygon([(cx_, cy_ - h), (cx_ + h * 0.8, cy_ - h * 0.1),
+                      (cx_, cy_ + h), (cx_ - h * 0.8, cy_ - h * 0.1)], fill=c)
+        draw.polygon([(cx_, cy_ - h), (cx_ + h * 0.8, cy_ - h * 0.1), (cx_, cy_ + h * 0.15)],
+                     fill=(158, 118, 240))
+    elif name == "wave":                      # local voice
+        for i, hh in enumerate((0.30, 0.62, 1.0, 0.62, 0.30)):
+            x = cx_ + (i - 2) * (size * 0.20)
+            draw.line([(x, cy_ - h * hh), (x, cy_ + h * hh)], fill=c, width=w)
+    elif name == "grid":                      # the HUD
+        r = size * 0.21
+        g = size * 0.06
+        for gx in (-1, 1):
+            for gy in (-1, 1):
+                x0, y0 = cx_ + gx * (r + g) - r, cy_ + gy * (r + g) - r
+                draw.rounded_rectangle([x0, y0, x0 + r * 2, y0 + r * 2],
+                                       radius=max(2, w // 2), fill=c)
+    elif name == "folder":
+        draw.rounded_rectangle([cx_ - h, cy_ - h * 0.45, cx_ + h, cy_ + h * 0.8],
+                               radius=w, fill=c)
+        draw.rounded_rectangle([cx_ - h, cy_ - h * 0.8, cx_ - h * 0.05, cy_ - h * 0.35],
+                               radius=w, fill=c)
+    elif name == "doc":
+        draw.rounded_rectangle([cx_ - h * 0.72, cy_ - h, cx_ + h * 0.72, cy_ + h],
+                               radius=w * 1.4, fill=c)
+        bg = (255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34)
+        for fy, ln in ((-0.42, 0.46), (-0.06, 0.46), (0.30, 0.26)):
+            draw.rounded_rectangle([cx_ - h * 0.44, cy_ + h * fy,
+                                    cx_ - h * 0.44 + h * ln * 2, cy_ + h * fy + w],
+                                   radius=w // 2, fill=bg)
+    elif name == "tag":                       # frontmatter / hash
+        for dx in (-0.34, 0.20):
+            draw.line([(cx_ + h * dx + h * 0.18, cy_ - h * 0.78),
+                       (cx_ + h * dx - h * 0.18, cy_ + h * 0.78)], fill=c, width=w)
+        for dy in (-0.30, 0.24):
+            draw.line([(cx_ - h * 0.82, cy_ + h * dy), (cx_ + h * 0.82, cy_ + h * dy)],
+                      fill=c, width=w)
+    elif name == "text":                      # plain english
+        for i, ln in enumerate((1.0, 0.76, 0.94, 0.52)):
+            y = cy_ - h * 0.62 + i * (size * 0.21)
+            draw.rounded_rectangle([cx_ - h * 0.82, y, cx_ - h * 0.82 + h * 1.64 * ln, y + w],
+                                   radius=w // 2, fill=c)
+    elif name == "terminal":
+        draw.rounded_rectangle([cx_ - h, cy_ - h * 0.8, cx_ + h, cy_ + h * 0.8],
+                               radius=w, outline=c, width=w)
+        draw.line([(cx_ - h * 0.5, cy_ - h * 0.2), (cx_ - h * 0.18, cy_ + h * 0.1)],
+                  fill=c, width=w)
+        draw.line([(cx_ - h * 0.18, cy_ + h * 0.1), (cx_ - h * 0.5, cy_ + h * 0.4)],
+                  fill=c, width=w)
+        draw.line([(cx_ + h * 0.05, cy_ + h * 0.4), (cx_ + h * 0.55, cy_ + h * 0.4)],
+                  fill=c, width=w)
+    elif name == "clock":
+        draw.ellipse([cx_ - h * 0.88, cy_ - h * 0.88, cx_ + h * 0.88, cy_ + h * 0.88],
+                     outline=c, width=w)
+        draw.line([(cx_, cy_), (cx_, cy_ - h * 0.48)], fill=c, width=w)
+        draw.line([(cx_, cy_), (cx_ + h * 0.40, cy_)], fill=c, width=w)
+    elif name == "check":
+        draw.line([(cx_ - h * 0.62, cy_ + h * 0.05), (cx_ - h * 0.14, cy_ + h * 0.5)],
+                  fill=c, width=w + 2)
+        draw.line([(cx_ - h * 0.14, cy_ + h * 0.5), (cx_ + h * 0.66, cy_ - h * 0.52)],
+                  fill=c, width=w + 2)
+    else:
+        f = load_font(size, bold=True)
+        draw.text((cx_ - tw(draw, name, f) // 2, cy_ - size // 2), name, font=f, fill=c)
+
+
 def icon_row(img, draw, x, y, label, sub, glyph=None, tile=84):
     """A rounded tile with a glyph, a bold label, and a grey sub-line.
 
     The reference uses four of these to carry the components of the system.
     They are what turns a headline into a spec."""
+    soft_shadow(img, (x, y, x + tile, y + tile), radius=20)
+    draw = ImageDraw.Draw(img)
     draw.rounded_rectangle([x, y, x + tile, y + tile], radius=20,
-                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34),
-                           outline=LGRAY, width=1)
+                           fill=(255, 255, 255) if sum(BG) / 3 > 128 else (30, 30, 34))
     if glyph:
-        draw_glyph(draw, glyph, x + tile // 2, y + tile // 2, size=int(tile * 0.40))
+        draw_glyph(draw, glyph, x + tile // 2, y + tile // 2, size=int(tile * 0.54))
 
     f_lab = load_font(32, bold=True)
     f_sub = load_font(27)
