@@ -162,7 +162,7 @@ def draw_dots(draw, cx_pos, cy_pos, cols=5, rows=5, r=4, gap=13):
             draw.ellipse([x - r, y - r, x + r, y + r], fill=LGRAY)
 
 
-def draw_grid(draw, step=52, dot=2, major=4):
+def draw_grid(draw, step=62, dot=2, major=4):
     """Dotted ground.
 
     Lines, even at two weights, either vanish or start competing with the type
