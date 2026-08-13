@@ -1022,7 +1022,7 @@ def flow_strip(img, draw, x, y, w, steps, h=176):
     return y + h
 
 
-def consent_card(img, draw, x, y, w, app, scopes, h=290):
+def consent_card(img, draw, x, y, w, app, scopes, h=290, brand=None):
     """A generic OAuth consent dialog.
 
     The shape every provider uses - who is asking, what for, allow or deny -
@@ -1033,16 +1033,22 @@ def consent_card(img, draw, x, y, w, app, scopes, h=290):
     draw.rounded_rectangle([x, y, x + w, y + h], radius=16,
                            fill=(255, 255, 255) if sum(BG) / 3 > 128 else (28, 28, 32),
                            outline=LGRAY, width=1)
-    draw.rounded_rectangle([x, y, x + w, y + 52], radius=16, fill=_tint(0.10))
-    draw.rectangle([x, y + 36, x + w, y + 52], fill=_tint(0.10))
-    draw.text((x + 22, y + 15), _space("AUTHORIZE"), font=load_mono(20, bold=True), fill=ACCENT)
+    # A consent dialog belongs to whoever is asking, so it takes their colours
+    # when they are supplied rather than the deck accent.
+    head = _rgb(brand[0]) if brand else _tint(0.10)
+    mark = _rgb(brand[1]) if brand and len(brand) > 1 else ACCENT
+    head_ink = BG if brand else ACCENT
+    draw.rounded_rectangle([x, y, x + w, y + 52], radius=16, fill=head)
+    draw.rectangle([x, y + 36, x + w, y + 52], fill=head)
+    draw.text((x + 22, y + 15), _space("AUTHORIZE"), font=load_mono(20, bold=True),
+              fill=head_ink)
 
     f_a = load_font(30, bold=True)
     f_s = load_font(24)
     draw.text((x + 22, y + 74), f"{app} wants access to", font=f_a, fill=BLACK)
     sy = y + 118
     for sc in scopes[:3]:
-        draw.ellipse([x + 26, sy + 9, x + 36, sy + 19], fill=ACCENT)
+        draw.ellipse([x + 26, sy + 9, x + 36, sy + 19], fill=mark)
         draw.text((x + 50, sy), sc, font=f_s, fill=GRAY)
         sy += 34
 
@@ -1053,7 +1059,7 @@ def consent_card(img, draw, x, y, w, app, scopes, h=290):
     f_b = load_font(25, bold=True)
     draw.text((x + 22 + (bw - tw(draw, "Deny", f_b)) // 2, by + 12), "Deny",
               font=f_b, fill=GRAY)
-    draw.rounded_rectangle([x + w - 22 - bw, by, x + w - 22, by + bh], radius=10, fill=ACCENT)
+    draw.rounded_rectangle([x + w - 22 - bw, by, x + w - 22, by + bh], radius=10, fill=mark)
     draw.text((x + w - 22 - bw + (bw - tw(draw, "Allow", f_b)) // 2, by + 12), "Allow",
               font=f_b, fill=BG)
     return y + h
@@ -1341,9 +1347,10 @@ def slide_body(data, idx):
         cn = s["consent"]
         cw = 470
         ch2 = 290
-        ctop = min(y + 10, H - PAD - 64 - ch2 - 110)
-        content_bottom = consent_card(img, draw, W - PAD - cw, ctop, cw,
-                                      cn.get("app", "The gateway"), cn.get("scopes", []), ch2)
+        ctop = min(y + 48, H - PAD - 64 - ch2 - 40)
+        content_bottom = consent_card(img, draw, (W - cw) // 2, ctop, cw,
+                                      cn.get("app", "The gateway"), cn.get("scopes", []),
+                                      ch2, brand=cn.get("brand"))
         draw = ImageDraw.Draw(img)
 
     if s.get("flow"):
