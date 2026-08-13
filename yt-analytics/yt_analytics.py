@@ -177,17 +177,31 @@ def get_recent_videos(youtube, channel_id, max_results=50, shorts_only=False):
     return videos
 
 
-def _is_short(iso_duration):
-    """Check if video is a Short (under 61 seconds)."""
+SHORTS_MAX_SECONDS = 180   # YouTube raised the Shorts ceiling from 60s to 3min
+
+
+def duration_seconds(iso_duration):
+    """PT1M57S -> 117. Returns 0 on anything unparseable."""
     import re
-    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", iso_duration)
+    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", str(iso_duration or ""))
     if not m:
-        return False
-    hours = int(m.group(1) or 0)
-    minutes = int(m.group(2) or 0)
-    seconds = int(m.group(3) or 0)
-    total = hours * 3600 + minutes * 60 + seconds
-    return total <= 60
+        return 0
+    return int(m.group(1) or 0) * 3600 + int(m.group(2) or 0) * 60 + int(m.group(3) or 0)
+
+
+def _is_short(iso_duration):
+    """A Short is 3 minutes or under.
+
+    Two bugs here at once. The ceiling was 60 seconds, which YouTube raised to
+    180 - so every 1-3 minute vertical was being counted as long-form. And the
+    per-video path compared the raw ISO string to an integer, which is never
+    true, so isShort came back False for the entire channel.
+
+    The effect was a 1m57s Short sitting at the top of the long-form retention
+    table with 59.3%, which is a Shorts number, and it made the long-form
+    picture look better than it is.
+    """
+    return 0 < duration_seconds(iso_duration) <= SHORTS_MAX_SECONDS
 
 
 def get_analytics(yt_analytics, channel_id, start_date, end_date, video_id=None):
@@ -403,6 +417,8 @@ def main():
                 info = title_map.get(v["videoId"], {})
                 v["title"] = info.get("title", "Unknown")
                 v["isShort"] = _is_short(info.get("duration", "PT0S"))
+                v["duration"] = info.get("duration", "PT0S")
+                v["durationSeconds"] = duration_seconds(info.get("duration", "PT0S"))
 
         # Recent videos list
         result["recentVideos"] = get_recent_videos(youtube, channel["id"],

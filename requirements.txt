@@ -1,0 +1,35 @@
+# Python dependencies for the skills that need them.
+#
+# The skills share one virtualenv at ~/.claude/skills/.venv rather than one each.
+# Every skill's Python entrypoint re-execs itself under it (see the "skills venv
+# bootstrap" block at the top of instagram_writer.py and yt_analytics.py), so
+# `python3 some_skill.py` works no matter what python3 resolves to on the PATH.
+#
+# Rebuild it with:  ./setup.sh
+#
+# Pinned exactly, not floored. This environment is synced in spirit across two
+# Macs, and "works on the laptop, not the desktop" is a debugging session nobody
+# wants. Bump deliberately, not by accident on a fresh install.
+
+# Slide and thumbnail rendering  (instagram-writer, yt-thumbnail, analytics assets)
+Pillow==12.3.0
+
+# YouTube Data + Analytics APIs, and Gmail  (yt-analytics, yt-upload, gmail)
+google-api-python-client==2.198.0
+google-auth-oauthlib==1.4.0
+certifi==2026.7.22
+
+# Caption and copy generation  (instagram-writer, social-copy)
+openai==2.52.0
+
+# Email  (email skill, Resend)
+resend==2.35.0
+
+# Calendar parsing  (standup, journal)
+icalendar==7.2.2
+
+# Headless browser  (yt-search, research scrapers)
+playwright==1.62.0
+
+# Numerics  (thumbnail and image analysis)
+numpy==2.5.1

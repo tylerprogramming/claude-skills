@@ -140,10 +140,35 @@ now lives in, or add the packages to your existing one.
 
 ```bash
 ./setup.sh --check     # is the venv there, and does every package import
+./setup.sh --rebuild   # throw it away and build clean
 ```
 
 `--check` imports each module rather than trusting that pip reported success,
 so it tells you what actually works rather than what was supposed to install.
+
+### uv, and where versions come from
+
+`setup.sh` uses [uv](https://docs.astral.sh/uv/) when it is installed and falls
+back to `python3 -m venv` plus pip when it is not. uv resolves in seconds, and
+it builds an isolated environment rather than negotiating with a Homebrew Python
+that marks itself externally managed (PEP 668) — the failure whose usual
+workaround is `--break-system-packages`, which does exactly what it says on a
+Python other things depend on.
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Package versions live in **`requirements.txt`, pinned exactly**. This
+environment lives on two Macs, and "works on the laptop, not the desktop" is a
+debugging session nobody wants, so a fresh install resolves the same wheels
+rather than whatever is newest that week. Bump a version deliberately, then run
+`./setup.sh` again.
+
+Playwright is installed as two things — the package and the Chromium build it
+drives. Installing only the package gives you an import that succeeds and a
+first call that fails, which reads as a bug in the skill rather than a missing
+download, so `setup.sh` does both.
 
 ### Why there is a venv
 

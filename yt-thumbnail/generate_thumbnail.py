@@ -390,7 +390,7 @@ def main():
         sys.exit(1)
 
     # Set up output directory
-    output_dir = Path(args.output_dir) if args.output_dir else Path.home() / "youtube" / "thumbnails"
+    output_dir = Path(args.output_dir) if args.output_dir else Path.home() / "content" / "youtube" / "thumbnails"
     today = datetime.now().strftime("%Y-%m-%d")
     if args.slug:
         output_dir = output_dir / f"{today}-{args.slug}"

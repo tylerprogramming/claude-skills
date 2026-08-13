@@ -21,6 +21,12 @@
 #                                   reuse the venv this script already built,
 #                                   no second few-hundred-MB download
 #   ./setup.sh --check [dir]        report what is missing, change nothing
+#   ./setup.sh --rebuild [dir]      throw the venv away and build it clean
+#
+# Versions come from requirements.txt, pinned exactly. This environment lives on
+# two Macs and "works on the laptop, not the desktop" is a debugging session
+# nobody wants, so a fresh install six months from now resolves the same wheels
+# rather than whatever is newest.
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -29,23 +35,16 @@ LINK=0
 [ "${1:-}" = "--link" ] && { LINK=1; shift; }
 MODE=""
 [ "${1:-}" = "--check" ] && { MODE="check"; shift; }
+[ "${1:-}" = "--rebuild" ] && { MODE="rebuild"; shift; }
 
 TARGET="${1:-$DIR}"
 mkdir -p "$TARGET" 2>/dev/null
 TARGET="$(cd "$TARGET" && pwd)" || { echo "  no such folder: ${1:-}" >&2; exit 1; }
 VENV="$TARGET/.venv"
 
-# Every third-party import across the skills, as pip package names.
-PACKAGES=(
-  google-api-python-client google-auth-oauthlib google-auth-httplib2  # yt-upload, yt-replier, yt-analytics, gmail, creator-hq
-  Pillow                                                              # flash-video, instagram-writer
-  numpy                                                               # harut, instagram-writer
-  openai                                                              # harut, transcribe
-  resend                                                              # email
-  icalendar                                                           # lifestyle
-  certifi                                                             # _kie
-  playwright                                                          # tiktok-replier
-)
+# Package versions live in requirements.txt, not here. One list, pinned, and it
+# is the thing a fresh machine reproduces from.
+REQ="$DIR/requirements.txt"
 
 # module name -> what to import, for verification
 MODULES=(googleapiclient google_auth_oauthlib google PIL numpy openai resend icalendar certifi playwright)
@@ -64,7 +63,7 @@ check() {
     "$VENV/bin/python3" -c "import $m" 2>/dev/null || missing+=("$m")
   done
   if [ ${#missing[@]} -eq 0 ]; then
-    say "packages  : all ${#MODULES[@]} present"
+    say "packages  : all ${#MODULES[@]} import cleanly"
   else
     say "packages  : MISSING ${missing[*]}"
     say "            run ./setup.sh to install them"
@@ -84,18 +83,47 @@ if [ "$LINK" = "1" ]; then
   exit $?
 fi
 
-command -v python3 >/dev/null 2>&1 || die "python3 not found"
+[ -f "$REQ" ] || die "requirements.txt is missing next to this script"
 
-# 3.10+ because several of these packages dropped older versions
-py_ok=$(python3 -c 'import sys; print(1 if sys.version_info >= (3,10) else 0)')
-[ "$py_ok" = "1" ] || die "python3 is $(python3 -c 'import sys;print(".".join(map(str,sys.version_info[:3])))'), need 3.10 or newer"
+# uv if it is here: it resolves in seconds, and it builds an isolated venv rather
+# than negotiating with a Homebrew python that marks itself externally managed
+# (PEP 668). The pip path below still works; it is just slower and noisier.
+if command -v uv >/dev/null 2>&1; then
+  if [ "$MODE" = "rebuild" ] || [ ! -x "$VENV/bin/python3" ]; then
+    say "creating $VENV with uv"
+    uv venv ${MODE:+--clear} "$VENV" >/dev/null || die "uv could not create the venv"
+  else
+    say "using existing $VENV ($("$VENV/bin/python3" --version))"
+  fi
+  say "syncing packages from requirements.txt"
+  uv pip install --quiet --python "$VENV/bin/python3" -r "$REQ" || die "uv pip install failed"
+else
+  say "uv not found, using pip. uv is one command and much faster:"
+  say "    curl -LsSf https://astral.sh/uv/install.sh | sh"
+  command -v python3 >/dev/null 2>&1 || die "python3 not found"
 
-say "creating $VENV with $(python3 --version)"
-python3 -m venv "$VENV" || die "could not create the venv"
+  # 3.10+ because several of these packages dropped older versions
+  py_ok=$(python3 -c 'import sys; print(1 if sys.version_info >= (3,10) else 0)')
+  [ "$py_ok" = "1" ] || die "python3 is $(python3 -c 'import sys;print(".".join(map(str,sys.version_info[:3])))'), need 3.10 or newer"
 
-say "installing ${#PACKAGES[@]} packages (a few hundred MB, once)"
-"$VENV/bin/pip" install --quiet --upgrade pip >/dev/null 2>&1
-"$VENV/bin/pip" install --quiet "${PACKAGES[@]}" || die "pip install failed"
+  if [ "$MODE" = "rebuild" ] && [ -d "$VENV" ]; then rm -rf "$VENV"; fi
+  if [ ! -x "$VENV/bin/python3" ]; then
+    say "creating $VENV with $(python3 --version)"
+    python3 -m venv "$VENV" || die "could not create the venv"
+  fi
+
+  say "installing packages (a few hundred MB, once)"
+  "$VENV/bin/pip" install --quiet --upgrade pip >/dev/null 2>&1
+  "$VENV/bin/pip" install --quiet -r "$REQ" || die "pip install failed"
+fi
+
+# Playwright is two installs: the package, and the browser it drives. With only
+# the package you get an import that succeeds and a first call that fails, which
+# reads as a bug in the skill rather than a missing download.
+if "$VENV/bin/python3" -c "import playwright" 2>/dev/null; then
+  "$VENV/bin/python3" -m playwright install chromium >/dev/null 2>&1 \
+    || say "note: chromium download failed. /tiktok-replier will not run until it succeeds"
+fi
 
 say "verifying"
 check || die "some packages did not import after install"

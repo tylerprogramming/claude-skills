@@ -8,6 +8,28 @@ user-invocable: true
 
 Plan a YouTube video inspired by a reference transcript at $ARGUMENTS.
 
+## Step 0 — read the packaging rules FIRST (required)
+
+Before writing any title or thumbnail brief, read:
+
+```
+~/content/BRAIN/youtube/packaging-rules.md
+```
+
+That file is the operational checklist, measured on Tyler's own channel and on a
+180-video competitor pull. It is not general YouTube advice and it overrides
+generic instincts. In particular it carries the search-demand gate, the
+"transformation verb not description" rule, the before/after thumbnail rule, the
+duration dead zone, and the standing prohibitions (no money in titles, no em
+dashes, never imply Tyler is not a developer).
+
+Also read `~/content/BRAIN/youtube/brain.md` for the reasoning and the
+per-video history behind those rules.
+
+**Every title and thumbnail you propose must be checkable against that file.**
+If a proposal breaks a rule there, either fix it or say plainly which rule it
+breaks and why it is worth breaking on this video.
+
 ## Workflow Context
 
 **Step 3 of the weekly content pipeline** (after `/yt-search` → `/transcribe`).
