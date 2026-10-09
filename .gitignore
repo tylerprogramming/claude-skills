@@ -68,3 +68,6 @@ harut/chroma_db/
 # Personal photos / face references (local only)
 lifestyle/app/public/profile.png
 yt-thumbnail/tylerai.png
+
+# Written by the Claude desktop app (Anthropic built-in skills), not ours
+synced/
