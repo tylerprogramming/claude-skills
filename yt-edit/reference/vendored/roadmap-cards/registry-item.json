@@ -1,0 +1,20 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/registry-item.json",
+  "name": "roadmap-cards",
+  "type": "hyperframes:block",
+  "title": "Roadmap Cards",
+  "description": "Full-frame agenda plate: glass cards on an aurora, each title resolving out of blur as it is named",
+  "tags": ["roadmap", "agenda", "cards", "intro", "youtube", "glass", "scenes"],
+  "dimensions": {
+    "width": 1920,
+    "height": 1080
+  },
+  "duration": 15.9,
+  "files": [
+    {
+      "path": "roadmap-cards.html",
+      "target": "compositions/roadmap-cards.html",
+      "type": "hyperframes:composition"
+    }
+  ]
+}

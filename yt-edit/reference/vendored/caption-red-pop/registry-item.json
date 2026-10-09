@@ -1,0 +1,15 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/registry-item.json",
+  "name": "caption-red-pop",
+  "type": "hyperframes:component",
+  "title": "Red Pop",
+  "description": "Heavy outlined caps, one line always; the spoken word turns red and pops",
+  "tags": ["captions", "caption-style", "single-line", "split-screen", "social", "tiktok"],
+  "files": [
+    {
+      "path": "caption-red-pop.html",
+      "target": "compositions/components/caption-red-pop.html",
+      "type": "hyperframes:snippet"
+    }
+  ]
+}
