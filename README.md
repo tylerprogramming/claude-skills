@@ -27,12 +27,25 @@ Skills are saved workflows for Claude Code. Instead of explaining what you want 
 | **YT** | `/yt-package` | Full YouTube video package — analysis, research, titles, hooks, script, description, filming guide |
 | **YT Search** | `/yt-search` | Search YouTube by keywords via yt-dlp, sort by views, generate report |
 | **Shorts** | `/yt-shorts` | Weekly short-form content package: 5 short scripts (YT Shorts/TikTok/Reels) + 2 Instagram carousel outlines from yt-search research |
-| **IG Post** | `/ig-post` | Write Instagram captions from a topic in your own voice. Three angles per run (story, blunt claim, useful list), sized for a single image post, carousel, or Reel. Enforces a no-em-dash, no-AI-slang style with a `tells.py` checker that every draft has to pass before you see it. Writing only, no design or publishing |
+| **IG Post** | `/ig-post` | *Not in this repo yet: there is no `ig-post/` folder or `tells.py` to copy.* Write Instagram captions from a topic in your own voice. Three angles per run (story, blunt claim, useful list), sized for a single image post, carousel, or Reel. Enforces a no-em-dash, no-AI-slang style with a `tells.py` checker that every draft has to pass before you see it. Writing only, no design or publishing |
 | **Custom GPT** | `/custom-gpt` | Build a complete Custom GPT package (system-prompt, KB files, README) from course transcripts or raw text |
 | **Analytics** | `/yt-analytics` | YouTube channel analytics - views, retention, traffic sources, per-video breakdown, title/thumbnail A/B tracking |
 | **YouTube** | `/yt-upload` | Upload videos to YouTube and manage existing videos via the YouTube Data API v3 (titles, descriptions, tags, thumbnails, scheduling, comments) |
 | **TikTok Replier** | `/tiktok-replier` | Two-stage TikTok comment management: Apify reads comments, Playwright posts replies using a persistent logged-in browser profile |
 | **YouTube Replier** | `/yt-replier` | Manage YouTube comments via the official Data API v3 — monitors uploads for unreplied comments, auto-drafts Skool-link CTA replies, posts approved replies. Self-contained OAuth + data dir |
+| **Skool Post** | `/skool-post` | Draft a ready-to-paste Skool community post from a video package, a topic, or a rough idea. Skool has no public posting API, so it writes the post for you to paste |
+| **LinkedIn Writer** | `/linkedin-writer` | LinkedIn posts in two modes: "build" (video companion post with named stack, numbered steps, architecture image, link) and "insight" (short text post for days between videos) |
+| **LinkedIn Carousel** | `/carousel` | LinkedIn carousel PDFs from text via the Gamma API |
+| **Carousel App** | `/carousel-app` | Launches the local Instagram carousel maker web app (the app itself is not in this repo) |
+| **Flash Video** | `/flash-video` | 7-second static Reels/TikToks: PIL text on a Kie.ai background, MP4 via ffmpeg with a 1s fade out |
+| **AI Video** | `/ai-video` | Remotion motion graphics for Shorts: kinetic text, terminal typing, stats dashboards, charts. Renders MP4 or transparent WebM |
+| **Submagic** | `/submagic` | Burn word-by-word captions onto an edited video with the Submagic API, then download the result |
+| **TikTok Analytics** | `/tiktok-analytics` | Track TikTok video performance over time from CSV imports, analytics screenshots, and Apify-scraped public metrics |
+| **Social Research** | `/social-research` | Cross-platform topic research (YouTube, Instagram, X, TikTok) from Apify data and transcripts, compiled into a brief with content ideas |
+| **Social Me** | `/social-me` | Same cross-platform research, plus the top YouTube videos' transcripts and comments, returned as a what-is-working / gaps / what-next brief |
+| **Harut** | `/harut` | RAG advisor over Harut's 21-hour business teachings, applied to a creator business (YouTube, Skool, social) |
+| **Model Bench** | `/model-bench` | Run one prompt across several Claude models through the Claude Code CLI and compare cost, time, and output side by side |
+| **Claude Code Essentials** | `/claude-code-essentials` | Send the "3 Rules of a Great CLAUDE.md" email to a recipient via Resend |
 
 ### AI Media Generation — Kie.ai
 
@@ -88,6 +101,7 @@ Build a real AI agent the easy way - no framework, no code, about ten minutes. T
 Take one finished video and push it to every platform without opening a single app. Upload and schedule to YouTube, cut the short-form scripts, write the platform posts, generate the pins and carousel, and queue the newsletter - all reviewed before anything goes out.
 
 - **Skills:** `/yt-upload` · `/repurpose` · `/social-copy` · `/pinterest-writer` · `/instagram-writer` · `/ig-post` · `/email` · `/skool` (+ Blotato for scheduling)
+- **Not in this repo:** `/ig-post` (not published yet) and `/skool` (kept local, see `.gitignore`). `/skool-post` drafts the Skool post instead.
 - **Setup:** `/yt-upload` needs a one-time `token.json` (10-min Google setup, walked through in the doc)
 - **Doc:** https://docs.google.com/document/d/1u9v2Ekpxwq00i2jci5WIoyNpLpG0Ap8aJcIJlEYwYk8/edit
 
