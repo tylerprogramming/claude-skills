@@ -12,7 +12,7 @@
 # wants. Bump deliberately, not by accident on a fresh install.
 
 # Slide and thumbnail rendering  (instagram-writer, yt-thumbnail, analytics assets)
-Pillow==12.3.0
+Pillow==13.0.0
 
 # YouTube Data + Analytics APIs, and Gmail  (yt-analytics, yt-upload, gmail)
 google-api-python-client==2.198.0
