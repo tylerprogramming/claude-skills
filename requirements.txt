@@ -17,7 +17,7 @@ Pillow==12.3.0
 # YouTube Data + Analytics APIs, and Gmail  (yt-analytics, yt-upload, gmail)
 google-api-python-client==2.198.0
 google-auth-oauthlib==1.4.0
-certifi==2026.7.22
+certifi==2026.10.23
 
 # Caption and copy generation  (instagram-writer, social-copy)
 openai==2.52.0
